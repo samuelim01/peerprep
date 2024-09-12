@@ -1,10 +1,4 @@
-const express = require("express");
-const app = express();
+const app = require('./app');
+const { PORT } = require('./config');
 
-app.get('/', (req, res) => {
-    res.send('Succesful response.')
-})
-
-const port = 8081;
-
-app.listen(port);
+app.listen(PORT, () => console.log(`App is running on port ${PORT}.`));

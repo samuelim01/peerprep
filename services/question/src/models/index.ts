@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { MONGODB_USERNAME, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DATABASE } from '../config';
 
-const connectDb = () => {
+export const connectDb = () => {
     const connectionString = `${MONGODB_URL}/${MONGODB_DATABASE}`
 
     mongoose.connect(connectionString, {
@@ -15,5 +15,3 @@ const connectDb = () => {
         process.exit(1);
     })
 };
-
-export default connectDb;

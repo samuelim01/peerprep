@@ -16,6 +16,4 @@ const questionSchema = new Schema<IQuestion>({
     complexity: { type: String, enum: ['Easy', 'Medium', 'Difficult'] },
 }, { versionKey: false });
 
-const Question = model<IQuestion>('Question', questionSchema);
-
-export default Question;
+export const Question = model<IQuestion>('Question', questionSchema);

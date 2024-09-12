@@ -1,12 +1,12 @@
 import fs from 'fs/promises';
-import Question, { IQuestion } from './models/questionModel';
+import { IQuestion, Question } from './models/questionModel';
 
 const getQuestions = async (): Promise<IQuestion[]> => {
     const data = await fs.readFile('./src/config/questions.json', { encoding: 'utf8' });
     return JSON.parse(data);
 }
 
-const syncQuestions = async () => {
+export const syncQuestions = async () => {
     try {
         const questions = await getQuestions();
         const ops = questions.map(item => ({
@@ -27,5 +27,3 @@ const syncQuestions = async () => {
         process.exit(1);
     }
 }
-
-export default syncQuestions;

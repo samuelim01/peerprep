@@ -1,8 +1,8 @@
 import express, { Express } from 'express';
 import router from './routes';
 import questionRouter from './routes/questionRoutes';
-import connectDb from './models';
-import syncQuestions from './setup';
+import { syncQuestions } from './setup';
+import { connectDb } from './models';
 import mongoose from 'mongoose';
 
 const app: Express = express();

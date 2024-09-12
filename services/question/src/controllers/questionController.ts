@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import Question from '../models/questionModel';
+import { Question } from '../models/questionModel';
 
-const getQuestions = async (res: Response) => {
+export const getQuestions = async (res: Response) => {
     const questions = await Question.find();
     const questionTitles = questions.map(q => q.title);
     res.status(200).json({
@@ -9,5 +9,3 @@ const getQuestions = async (res: Response) => {
     });
     return;
 };
-
-export default getQuestions;

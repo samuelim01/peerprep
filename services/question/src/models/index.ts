@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { MONGODB_USERNAME, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DATABASE } = require('../config');
+import mongoose from 'mongoose';
+import { MONGODB_USERNAME, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DATABASE } from '../config';
 
 const connectDb = () => {
     const connectionString = `${MONGODB_URL}/${MONGODB_DATABASE}`
@@ -16,4 +16,4 @@ const connectDb = () => {
     })
 };
 
-module.exports = connectDb;
+export default connectDb;

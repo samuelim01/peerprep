@@ -1,6 +1,7 @@
-const Question = require('../models/questionModel');
+import { Response } from 'express';
+import Question from '../models/questionModel';
 
-const getQuestions = async (req, res) => {
+const getQuestions = async (res: Response) => {
     const questions = await Question.find();
     const questionTitles = questions.map(q => q.title);
     res.status(200).json({
@@ -9,4 +10,4 @@ const getQuestions = async (req, res) => {
     return;
 };
 
-module.exports = getQuestions;
+export default getQuestions;

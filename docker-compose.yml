@@ -10,3 +10,15 @@ services:
     volumes:
       - /app/node_modules
       - ./frontend:/app
+  
+  question:
+    container_name: question
+    image: question
+    build:
+      context: services/question
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    volumes:
+      - /app/node_modules
+      - ./services/question:/app

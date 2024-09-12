@@ -14,6 +14,10 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
+## Lint
+
+Run `ng lint` to lint the project files. The linting rules can be configured in `.prettierrc.json` and `eslint.config.js`. You can use `ng lint --fix` to auto-fix linting issues where possible.
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).

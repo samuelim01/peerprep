@@ -32,8 +32,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${QUESTION_DB_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${QUESTION_DB_PASSWORD}
-    ports:
-      - 27017:27017
     volumes:
       - question-db:/data/db
   

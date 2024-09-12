@@ -32,6 +32,13 @@ module.exports = tseslint.config(
                     style: 'kebab-case',
                 },
             ],
+            // https://stackoverflow.com/questions/68816664/get-rid-of-error-delete-eslint-prettier-prettier-and-allow-use-double
+            'prettier/prettier': [
+                'error',
+                {
+                    'endOfLine': 'auto',
+                }
+            ]
         },
     },
     {

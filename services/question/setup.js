@@ -1,15 +1,14 @@
-const fs = require('fs');
+const fs = require('fs/promises');
 const Question = require('./models/questionModel');
 
-const getQuestions = () => {
-    const data = fs.readFileSync('./config/questions.json');
+const getQuestions = async () => {
+    const data = await fs.readFile('./config/questions.json', { encoding: 'utf8' });
     return JSON.parse(data);
 }
 
 const syncQuestions = async () => {
     try {
-        const questions = getQuestions();
-
+        const questions = await getQuestions();
         const ops = questions.map(item => ({
             updateOne: {
                 filter: { id: item.id },
@@ -17,7 +16,7 @@ const syncQuestions = async () => {
                 upsert: true,
             }
         }));
-        Question.bulkWrite(ops);
+        await Question.bulkWrite(ops);
     } catch {
         console.log('Error syncing questions: ', error.message);
         process.exit(1);

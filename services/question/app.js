@@ -3,12 +3,13 @@ const router = require('./routes');
 const questionRouter = require('./routes/questionRoutes');
 const connectDb = require('./models');
 const syncQuestions = require('./setup');
+const mongoose = require('mongoose');
 
 const app = express();
 
 // Establish database connection
 connectDb();
-syncQuestions();
+mongoose.connection.once('open', async () => await syncQuestions());
 
 // Middleware
 

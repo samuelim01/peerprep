@@ -17,8 +17,6 @@ services:
     build:
       context: services/question
       dockerfile: Dockerfile
-    depends_on:
-      - question-db
     environment:
       MONGODB_USERNAME: ${QUESTION_DB_USERNAME}
       MONGODB_PASSWORD: ${QUESTION_DB_PASSWORD}

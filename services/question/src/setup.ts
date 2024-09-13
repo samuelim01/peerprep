@@ -4,7 +4,7 @@ import { IQuestion, Question } from './models/questionModel';
 const getQuestions = async (): Promise<IQuestion[]> => {
     const data = await fs.readFile('./src/config/questions.json', { encoding: 'utf8' });
     return JSON.parse(data);
-}
+};
 
 export const syncQuestions = async () => {
     try {
@@ -14,10 +14,10 @@ export const syncQuestions = async () => {
                 filter: { id: item.id },
                 update: item,
                 upsert: true,
-            }
+            },
         }));
         await Question.bulkWrite(ops);
-        console.log('Questions synced successfully')
+        console.log('Questions synced successfully');
     } catch (error) {
         if (error instanceof Error) {
             console.log('Error syncing questions: ', error.message);
@@ -26,4 +26,4 @@ export const syncQuestions = async () => {
         }
         process.exit(1);
     }
-}
+};

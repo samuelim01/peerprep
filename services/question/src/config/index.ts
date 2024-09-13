@@ -7,5 +7,5 @@ export const MONGODB_DATABASE = 'question';
 export const corsOptions = {
     origin: process.env.corsOrigin ?? true,
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
-    allowedHeaders: ['Origin', 'X-Request-With', 'Content-Type', 'Accept', 'Authorization']
-}
+    allowedHeaders: ['Origin', 'X-Request-With', 'Content-Type', 'Accept', 'Authorization'],
+};

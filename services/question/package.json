@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "nodemon src/index.ts"
+    "start": "nodemon src/index.ts",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix"
   },
   "author": "",
   "license": "ISC",
@@ -25,7 +27,11 @@
     "@types/node": "^22.5.4",
     "@typescript-eslint/eslint-plugin": "^8.5.0",
     "eslint": "^9.10.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "nodemon": "^3.1.4",
+    "prettier": "3.3.3",
+    "prettier-eslint": "^16.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.5.0"

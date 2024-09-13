@@ -44,5 +44,7 @@ jobs:
           node-version: ${{ env.node-version }}
       - name: Install Node Modules
         run: cd services/question && npm ci
+      - name: Linting
+        run: cd frontend && npm run lint
       - name: Build App
         run: cd services/question && npm run build

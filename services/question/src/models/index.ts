@@ -1,18 +1,29 @@
 import mongoose from 'mongoose';
-import { MONGODB_USERNAME, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DATABASE } from '../config';
+import { IQuestion, Question } from './questionModel';
 
-export const connectDb = () => {
-    const connectionString = `${MONGODB_URL}/${MONGODB_DATABASE}`;
+export async function connectToDB() {
+    const mongoURI = process.env.NODE_ENV === 'production' ? process.env.DB_CLOUD_URI : process.env.DB_LOCAL_URI;
 
-    mongoose
-        .connect(connectionString, {
-            authSource: 'admin',
-            user: MONGODB_USERNAME,
-            pass: MONGODB_PASSWORD,
-        })
-        .then(() => console.log('MongoDB connected successfully'))
-        .catch(error => {
-            console.error('MongoDB connection error:', error.message);
-            process.exit(1);
-        });
-};
+    if (!mongoURI) {
+        throw Error('MongoDB URI not specified');
+    } else if (!process.env.DB_USERNAME || !process.env.DB_PASSWORD) {
+        throw Error('MongoDB credentials not specified');
+    }
+
+    await mongoose.connect(mongoURI, {
+        authSource: 'admin',
+        user: process.env.DB_USERNAME,
+        pass: process.env.DB_PASSWORD,
+    });
+}
+
+export async function upsertManyQuestions(questions: IQuestion[]) {
+    const ops = questions.map(item => ({
+        updateOne: {
+            filter: { id: item.id },
+            update: item,
+            upsert: true,
+        },
+    }));
+    await Question.bulkWrite(ops);
+}

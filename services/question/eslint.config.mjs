@@ -12,5 +12,13 @@ export default tseslint.config({
         ...tseslint.configs.stylistic,
         eslintPluginPrettierRecommended,
     ],
-    rules: {},
+    rules: {
+        // https://stackoverflow.com/questions/68816664/get-rid-of-error-delete-eslint-prettier-prettier-and-allow-use-double
+        'prettier/prettier': [
+            'error',
+            {
+                'endOfLine': 'auto',
+            }
+        ]
+    },
 });

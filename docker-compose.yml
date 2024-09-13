@@ -19,11 +19,13 @@ services:
     build:
       context: services/question
       dockerfile: Dockerfile
-    environment:
-      MONGODB_USERNAME: ${QUESTION_DB_USERNAME}
-      MONGODB_PASSWORD: ${QUESTION_DB_PASSWORD}
     ports:
       - 8081:8081
+    environment:
+      DB_CLOUD_URI: ${QUESTION_DB_CLOUD_URI}
+      DB_LOCAL_URI: ${QUESTION_DB_LOCAL_URI}
+      DB_USERNAME: ${QUESTION_DB_USERNAME}
+      DB_PASSWORD: ${QUESTION_DB_PASSWORD}
     volumes:
       - /app/node_modules
       - ./services/question:/app

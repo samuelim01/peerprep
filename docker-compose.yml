@@ -10,6 +10,8 @@ services:
     volumes:
       - /app/node_modules
       - ./frontend:/app
+    networks:
+      - question-network
   
   question:
     container_name: question
@@ -25,6 +27,9 @@ services:
     volumes:
       - /app/node_modules
       - ./services/question:/app
+    networks:
+      - question-network
+      - question-db-network
 
   question-db:
     container_name: question-db
@@ -34,6 +39,14 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${QUESTION_DB_PASSWORD}
     volumes:
       - question-db:/data/db
-  
+    networks:
+      - question-db-network
+
 volumes:
   question-db:
+
+networks:
+  question-network:
+    driver: bridge
+  question-db-network:
+    driver: bridge

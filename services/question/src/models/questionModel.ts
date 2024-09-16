@@ -5,7 +5,7 @@ export interface IQuestion {
     title: string;
     description: string;
     categories: [string];
-    complexity: string;
+    difficulty: string;
 }
 
 const questionSchema = new Schema<IQuestion>(
@@ -14,7 +14,7 @@ const questionSchema = new Schema<IQuestion>(
         title: String,
         description: String,
         categories: [String],
-        complexity: { type: String, enum: ['Easy', 'Medium', 'Difficult'] },
+        difficulty: { type: String, enum: ['Easy', 'Medium', 'Difficult'] },
     },
     { versionKey: false },
 );

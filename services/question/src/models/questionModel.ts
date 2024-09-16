@@ -1,20 +1,44 @@
 import { model, Schema } from 'mongoose';
 
+enum Difficulty {
+    Easy = 'Easy',
+    Medium = 'Medium',
+    Hard = 'Hard',
+}
+
 export interface IQuestion {
     id: number;
     title: string;
     description: string;
     categories: [string];
-    difficulty: string;
+    difficulty: Difficulty;
 }
 
 const questionSchema = new Schema<IQuestion>(
     {
-        id: { type: Number, required: true, unique: true },
-        title: String,
-        description: String,
-        categories: [String],
-        difficulty: { type: String, enum: ['Easy', 'Medium', 'Difficult'] },
+        id: {
+            type: Number,
+            required: true,
+            unique: true,
+        },
+        title: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        description: {
+            type: String,
+            required: true,
+        },
+        categories: {
+            type: [String],
+            required: true,
+        },
+        difficulty: {
+            type: String,
+            required: true,
+            enum: ['Easy', 'Medium', 'Difficult'],
+        },
     },
     { versionKey: false },
 );

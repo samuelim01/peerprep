@@ -10,7 +10,7 @@ export interface IQuestion {
     id: number;
     title: string;
     description: string;
-    categories: [string];
+    topics: [string];
     difficulty: Difficulty;
 }
 
@@ -30,7 +30,7 @@ const questionSchema = new Schema<IQuestion>(
             type: String,
             required: true,
         },
-        categories: {
+        topics: {
             type: [String],
             required: true,
         },

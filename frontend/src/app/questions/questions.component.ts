@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule, NgFor } from '@angular/common'
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 interface Question {
     id: number;

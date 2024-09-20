@@ -7,14 +7,18 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule, NgFor } from '@angular/common'
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
 
 interface Question {
-    id: number;
-    title: string;
-    description: string;
-    topics: string[];
-    difficulty: string;
+    id?: number;
+    title?: string;
+    description?: string;
+    topics?: string[];
+    difficulty?: string;
 }
 
 interface Column {
@@ -22,10 +26,20 @@ interface Column {
     header: string;
 }
 
+interface Topic {
+    label: string;
+    value: string;
+}
+
+interface Difficulty {
+    label: string;
+    value: string;
+}
+
 @Component({
   selector: 'app-questions',
   standalone: true,
-  imports: [TableModule, NgFor, CommonModule, FormsModule, ToastModule, ToolbarModule, ButtonModule, ConfirmDialogModule],
+  imports: [TableModule, NgFor, CommonModule, FormsModule, ToastModule, ToolbarModule, ButtonModule, ConfirmDialogModule, DialogModule, ButtonModule, ReactiveFormsModule, MultiSelectModule, DropdownModule],
   providers: [ConfirmationService, MessageService],
   templateUrl: './questions.component.html',
   styleUrl: './questions.component.css'
@@ -48,6 +62,14 @@ export class QuestionsComponent implements OnInit {
             difficulty: "Easy"
         }
     ];
+
+    topics!: Topic[];
+
+    difficulties!: Difficulty[];
+
+    questionFormGroup!: FormGroup;
+
+    selectedDifficulty!: string;
     
     question!: Question;
 
@@ -55,20 +77,66 @@ export class QuestionsComponent implements OnInit {
 
     submitted: boolean = false;
 
-    questionDialog: boolean = false;
+    isDialogVisible: boolean = false;
 
     cols: Column[] = [];
 
+
     constructor(private messageService: MessageService, private confirmationService: ConfirmationService) {}
-
     ngOnInit() {
+        // two way binding for forms is not working for some reason unless question is initialised with empty values
+        this.question = {
+            title: '',
+            topics: [],
+            description: '',
+            difficulty: ''
+        };
 
+        this.topics = [
+            { label: 'Arrays', value: 'Arrays'},
+            { label: 'Dynamic Programming', value: 'Dynamic Programming'},
+            { label: 'Greedy', value: 'Greedy'},
+            { label: 'Hashset', value: 'Hashset'},
+            { label: 'Sorting', value: 'Sorting'}
+        ];
+
+        this.difficulties = [
+            { label: 'Easy', value: 'Easy'},
+            { label: 'Medium', value: 'Medium'},
+            { label: 'Hard', value: 'Hard'},
+        ]
+        this.questionFormGroup = new FormGroup({
+            selectedTopics: new FormControl<Topic[] | null>([]),
+            selectedDifficulty: new FormControl<Difficulty[] | null>([]),
+            textTitle: new FormControl<string | null>(''),
+            textDescription: new FormControl<string | null>('')
+        });
+
+        // Dropdown difficulty listener
+        this.questionFormGroup.get('selectedDifficulty')?.valueChanges.subscribe(v => {
+            this.question.difficulty = v;
+        });
+
+        // Multiselect topics listener
+        this.questionFormGroup.get('selectedTopics')?.valueChanges.subscribe(v => {
+            this.question.topics = v;
+        });
+
+        // text title listener
+        this.questionFormGroup.get('textTitle')?.valueChanges.subscribe(v => {
+            this.question.title = v;
+        });
+
+        // text description listener
+        this.questionFormGroup.get('textDescription')?.valueChanges.subscribe(v => {
+            this.question.description = v;
+        });
     }
 
-    openNew() {
-        this.question = {} as Question;
+    openNewQuestion() {
+        this.question = {};
         this.submitted = false;
-        this.questionDialog = true;
+        this.isDialogVisible = true;
     }
 
     deleteSelectedQuestions() {
@@ -85,6 +153,17 @@ export class QuestionsComponent implements OnInit {
     }
 
     saveQuestion() {
-        console.log("save question");
+        this.submitted = true;
+        
+        if(!this.question.title?.trim() || 
+            !this.question.topics ||
+            !this.question.difficulty?.trim() || 
+            !this.question.description?.trim()) {
+            return;
+        }
+
+        this.isDialogVisible = false
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'New Question Added', life: 3000 });
+        this.question = {};
     }
 }

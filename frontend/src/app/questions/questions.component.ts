@@ -154,7 +154,7 @@ export class QuestionsComponent implements OnInit {
 
     saveQuestion() {
         this.submitted = true;
-        
+
         if(!this.question.title?.trim() || 
             !this.question.topics ||
             !this.question.difficulty?.trim() || 
@@ -165,5 +165,13 @@ export class QuestionsComponent implements OnInit {
         this.isDialogVisible = false
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'New Question Added', life: 3000 });
         this.question = {};
+    }
+
+    editQuestion(question: Question) {
+        
+    }
+
+    deleteQuestion(question: Question) {
+
     }
 }

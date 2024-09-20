@@ -32,6 +32,7 @@
                 <th>description</th>
                 <th>Topics</th>
                 <th>Difficulty</th>
+                <th></th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-question>
@@ -44,6 +45,21 @@
                 <td>{{question.description}}</td>
                 <td>{{question.topics}}</td>
                 <td>{{question.difficulty}}</td>
+                <td>
+                    <p-button 
+                    icon="pi pi-pencil" 
+                    class="mr-2" 
+                    [rounded]="true" 
+                    [outlined]="true" 
+                    severity="success" 
+                    (onClick)="editQuestion(question)" />
+                <p-button 
+                    icon="pi pi-trash" 
+                    severity="danger" 
+                    [rounded]="true" 
+                    [outlined]="true" 
+                    (onClick)="deleteQuestion(question)" />
+                </td>
             </tr>
         </ng-template>
     </p-table>

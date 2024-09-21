@@ -8,7 +8,6 @@ import { CommonModule, NgFor } from '@angular/common'
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
@@ -83,6 +82,7 @@ export class QuestionsComponent implements OnInit {
 
 
     constructor(private messageService: MessageService, private confirmationService: ConfirmationService) {}
+
     ngOnInit() {
         // two way binding for forms is not working for some reason unless question is initialised with empty values
         this.question = {
@@ -97,16 +97,23 @@ export class QuestionsComponent implements OnInit {
             { label: 'Dynamic Programming', value: 'Dynamic Programming'},
             { label: 'Greedy', value: 'Greedy'},
             { label: 'Hashset', value: 'Hashset'},
-            { label: 'Sorting', value: 'Sorting'}
+            { label: 'Sorting', value: 'Sorting'},
+            { label: 'Algorithms', value: 'Algorithms'},
+            { label: 'Bit Manipulation', value: 'Bit Manipulation'},
+            { label: 'Brainteaser', value: 'Brainteaser'},
+            { label: 'Data Structures', value: 'Data Structures'},
+            { label: 'Databases', value: 'Databases'},
+            { label: 'Recursion', value: 'Recursion'},
+            { label: 'Strings', value: 'Strings'}
         ];
 
         this.difficulties = [
             { label: 'Easy', value: 'Easy'},
             { label: 'Medium', value: 'Medium'},
-            { label: 'Hard', value: 'Hard'},
+            { label: 'Hard', value: 'Hard'}
         ]
         this.questionFormGroup = new FormGroup({
-            selectedTopics: new FormControl<Topic[] | null>([]),
+            selectedTopics: new FormControl<string[] | null>([]),
             selectedDifficulty: new FormControl<Difficulty[] | null>([]),
             textTitle: new FormControl<string | null>(''),
             textDescription: new FormControl<string | null>('')
@@ -154,7 +161,7 @@ export class QuestionsComponent implements OnInit {
 
     saveQuestion() {
         this.submitted = true;
-
+        console.log(this.question);
         if(!this.question.title?.trim() || 
             !this.question.topics ||
             !this.question.difficulty?.trim() || 
@@ -162,16 +169,32 @@ export class QuestionsComponent implements OnInit {
             return;
         }
 
-        this.isDialogVisible = false
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'New Question Added', life: 3000 });
-        this.question = {};
-    }
-
-    editQuestion(question: Question) {
+        if(this.question.id) {
+            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Question has been updated successfully', life: 3000 });
+        } else {
+            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'New Question Added', life: 3000 });
+        }
         
+        this.isDialogVisible = false
+        this.question = {};
+        this.questionFormGroup.reset({
+            selectedTopics: [],
+            selectedDifficulty: '',
+            textTitle: '',
+            textDescription: ''
+        });
     }
 
-    deleteQuestion(question: Question) {
-
+    // TODO: Fix selectedTopics
+    editQuestion(question: Question) {
+        this.question.id = question.id;
+        this.questionFormGroup.patchValue({
+            textTitle: question.title,
+            textDescription: question.description,
+            selectedTopics: question.topics,
+            selectedDifficulty: question.difficulty
+          });
+        this.isDialogVisible = true;
+        console.log(this.questionFormGroup.value);
     }
 }

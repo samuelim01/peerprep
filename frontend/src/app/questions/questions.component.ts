@@ -11,6 +11,7 @@ import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
+import questionData from "./questions.json";
 
 interface Question {
     id?: number;
@@ -45,22 +46,7 @@ interface Difficulty {
 })
 
 export class QuestionsComponent implements OnInit {
-    questions: Question[] = [
-        {
-            id: 1,
-            title: "Reverse a String",
-            description: "Write a function that reverses a string. The input string is given as an array of characters s.\n\nYou must do this by modifying the input array in-place with O(1) extra memory.\n\n\nExample 1:\n\nInput: s = [\"h\",\"e\",\"l\",\"l\",\"o\"]\nOutput: [\"o\",\"l\",\"l\",\"e\",\"h\"]\n\nExample 2:\nInput: s = [\"H\",\"a\",\"n\",\"n\",\"a\",\"h\"]\nOutput: [\"h\",\"a\",\"n\",\"n\",\"a\",\"H\"]\n\nConstraints:\n1 <= s.length <= 105 s[i] is a printable ascii character.",
-            topics: ["Strings", "Algorithms"],
-            difficulty: "Easy"
-        },
-        {
-            id: 2,
-            title: "Linked List Cycle Detection",
-            description: "Implement a function to detect if a linked list contains a cycle.",
-            topics: ["Data Structures", "Algorithms"],
-            difficulty: "Easy"
-        }
-    ];
+    questions: Question[] = questionData;
 
     topics!: Topic[];
 

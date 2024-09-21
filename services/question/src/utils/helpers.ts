@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import {Response} from 'express';
 
 /**
  * 500: Unexpected error in the database/server
@@ -9,7 +9,7 @@ import { Response } from 'express';
  */
 export const handleError = (res: any, error: any, message = 'An unexpected error occurred', statusCode = 500) => {
     console.error(error);
-    res.status(statusCode).json({ error });
+    res.status(statusCode).json({error});
 };
 
 /**
@@ -21,7 +21,7 @@ export const handleError = (res: any, error: any, message = 'An unexpected error
  */
 export const handleBadRequest = (res: any, error: any, message = 'Bad Request', statusCode = 400) => {
     console.error(error);
-    res.status(statusCode).json({ error });
+    res.status(statusCode).json({error});
 };
 
 /**
@@ -33,18 +33,19 @@ export const handleBadRequest = (res: any, error: any, message = 'Bad Request', 
  */
 export const handleNotFound = (res: any, error: any, message = 'Not Found', statusCode = 404) => {
     console.error(error);
-    res.status(statusCode).json({ error });
+    res.status(statusCode).json({error});
 };
 
 /**
- * 200: Success
+ * Handles successful responses.
  * @param res
+ * @param statusCode - Default is 200
  * @param message
  * @param data
  */
-export const handleSuccess = (res: Response, message: string, data: any) => {
-    res.status(200).json({
-        status: 'success',
+export const handleSuccess = (res: Response, statusCode: number = 200, message: string, data: any) => {
+    res.status(statusCode).json({
+        status: 'Success',
         message,
         data,
     });

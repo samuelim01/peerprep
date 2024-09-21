@@ -20,6 +20,7 @@ const questionSchema = new Schema<IQuestion>(
             type: Number,
             required: true,
             unique: true,
+            immutable: true,
         },
         title: {
             type: String,

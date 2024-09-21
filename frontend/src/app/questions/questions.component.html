@@ -1,20 +1,21 @@
-<div class="card">
+<div class="card mx-8">
     <p-toast />
-    <p-toolbar styleClass="mb-4 gap-2">
-        <ng-template pTemplate="right">
-            <p-button
-                icon="pi pi-plus" 
-                severity="success" 
-                label="New" 
-                class="mr-2" 
-                (onClick)="openNewQuestion()" />
-            <p-button
-                icon="pi pi-trash" 
-                severity="danger" 
-                label="Delete" 
-                (onClick)="deleteSelectedQuestions()" 
-                [disabled]="!selectedQuestions || !selectedQuestions.length" />
-        </ng-template>
+    <p-toolbar styleClass="mb-2 gap-2">
+        <div class="p-justify-end">
+                <p-button
+                    icon="pi pi-plus" 
+                    severity="primary" 
+                    [outlined]="true" 
+                    label="New" 
+                    class="mr-2" 
+                    (onClick)="openNewQuestion()" />
+                <p-button
+                    icon="pi pi-trash" 
+                    severity="danger" 
+                    label="Delete" 
+                    (onClick)="deleteSelectedQuestions()" 
+                    [disabled]="!selectedQuestions || !selectedQuestions.length" />
+        </div>
     </p-toolbar>
     <p-table 
     [columns]="cols" 
@@ -26,6 +27,11 @@
     [rows]="5"
     [rowsPerPageOptions]="[5, 10, 20]"
     styleClass="p-datatable-gridlines-striped">
+        <ng-template pTemplate="caption">
+            <div class="flex">
+                <h3 class="m-0">Manage Questions</h3>
+            </div>
+        </ng-template>
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
@@ -49,11 +55,11 @@
                 <td>{{question.difficulty}}</td>
                 <td>
                     <p-button 
-                    icon="pi pi-pencil" 
+                    label="Edit"
+                    severity="primary" 
+                    icon="pi pi-file-edit" 
                     class="mr-2" 
-                    [rounded]="true" 
-                    [outlined]="true" 
-                    severity="success" 
+                    [text]="true"
                     (onClick)="editQuestion(question)" />
                 </td>
             </tr>

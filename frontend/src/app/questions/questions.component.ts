@@ -167,7 +167,7 @@ export class QuestionsComponent implements OnInit {
         } else {
             // add
             this.question.id = this.createId();
-            this.questions.push(this.question);
+            this.questions = [...this.questions, this.question];
             this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'New Question Added', life: 3000 });
         }
 

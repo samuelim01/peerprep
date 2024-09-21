@@ -141,6 +141,7 @@ export class QuestionsComponent implements OnInit {
     }
 
     openNewQuestion() {
+        this.resetFormGroup();
         this.question = {};
         this.submitted = false;
         this.isDialogVisible = true;
@@ -169,23 +170,26 @@ export class QuestionsComponent implements OnInit {
             return;
         }
 
+        // ---------------------------------------------
+        // Add questions to the database and client side
+        // ---------------------------------------------
+
         if(this.question.id) {
+            // update
             this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Question has been updated successfully', life: 3000 });
+            
         } else {
+            // add
+            this.question.id = this.createId();
+            this.questions.push(this.question);
             this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'New Question Added', life: 3000 });
         }
-        
+
+
         this.isDialogVisible = false
         this.question = {};
-        this.questionFormGroup.reset({
-            selectedTopics: [],
-            selectedDifficulty: '',
-            textTitle: '',
-            textDescription: ''
-        });
     }
 
-    // TODO: Fix selectedTopics
     editQuestion(question: Question) {
         this.question.id = question.id;
         this.questionFormGroup.patchValue({
@@ -195,6 +199,20 @@ export class QuestionsComponent implements OnInit {
             selectedDifficulty: question.difficulty
           });
         this.isDialogVisible = true;
-        console.log(this.questionFormGroup.value);
+    }
+
+    // assuming newest question is always appended at the back
+    createId() {
+        console.log(this.questions);
+        return Number(this.questions.at(-1)?.id) + 1;
+    }
+
+    resetFormGroup() {
+        this.questionFormGroup.reset({
+            selectedTopics: [],
+            selectedDifficulty: '',
+            textTitle: '',
+            textDescription: ''
+        });
     }
 }

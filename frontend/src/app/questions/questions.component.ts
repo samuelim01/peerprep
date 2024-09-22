@@ -194,7 +194,7 @@ export class QuestionsComponent implements OnInit {
         });
         this.isDialogVisible = true;
     }
-    
+
     // assuming newest question is always appended at the back
     createId() {
         console.log(this.questions);

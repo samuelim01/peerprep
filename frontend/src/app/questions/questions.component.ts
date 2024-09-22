@@ -1,17 +1,17 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
-import { CommonModule, NgFor } from '@angular/common'
+import { CommonModule, NgFor } from '@angular/common';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import questionData from "./questions.json";
+import questionData from './questions.json';
 
 interface Question {
     id?: number;
@@ -37,14 +37,27 @@ interface Difficulty {
 }
 
 @Component({
-  selector: 'app-questions',
-  standalone: true,
-  imports: [TableModule, NgFor, CommonModule, FormsModule, ToastModule, ToolbarModule, ButtonModule, ConfirmDialogModule, DialogModule, ButtonModule, ReactiveFormsModule, MultiSelectModule, DropdownModule],
-  providers: [ConfirmationService, MessageService],
-  templateUrl: './questions.component.html',
-  styleUrl: './questions.component.css'
+    selector: 'app-questions',
+    standalone: true,
+    imports: [
+        TableModule,
+        NgFor,
+        CommonModule,
+        FormsModule,
+        ToastModule,
+        ToolbarModule,
+        ButtonModule,
+        ConfirmDialogModule,
+        DialogModule,
+        ButtonModule,
+        ReactiveFormsModule,
+        MultiSelectModule,
+        DropdownModule,
+    ],
+    providers: [ConfirmationService, MessageService],
+    templateUrl: './questions.component.html',
+    styleUrl: './questions.component.css',
 })
-
 export class QuestionsComponent implements OnInit {
     questions: Question[] = questionData;
 
@@ -55,19 +68,21 @@ export class QuestionsComponent implements OnInit {
     questionFormGroup!: FormGroup;
 
     selectedDifficulty!: string;
-    
+
     question!: Question;
 
     selectedQuestions!: Question[] | null;
 
-    submitted: boolean = false;
+    submitted = false;
 
-    isDialogVisible: boolean = false;
+    isDialogVisible = false;
 
     cols: Column[] = [];
 
-
-    constructor(private messageService: MessageService, private confirmationService: ConfirmationService) {}
+    constructor(
+        private messageService: MessageService,
+        private confirmationService: ConfirmationService,
+    ) {}
 
     ngOnInit() {
         // two way binding for forms is not working for some reason unless question is initialised with empty values
@@ -75,34 +90,34 @@ export class QuestionsComponent implements OnInit {
             title: '',
             topics: [],
             description: '',
-            difficulty: ''
+            difficulty: '',
         };
 
         this.topics = [
-            { label: 'Arrays', value: 'Arrays'},
-            { label: 'Dynamic Programming', value: 'Dynamic Programming'},
-            { label: 'Greedy', value: 'Greedy'},
-            { label: 'Hashset', value: 'Hashset'},
-            { label: 'Sorting', value: 'Sorting'},
-            { label: 'Algorithms', value: 'Algorithms'},
-            { label: 'Bit Manipulation', value: 'Bit Manipulation'},
-            { label: 'Brainteaser', value: 'Brainteaser'},
-            { label: 'Data Structures', value: 'Data Structures'},
-            { label: 'Databases', value: 'Databases'},
-            { label: 'Recursion', value: 'Recursion'},
-            { label: 'Strings', value: 'Strings'}
+            { label: 'Arrays', value: 'Arrays' },
+            { label: 'Dynamic Programming', value: 'Dynamic Programming' },
+            { label: 'Greedy', value: 'Greedy' },
+            { label: 'Hashset', value: 'Hashset' },
+            { label: 'Sorting', value: 'Sorting' },
+            { label: 'Algorithms', value: 'Algorithms' },
+            { label: 'Bit Manipulation', value: 'Bit Manipulation' },
+            { label: 'Brainteaser', value: 'Brainteaser' },
+            { label: 'Data Structures', value: 'Data Structures' },
+            { label: 'Databases', value: 'Databases' },
+            { label: 'Recursion', value: 'Recursion' },
+            { label: 'Strings', value: 'Strings' },
         ];
 
         this.difficulties = [
-            { label: 'Easy', value: 'Easy'},
-            { label: 'Medium', value: 'Medium'},
-            { label: 'Hard', value: 'Hard'}
-        ]
+            { label: 'Easy', value: 'Easy' },
+            { label: 'Medium', value: 'Medium' },
+            { label: 'Hard', value: 'Hard' },
+        ];
         this.questionFormGroup = new FormGroup({
             selectedTopics: new FormControl<string[] | null>([]),
             selectedDifficulty: new FormControl<Difficulty[] | null>([]),
             textTitle: new FormControl<string | null>(''),
-            textDescription: new FormControl<string | null>('')
+            textDescription: new FormControl<string | null>(''),
         });
 
         // Dropdown difficulty listener
@@ -139,9 +154,14 @@ export class QuestionsComponent implements OnInit {
             header: 'Delete Confirmation',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.questions = this.questions.filter((val) => !this.selectedQuestions?.includes(val));
+                this.questions = this.questions.filter(val => !this.selectedQuestions?.includes(val));
                 this.selectedQuestions = null;
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Questions Deleted', life: 3000 });
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Successful',
+                    detail: 'Questions Deleted',
+                    life: 3000,
+                });
             },
         });
     }
@@ -149,30 +169,36 @@ export class QuestionsComponent implements OnInit {
     saveQuestion() {
         this.submitted = true;
         console.log(this.question);
-        if(!this.question.title?.trim() || 
+        if (
+            !this.question.title?.trim() ||
             !this.question.topics ||
-            !this.question.difficulty?.trim() || 
-            !this.question.description?.trim()) {
+            !this.question.difficulty?.trim() ||
+            !this.question.description?.trim()
+        ) {
             return;
         }
-
-        // ---------------------------------------------
-        // Add questions to the database and client side
-        // ---------------------------------------------
-
-        if(this.question.id) {
+        
+        if (this.question.id) {
             // update
-            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Question has been updated successfully', life: 3000 });
-            
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Successful',
+                detail: 'Question has been updated successfully',
+                life: 3000,
+            });
         } else {
             // add
             this.question.id = this.createId();
             this.questions = [...this.questions, this.question];
-            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'New Question Added', life: 3000 });
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Successful',
+                detail: 'New Question Added',
+                life: 3000,
+            });
         }
 
-
-        this.isDialogVisible = false
+        this.isDialogVisible = false;
         this.question = {};
     }
 
@@ -182,8 +208,8 @@ export class QuestionsComponent implements OnInit {
             textTitle: question.title,
             textDescription: question.description,
             selectedTopics: question.topics,
-            selectedDifficulty: question.difficulty
-          });
+            selectedDifficulty: question.difficulty,
+        });
         this.isDialogVisible = true;
     }
 
@@ -198,7 +224,7 @@ export class QuestionsComponent implements OnInit {
             selectedTopics: [],
             selectedDifficulty: '',
             textTitle: '',
-            textDescription: ''
+            textDescription: '',
         });
     }
 }

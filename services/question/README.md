@@ -23,7 +23,32 @@ that matches with parameters will be returned; if no parameters are provided, al
 | 404 (Not Found)             | No questions found.                        |
 | 500 (Internal Server Error) | Unexpected error in the database or server |
 
-**Example of Response Body for Success**:
+### Command Line Example:
+
+```
+Retrieve all Questions:
+curl -X GET http://localhost:8081/questions
+
+Retrieve Questions by Title:
+curl -X GET "http://localhost:8081/questions?title=Reverse%20a%20String"
+
+Retrieve Questions by Description:
+curl -X GET "http://localhost:8081/questions?description=string"
+
+Retrieve Questions by Topics:
+curl -X GET "http://localhost:8081/questions?topics=Algorithms,Data%20Structures"
+
+Retrieve Questions by Difficulty:
+curl -X GET "http://localhost:8081/questions?difficulty=Easy"
+
+Retrieve Questions by Title and Difficulty:
+curl -X GET "http://localhost:8081/questions?title=Reverse%20a%20String&difficulty=Easy"
+
+Retrieve Questions by Title, Description, Topics, and Difficulty:
+curl -X GET "http://localhost:8081/questions?title=Reverse%20a%20String&description=string&topics=Algorithms&difficulty=Easy"
+```
+
+### Example of Response Body for Success:
 
 ```json
 {
@@ -77,7 +102,14 @@ This endpoint allows the retrieval of the question by using the question ID.
 | 404 (Not Found)             | Question with the specified `questionID` not found              |
 | 500 (Internal Server Error) | Unexpected error in the database or server                      |
 
-**Example of Response Body for Success**:
+### Command Line Example:
+
+```
+Retrieve Question by ID:
+curl -X GET http://localhost:8081/questions/1
+```
+
+### Example of Response Body for Success:
 
 ```json
 {
@@ -121,7 +153,17 @@ This endpoint allows the retrieval of random questions that matches the paramete
 | 404 (Not Found)             | Question with the specified parameter(s) not found                                        |
 | 500 (Internal Server Error) | Unexpected error in the database or server                                                |
 
-**Example of Response Body for Success**:
+### Command Line Example:
+
+```
+Retrieve Random Question by Topics and Difficulty:
+curl -X GET "http://localhost:8081/questions/search?topics=Algorithms&difficulty=Medium"
+
+Retrieve Random Question by Topics, Difficulty, and Limit:
+curl -X GET "http://localhost:8081/questions/search?topics=Algorithms,Data%20Structures&difficulty=Easy&limit=5"
+```
+
+### Example of Response Body for Success:
 
 ```json
 {
@@ -180,7 +222,14 @@ This endpoint retrieves all unique topics in the database
 | 200 (OK)                    | Success, all topics are returned                                   |
 | 500 (Internal Server Error) | The server encountered an error and could not complete the request |
 
-**Example of Response Body for Success**:
+### Command Line Example:
+
+```
+Retrieve Topics:
+curl -X GET http://localhost:8081/questions/topics
+```
+
+### Example of Response Body for Success:
 
 ```json
 {
@@ -224,7 +273,22 @@ This endpoint allows the addition of a new question.
 | 400 (Bad Request)           | Required fields are missing or invalid or `id` already exists. |
 | 500 (Internal Server Error) | Unexpected error in the database or server.                    |
 
-**Example of Response Body for Success**:
+### Command Line Example:
+
+```
+Add Question:
+curl -X POST http://localhost:8081/questions \
+     -H "Content-Type: application/json" \
+     -d '{
+           "id": 21,
+           "title": "New Question",
+           "description": "This is a description for a new question.",
+           "topics": ["Data Structures", "Algorithms"],
+           "difficulty": "Medium"
+         }'
+```
+
+### Example of Response Body for Success:
 
 ```json
 {
@@ -272,7 +336,21 @@ This endpoint allows updating an existing question. Only the title, description,
 | 404 (Not Found)             | Question with the specified `questionId` not found. |
 | 500 (Internal Server Error) | Unexpected error in the database or server.         |
 
-**Example of Response Body for Success**:
+### Command Line Example:
+
+```
+Update Question:
+curl -X PUT http://localhost:8081/questions/21 \
+     -H "Content-Type: application/json" \
+     -d '{
+            "title": "Updated Question Title",
+            "description": "This is the updated description.",
+            "topics": ["Updated Topic"],
+            "difficulty": "Hard"
+         }'
+```
+
+### Example of Response Body for Success:
 
 ```json
 {
@@ -313,7 +391,14 @@ This endpoint allows the deletion of a question by the question ID.
 | 404 (Not Found)             | Question with the specified `questionId` not found. |
 | 500 (Internal Server Error) | Unexpected error in the database or server.         |
 
-**Example of Response Body for Success**:
+### Command Line Example:
+
+```
+Delete Question:
+curl -X DELETE http://localhost:8081/questions/21
+```
+
+### Example of Response Body for Success:
 
 ```json
 {

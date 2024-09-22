@@ -161,6 +161,7 @@ export class QuestionsComponent implements OnInit {
 
         if (this.question.id) {
             // update
+            this.questions[this.questions.findIndex(x => x.id == this.question.id)] = this.question;
             this.messageService.add({
                 severity: 'success',
                 summary: 'Successful',
@@ -193,7 +194,7 @@ export class QuestionsComponent implements OnInit {
         });
         this.isDialogVisible = true;
     }
-
+    
     // assuming newest question is always appended at the back
     createId() {
         console.log(this.questions);

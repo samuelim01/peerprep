@@ -21,7 +21,9 @@ export const getQuestions = async (req: Request, res: Response) => {
         }
         if (topics) {
             const topicsArray = (topics as string).split(',');
-            query.topics = {$in: topicsArray, $options: 'i'};
+            query.topics = {
+                $in: topicsArray.map(topic => new RegExp(topic, 'i'))
+            };
         }
         if (difficulty) {
             query.difficulty = difficulty as string;
@@ -98,7 +100,7 @@ export const getQuestionByParameters = async (req: Request, res: Response) => {
     try {
         const topicsArray = (topics as string).split(',');
         const query = {
-            topics: {$in: topicsArray, $options: 'i'},
+            topics: {$in: topicsArray.map(topic => new RegExp(topic, 'i'))},
             difficulty: difficulty,
         };
         const numOfQuestions = await Question.countDocuments(query);
@@ -195,7 +197,10 @@ export const updateQuestion = async (req: Request, res: Response) => {
     const updates = {...req.body};
 
     try {
-        const updatedQuestion = await Question.findOneAndUpdate({id: parseInt(id, 10)}, updates, {new: true, runValidators: true});
+        const updatedQuestion = await Question.findOneAndUpdate({id: parseInt(id, 10)}, updates, {
+            new: true,
+            runValidators: true
+        });
 
         if (!updatedQuestion) {
             return handleNotFound(res, 'Question not found');

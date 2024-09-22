@@ -121,9 +121,47 @@ This endpoint allows the retrieval of random questions that matches the paramete
 | 404 (Not Found)             | Question with the specified parameter(s) not found                                        |
 | 500 (Internal Server Error) | Unexpected error in the database or server                                                |
 
-**Example of Response Body for Success**:  
-```json
+**Example of Response Body for Success**:
 
+```json
+{
+  "status": "Success",
+  "message": "Questions with Parameters retrieved successfully",
+  "data": [
+    {
+      "_id": "66ea6985cd34132719540c25",
+      "id": 4,
+      "description": "Given two binary strings a and b, return their sum as a binary string.",
+      "difficulty": "Easy",
+      "title": "Add Binary",
+      "topics": [
+        "Bit Manipulation",
+        "Algorithms"
+      ]
+    },
+    {
+      "_id": "66ea6985cd34132719540c22",
+      "id": 1,
+      "description": "Write a function that reverses a string. The input string is given as an array of characters s.\n\nYou must do this by modifying the input array in-place with O(1) extra memory.\n\n\nExample 1:\n\nInput: s = [\"h\",\"e\",\"l\",\"l\",\"o\"]\nOutput: [\"o\",\"l\",\"l\",\"e\",\"h\"]\n\nExample 2:\nInput: s = [\"H\",\"a\",\"n\",\"n\",\"a\",\"h\"]\nOutput: [\"h\",\"a\",\"n\",\"n\",\"a\",\"H\"]\n\nConstraints:\n1 \u003C= s.length \u003C= 105 s[i] is a printable ascii character.",
+      "difficulty": "Easy",
+      "title": "Reverse a String",
+      "topics": [
+        "Strings",
+        "Algorithms"
+      ]
+    },
+    {
+      "_id": "66ea6985cd34132719540c27",
+      "id": 6,
+      "description": "Implement a last-in first-out (LIFO) stack using only two queues. The implemented stack should support all the functions of a normal stack (push, top, pop, and empty).",
+      "difficulty": "Easy",
+      "title": "Implement Stack using Queues",
+      "topics": [
+        "Data Structures"
+      ]
+    }
+  ]
+}
 ```
 
 ---
@@ -142,7 +180,8 @@ This endpoint retrieves all unique topics in the database
 | 200 (OK)                    | Success, all topics are returned                                   |
 | 500 (Internal Server Error) | The server encountered an error and could not complete the request |
 
-**Example of Response Body for Success**:  
+**Example of Response Body for Success**:
+
 ```json
 {
   "status": "Success",
@@ -186,21 +225,22 @@ This endpoint allows the addition of a new question.
 | 500 (Internal Server Error) | Unexpected error in the database or server.                    |
 
 **Example of Response Body for Success**:
+
 ```json
 {
-    "status": "Success",
-    "message": "Question created successfully",
-    "data": {
-        "id": 21,
-        "title": "New Question",
-        "description": "This is a description for a new question.",
-        "topics": [
-            "Data Structures",
-            "Algorithms"
-        ],
-        "difficulty": "Medium",
-        "_id": "66eedf739672ca081e9fd5ff"
-    }
+  "status": "Success",
+  "message": "Question created successfully",
+  "data": {
+    "id": 21,
+    "title": "New Question",
+    "description": "This is a description for a new question.",
+    "topics": [
+      "Data Structures",
+      "Algorithms"
+    ],
+    "difficulty": "Medium",
+    "_id": "66eedf739672ca081e9fd5ff"
+  }
 }
 ```
 
@@ -233,21 +273,22 @@ This endpoint allows updating an existing question. Only the title, description,
 | 500 (Internal Server Error) | Unexpected error in the database or server.         |
 
 **Example of Response Body for Success**:
+
 ```json
 {
-    "status": "Success",
-    "message": "Question updated successfully",
-    "data": {
-        "_id": "66eedf739672ca081e9fd5ff",
-        "id": 21,
-        "title": "Updated Title",
-        "description": "Updated description for the existing question.",
-        "topics": [
-            "Data Structures",
-            "Algorithms"
-        ],
-        "difficulty": "Hard"
-    }
+  "status": "Success",
+  "message": "Question updated successfully",
+  "data": {
+    "_id": "66eedf739672ca081e9fd5ff",
+    "id": 21,
+    "title": "Updated Title",
+    "description": "Updated description for the existing question.",
+    "topics": [
+      "Data Structures",
+      "Algorithms"
+    ],
+    "difficulty": "Hard"
+  }
 }
 ```
 
@@ -273,21 +314,22 @@ This endpoint allows the deletion of a question by the question ID.
 | 500 (Internal Server Error) | Unexpected error in the database or server.         |
 
 **Example of Response Body for Success**:
+
 ```json
 {
-    "status": "Success",
-    "message": "Question deleted successfully",
-    "data": {
-        "_id": "66eedf739672ca081e9fd5ff",
-        "id": 21,
-        "title": "Updated Title",
-        "description": "Updated description for the existing question.",
-        "topics": [
-            "Data Structures",
-            "Algorithms"
-        ],
-        "difficulty": "Hard"
-    }
+  "status": "Success",
+  "message": "Question deleted successfully",
+  "data": {
+    "_id": "66eedf739672ca081e9fd5ff",
+    "id": 21,
+    "title": "Updated Title",
+    "description": "Updated description for the existing question.",
+    "topics": [
+      "Data Structures",
+      "Algorithms"
+    ],
+    "difficulty": "Hard"
+  }
 }
 ```
 

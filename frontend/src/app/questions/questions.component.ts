@@ -12,29 +12,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import questionData from './questions.json';
-
-interface Question {
-    id?: number;
-    title?: string;
-    description?: string;
-    topics?: string[];
-    difficulty?: string;
-}
-
-interface Column {
-    field: string;
-    header: string;
-}
-
-interface Topic {
-    label: string;
-    value: string;
-}
-
-interface Difficulty {
-    label: string;
-    value: string;
-}
+import { Question, Column, Topic, Difficulty } from './question.model';
+import { DifficultyLevels } from './difficulty-levels.enum';
 
 @Component({
     selector: 'app-questions',
@@ -93,6 +72,7 @@ export class QuestionsComponent implements OnInit {
             difficulty: '',
         };
 
+        // Dummy data for topics
         this.topics = [
             { label: 'Arrays', value: 'Arrays' },
             { label: 'Dynamic Programming', value: 'Dynamic Programming' },
@@ -109,10 +89,11 @@ export class QuestionsComponent implements OnInit {
         ];
 
         this.difficulties = [
-            { label: 'Easy', value: 'Easy' },
-            { label: 'Medium', value: 'Medium' },
-            { label: 'Hard', value: 'Hard' },
+            { label: DifficultyLevels.EASY, value: DifficultyLevels.EASY },
+            { label: DifficultyLevels.MEDIUM, value: DifficultyLevels.MEDIUM },
+            { label: DifficultyLevels.HARD, value: DifficultyLevels.HARD },
         ];
+
         this.questionFormGroup = new FormGroup({
             selectedTopics: new FormControl<string[] | null>([]),
             selectedDifficulty: new FormControl<Difficulty[] | null>([]),
@@ -177,7 +158,7 @@ export class QuestionsComponent implements OnInit {
         ) {
             return;
         }
-        
+
         if (this.question.id) {
             // update
             this.messageService.add({

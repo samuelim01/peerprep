@@ -10,6 +10,7 @@ import { Question } from '../models/questionModel';
 export const getQuestions = async (req: Request, res: Response) => {
     try {
         const { title, description, topics, difficulty } = req.query;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const query: any = {};
 
         if (title) {

@@ -277,15 +277,7 @@ This endpoint allows the addition of a new question.
 
 ```
 Add Question:
-curl -X POST http://localhost:8081/questions \
-     -H "Content-Type: application/json" \
-     -d '{
-           "id": 21,
-           "title": "New Question",
-           "description": "This is a description for a new question.",
-           "topics": ["Data Structures", "Algorithms"],
-           "difficulty": "Medium"
-         }'
+curl -X POST http://localhost:8081/questions -H "Content-Type: application/json" -d "{\"id\": 21, \"title\": \"New Question\", \"description\": \"This is a description for a new question.\", \"topics\": [\"Data Structures\", \"Algorithms\"], \"difficulty\": \"Medium\"}"
 ```
 
 ### Example of Response Body for Success:
@@ -340,14 +332,7 @@ This endpoint allows updating an existing question. Only the title, description,
 
 ```
 Update Question:
-curl -X PUT http://localhost:8081/questions/21 \
-     -H "Content-Type: application/json" \
-     -d '{
-            "title": "Updated Question Title",
-            "description": "This is the updated description.",
-            "topics": ["Updated Topic"],
-            "difficulty": "Hard"
-         }'
+curl -X PUT http://localhost:8081/questions/21 -H "Content-Type: application/json" -d "{\"title\": \"Updated Question Title\", \"description\": \"This is the updated description.\", \"topics\": [\"Updated Topic\"], \"difficulty\": \"Hard\"}"
 ```
 
 ### Example of Response Body for Success:

@@ -1,5 +1,27 @@
 # Question Service User Guide
 
+## Pre-requisites
+
+You need to create the `.env` files from the provided `.env.sample` files in both the root directory and
+the `services/question` directory.
+
+1. Open the Command Prompt.
+2. Navigate to the root directory of the project.
+3. Run the following command to create the `.env` files:
+```cmd
+cp .env.sample .env
+cp services/question/.env.sample services/question/.env
+```
+4. After setting up the .env files, build the Docker images and start the containers using the following command:
+```cmd
+docker compose build
+docker compose up -d
+```
+5. To stop and remove the containers and associated volumes, use the following command:
+```cmd
+docker compose down -v
+```
+
 ## Get Questions
 
 This endpoint allows the retrieval of all the questions in the database. If filter by (optional) parameters, questions

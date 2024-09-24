@@ -140,7 +140,7 @@ export class QuestionsComponent implements OnInit {
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Successful',
-                    detail: 'Questions Deleted',
+                    detail: 'Question(s) Deleted',
                     life: 3000,
                 });
             },
@@ -149,7 +149,7 @@ export class QuestionsComponent implements OnInit {
 
     saveQuestion() {
         this.submitted = true;
-        console.log(this.question);
+
         if (
             !this.question.title?.trim() ||
             !this.question.topics ||
@@ -197,7 +197,6 @@ export class QuestionsComponent implements OnInit {
 
     // assuming newest question is always appended at the back
     createId() {
-        console.log(this.questions);
         return Number(this.questions.at(-1)?.id) + 1;
     }
 

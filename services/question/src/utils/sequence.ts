@@ -10,11 +10,7 @@ export async function initializeCounter() {
     if (maxQuestion) {
         maxId = maxQuestion.id;
     }
-    await Counter.findOneAndUpdate(
-        { _id: 'questionId' },
-        { $set: { sequence_value: maxId } },
-        { upsert: true },
-    );
+    await Counter.findOneAndUpdate({ _id: 'questionId' }, { $set: { sequence_value: maxId } }, { upsert: true });
     console.log(`Question ID initialized to start from: ${maxId}`);
 }
 

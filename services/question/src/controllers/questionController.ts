@@ -10,11 +10,10 @@ import { Question } from '../models/questionModel';
 export const getQuestions = async (req: Request, res: Response) => {
     try {
         const { title, description, topics, difficulty } = req.query;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const query: any = {};
 
         if (title) {
-            query.title = { $regex: `^${title as string}$`, $options: 'i' };
+            query.title = title as string;
         }
         if (description) {
             const words = (description as string).split(' ');
@@ -166,14 +165,10 @@ export const addQuestion = async (req: Request, res: Response) => {
 
     try {
         const existingQuestion = await Question.findOne({
-            $or: [
-                { id },
-                { title: { $regex: `^${title}$`, $options: 'i' } },
-                { description: { $regex: `^${description}$`, $options: 'i' } },
-            ],
-        });
+            $or: [{ id }, { title: title }, { description: description }],
+        }).collation({ locale: 'en', strength: 2 });
         if (existingQuestion) {
-            return handleBadRequest(res, `A question with ID ${id} already exists`);
+            return handleBadRequest(res, `A question with the same ID, title, or description already exists.`);
         }
 
         const newQuestion = new Question({

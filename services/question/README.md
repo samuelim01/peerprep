@@ -2,22 +2,17 @@
 
 ## Pre-requisites
 
-You need to create the `.env` files from the provided `.env.sample` files in both the root directory and
-the `services/question` directory.
-
-1. Open the Command Prompt.
-2. Navigate to the root directory of the project.
-3. Run the following command to create the `.env` files:
+1. Run the following command to create the `.env` files at the root directory:
 ```cmd
 cp .env.sample .env
 cp services/question/.env.sample services/question/.env
 ```
-4. After setting up the .env files, build the Docker images and start the containers using the following command:
+2. After setting up the .env files, build the Docker images and start the containers using the following command:
 ```cmd
 docker compose build
 docker compose up -d
 ```
-5. To stop and remove the containers and associated volumes, use the following command:
+3. To stop and remove the containers and associated volumes, use the following command:
 ```cmd
 docker compose down -v
 ```
@@ -39,11 +34,11 @@ that matches with parameters will be returned; if no parameters are provided, al
 
 ### Responses:
 
-| Response Code               | Explanation                                |
-|-----------------------------|--------------------------------------------|
-| 200 (OK)                    | Success, all questions are returned        |
-| 404 (Not Found)             | No questions found.                        |
-| 500 (Internal Server Error) | Unexpected error in the database or server |
+| Response Code               | Explanation                                 |
+|-----------------------------|---------------------------------------------|
+| 200 (OK)                    | Success, all questions are returned.        |
+| 404 (Not Found)             | No questions found.                         |
+| 500 (Internal Server Error) | Unexpected error in the database or server. |
 
 ### Command Line Example:
 
@@ -69,6 +64,9 @@ curl -X GET "http://localhost:8081/questions?title=Reverse%20a%20String&difficul
 Retrieve Questions by Title, Description, Topics, and Difficulty:
 curl -X GET "http://localhost:8081/questions?title=Reverse%20a%20String&description=string&topics=Algorithms&difficulty=Easy"
 ```
+
+### Parameter Format Details:
+The `topics` parameter must be passed as a comma-separated string in `GET` request because there is limitation with URL encoding and readability concerns.
 
 ### Example of Response Body for Success:
 
@@ -118,11 +116,11 @@ This endpoint allows the retrieval of the question by using the question ID.
 
 ### Responses:
 
-| Response Code               | Explanation                                                     |
-|-----------------------------|-----------------------------------------------------------------|
-| 200 (OK)                    | Success, question corresponding to the `questionID` is returned |
-| 404 (Not Found)             | Question with the specified `questionID` not found              |
-| 500 (Internal Server Error) | Unexpected error in the database or server                      |
+| Response Code               | Explanation                                                      |
+|-----------------------------|------------------------------------------------------------------|
+| 200 (OK)                    | Success, question corresponding to the `questionID` is returned. |
+| 404 (Not Found)             | Question with the specified `questionID` not found.              |
+| 500 (Internal Server Error) | Unexpected error in the database or server.                      |
 
 ### Command Line Example:
 
@@ -171,9 +169,9 @@ This endpoint allows the retrieval of random questions that matches the paramete
 | Response Code               | Explanation                                                                               |
 |-----------------------------|-------------------------------------------------------------------------------------------|
 | 200 (OK)                    | Success, questions corresponding to the `limit`, `topics`, and `difficulty` are returned. |
-| 400 (Bad Request)           | Missing fields                                                                            |
-| 404 (Not Found)             | Question with the specified parameter(s) not found                                        |
-| 500 (Internal Server Error) | Unexpected error in the database or server                                                |
+| 400 (Bad Request)           | Missing fields.                                                                           |
+| 404 (Not Found)             | Question with the specified parameter(s) not found.                                       |
+| 500 (Internal Server Error) | Unexpected error in the database or server.                                               |
 
 ### Command Line Example:
 
@@ -239,10 +237,11 @@ This endpoint retrieves all unique topics in the database
 
 ### Responses:
 
-| Response Code               | Explanation                                                        |
-|-----------------------------|--------------------------------------------------------------------|
-| 200 (OK)                    | Success, all topics are returned                                   |
-| 500 (Internal Server Error) | The server encountered an error and could not complete the request |
+| Response Code               | Explanation                                                         |
+|-----------------------------|---------------------------------------------------------------------|
+| 200 (OK)                    | Success, all topics are returned.                                   |
+| 404 (Not Found)             | No topic found.                                                     |
+| 500 (Internal Server Error) | The server encountered an error and could not complete the request. |
 
 ### Command Line Example:
 

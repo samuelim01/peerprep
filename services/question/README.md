@@ -3,16 +3,21 @@
 ## Pre-requisites
 
 1. Run the following command to create the `.env` files at the root directory:
+
 ```cmd
 cp .env.sample .env
 cp services/question/.env.sample services/question/.env
 ```
+
 2. After setting up the .env files, build the Docker images and start the containers using the following command:
+
 ```cmd
 docker compose build
 docker compose up -d
 ```
+
 3. To stop and remove the containers and associated volumes, use the following command:
+
 ```cmd
 docker compose down -v
 ```
@@ -34,11 +39,10 @@ that matches with parameters will be returned; if no parameters are provided, al
 
 ### Responses:
 
-| Response Code               | Explanation                                 |
-|-----------------------------|---------------------------------------------|
-| 200 (OK)                    | Success, all questions are returned.        |
-| 404 (Not Found)             | No questions found.                         |
-| 500 (Internal Server Error) | Unexpected error in the database or server. |
+| Response Code               | Explanation                                                                                                     |
+|-----------------------------|-----------------------------------------------------------------------------------------------------------------|
+| 200 (OK)                    | Success, all questions are returned. If no questions match the optional parameters, an empty array is returned. |
+| 500 (Internal Server Error) | Unexpected error in the database or server.                                                                     |
 
 ### Command Line Example:
 
@@ -66,7 +70,9 @@ curl -X GET "http://localhost:8081/questions?title=Reverse%20a%20String&descript
 ```
 
 ### Parameter Format Details:
-The `topics` parameter must be passed as a comma-separated string in `GET` request because there is limitation with URL encoding and readability concerns.
+
+The `topics` parameter must be passed as a comma-separated string in `GET` request because there is limitation with URL
+encoding and readability concerns.
 
 ### Example of Response Body for Success:
 
@@ -108,19 +114,19 @@ The `topics` parameter must be passed as a comma-separated string in `GET` reque
 This endpoint allows the retrieval of the question by using the question ID.
 
 - **HTTP Method**: `GET`
-- **Endpoint**: `/questions/{questionId}`
+- **Endpoint**: `/questions/{id}`
 
 ### Parameters:
 
-- `questionId` (Required) - The ID of the question to retrieve.
+- `id` (Required) - The ID of the question to retrieve.
 
 ### Responses:
 
-| Response Code               | Explanation                                                      |
-|-----------------------------|------------------------------------------------------------------|
-| 200 (OK)                    | Success, question corresponding to the `questionID` is returned. |
-| 404 (Not Found)             | Question with the specified `questionID` not found.              |
-| 500 (Internal Server Error) | Unexpected error in the database or server.                      |
+| Response Code               | Explanation                                              |
+|-----------------------------|----------------------------------------------------------|
+| 200 (OK)                    | Success, question corresponding to the `id` is returned. |
+| 404 (Not Found)             | Question with the specified `id` not found.              |
+| 500 (Internal Server Error) | Unexpected error in the database or server.              |
 
 ### Command Line Example:
 
@@ -166,12 +172,13 @@ This endpoint allows the retrieval of random questions that matches the paramete
 
 ### Responses:
 
-| Response Code               | Explanation                                                                               |
-|-----------------------------|-------------------------------------------------------------------------------------------|
-| 200 (OK)                    | Success, questions corresponding to the `limit`, `topics`, and `difficulty` are returned. |
-| 400 (Bad Request)           | Missing fields.                                                                           |
-| 404 (Not Found)             | Question with the specified parameter(s) not found.                                       |
-| 500 (Internal Server Error) | Unexpected error in the database or server.                                               |
+### Responses:
+
+| Response Code               | Explanation                                                                                                 |
+|-----------------------------|-------------------------------------------------------------------------------------------------------------|
+| 200 (OK)                    | Success, questions matching the parameters are returned. If no questions match, an empty array is returned. |
+| 400 (Bad Request)           | The request is missing required parameters or the parameters are invalid.                                   |
+| 500 (Internal Server Error) | Unexpected error in the database or server.                                                                 |
 
 ### Command Line Example:
 
@@ -273,14 +280,14 @@ curl -X GET http://localhost:8081/questions/topics
 
 ## Add Question
 
-This endpoint allows the addition of a new question.
+This endpoint allows the addition of a new question. The `id` is now automatically generated by the system to ensure
+uniqueness.
 
 - **HTTP Method**: `POST`
 - **Endpoint**: `/questions`
 
 ### Parameters:
 
-- `id` (Required) - The unique ID of the question.
 - `title` (Required) - The title of the question.
 - `description` (Required) - A description of the question.
 - `topics` (Required) - The topics associated with the question.
@@ -288,17 +295,17 @@ This endpoint allows the addition of a new question.
 
 ### Responses:
 
-| Response Code               | Explanation                                                    |
-|-----------------------------|----------------------------------------------------------------|
-| 201 (Created)               | The question is created successfully.                          |
-| 400 (Bad Request)           | Required fields are missing or invalid or `id` already exists. |
-| 500 (Internal Server Error) | Unexpected error in the database or server.                    |
+| Response Code               | Explanation                                                        |
+|-----------------------------|--------------------------------------------------------------------|
+| 201 (Created)               | The question is created successfully.                              |
+| 400 (Bad Request)           | Required fields are missing or invalid or question already exists. |
+| 500 (Internal Server Error) | Unexpected error in the database or server.                        |
 
 ### Command Line Example:
 
 ```
 Add Question:
-curl -X POST http://localhost:8081/questions -H "Content-Type: application/json" -d "{\"id\": 21, \"title\": \"New Question\", \"description\": \"This is a description for a new question.\", \"topics\": [\"Data Structures\", \"Algorithms\"], \"difficulty\": \"Medium\"}"
+curl -X POST http://localhost:8081/questions -H "Content-Type: application/json" -d "{\"title\": \"New Question\", \"description\": \"This is a description for a new question.\", \"topics\": [\"Data Structures\", \"Algorithms\"], \"difficulty\": \"Medium\"}"
 ```
 
 ### Example of Response Body for Success:
@@ -328,11 +335,11 @@ curl -X POST http://localhost:8081/questions -H "Content-Type: application/json"
 This endpoint allows updating an existing question. Only the title, description, topics, and difficulty can be updated.
 
 - **HTTP Method**: `PUT`
-- **Endpoint**: `/questions/{questionId}`
+- **Endpoint**: `/questions/{id}`
 
 ### Request Parameters:
 
-- `questionId` (Required) - The ID of the question to update.
+- `id` (Required) - The ID of the question to update.
 
 ### Request Body:
 
@@ -343,11 +350,11 @@ This endpoint allows updating an existing question. Only the title, description,
 
 ### Responses:
 
-| Response Code               | Explanation                                         |
-|-----------------------------|-----------------------------------------------------|
-| 200 (OK)                    | Success, the question is updated successfully.      |
-| 404 (Not Found)             | Question with the specified `questionId` not found. |
-| 500 (Internal Server Error) | Unexpected error in the database or server.         |
+| Response Code               | Explanation                                    |
+|-----------------------------|------------------------------------------------|
+| 200 (OK)                    | Success, the question is updated successfully. |
+| 404 (Not Found)             | Question with the specified `id` not found.    |
+| 500 (Internal Server Error) | Unexpected error in the database or server.    |
 
 ### Command Line Example:
 
@@ -383,19 +390,19 @@ curl -X PUT http://localhost:8081/questions/21 -H "Content-Type: application/jso
 This endpoint allows the deletion of a question by the question ID.
 
 - **HTTP Method**: `DELETE`
-- **Endpoint**: `/questions/{questionId}`
+- **Endpoint**: `/questions/{id}`
 
 ### Parameters:
 
-- `questionId` (Required) - The ID of the question to delete.
+- `id` (Required) - The ID of the question to delete.
 
 ### Responses:
 
-| Response Code               | Explanation                                         |
-|-----------------------------|-----------------------------------------------------|
-| 200 (OK)                    | Success, the question is deleted successfully.      |
-| 404 (Not Found)             | Question with the specified `questionId` not found. |
-| 500 (Internal Server Error) | Unexpected error in the database or server.         |
+| Response Code               | Explanation                                    |
+|-----------------------------|------------------------------------------------|
+| 200 (OK)                    | Success, the question is deleted successfully. |
+| 404 (Not Found)             | Question with the specified `id` not found.    |
+| 500 (Internal Server Error) | Unexpected error in the database or server.    |
 
 ### Command Line Example:
 

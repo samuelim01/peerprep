@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { handleError, handleNotFound, handleBadRequest, handleSuccess } from '../utils/helpers';
 import { Question } from '../models/questionModel';
+import { getNextSequenceValue } from '../utils/sequence';
 
 /**
  * This endpoint allows the retrieval of all the questions in the database (or can filter by optional parameters).
@@ -32,7 +33,7 @@ export const getQuestions = async (req: Request, res: Response) => {
         const questions = await Question.find(query);
 
         if ((title || description || topics || difficulty) && questions.length === 0) {
-            return handleNotFound(res, 'No questions found matching the provided parameters.');
+            return handleSuccess(res, 200, 'No questions found matching the provided parameters.', []);
         }
 
         handleSuccess(res, 200, 'Questions retrieved successfully', questions);
@@ -106,7 +107,7 @@ export const getQuestionByParameters = async (req: Request, res: Response) => {
         const numOfQuestions = await Question.countDocuments(query);
 
         if (numOfQuestions === 0) {
-            return handleNotFound(res, 'No questions found with the given parameters');
+            return handleSuccess(res, 200, 'No questions found with the given parameters', []);
         }
 
         const finalLimit = Math.min(newLimit, numOfQuestions);
@@ -145,11 +146,8 @@ export const getTopics = async (req: Request, res: Response) => {
  * @param res
  */
 export const addQuestion = async (req: Request, res: Response) => {
-    const { id, title, description, topics, difficulty } = req.body;
+    const { title, description, topics, difficulty } = req.body;
 
-    if (!id) {
-        return handleBadRequest(res, 'ID is required');
-    }
     if (!title) {
         return handleBadRequest(res, 'Title is required');
     }
@@ -165,14 +163,15 @@ export const addQuestion = async (req: Request, res: Response) => {
 
     try {
         const existingQuestion = await Question.findOne({
-            $or: [{ id }, { title: title }, { description: description }],
+            $or: [{ title: title }, { description: description }],
         }).collation({ locale: 'en', strength: 2 });
         if (existingQuestion) {
-            return handleBadRequest(res, `A question with the same ID, title, or description already exists.`);
+            return handleBadRequest(res, `A question with the same title or description already exists.`);
         }
 
+        const newId = await getNextSequenceValue('questionId');
         const newQuestion = new Question({
-            id,
+            id: newId,
             title,
             description,
             topics,

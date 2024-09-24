@@ -2,31 +2,31 @@
     <p-toast />
     <p-toolbar styleClass="mb-2 gap-2">
         <div class="p-justify-end">
-                <p-button
-                    icon="pi pi-plus" 
-                    severity="primary" 
-                    [outlined]="true" 
-                    label="New" 
-                    class="mr-2" 
-                    (onClick)="openNewQuestion()" />
-                <p-button
-                    icon="pi pi-trash" 
-                    severity="danger" 
-                    label="Delete" 
-                    (onClick)="deleteSelectedQuestions()" 
-                    [disabled]="!selectedQuestions || !selectedQuestions.length" />
+            <p-button
+                icon="pi pi-plus"
+                severity="primary"
+                [outlined]="true"
+                label="New"
+                class="mr-2"
+                (onClick)="openNewQuestion()" />
+            <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                label="Delete"
+                (onClick)="deleteSelectedQuestions()"
+                [disabled]="!selectedQuestions || !selectedQuestions.length" />
         </div>
     </p-toolbar>
-    <p-table 
-    [columns]="cols" 
-    [value]="questions"
-    [(selection)]="selectedQuestions"
-    datakey="id"
-    [tableStyle]="{ 'min-width': '50rem' }"
-    [paginator]="true"
-    [rows]="5"
-    [rowsPerPageOptions]="[5, 10, 20]"
-    styleClass="p-datatable-gridlines-striped">
+    <p-table
+        [columns]="cols"
+        [value]="questions"
+        [(selection)]="selectedQuestions"
+        datakey="id"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        [paginator]="true"
+        [rows]="5"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        styleClass="p-datatable-gridlines-striped">
         <ng-template pTemplate="caption">
             <div class="flex">
                 <h3 class="m-0">Manage Questions</h3>
@@ -48,34 +48,28 @@
                 <td>
                     <p-tableCheckbox [value]="question" />
                 </td>
-                <td>{{question.id}}</td>
-                <td>{{question.title}}</td>
-                <td>{{question.description}}</td>
-                <td>{{question.topics.join(', ')}}</td>
-                <td>{{question.difficulty}}</td>
+                <td>{{ question.id }}</td>
+                <td>{{ question.title }}</td>
+                <td>{{ question.description }}</td>
+                <td>{{ question.topics.join(', ') }}</td>
+                <td>{{ question.difficulty }}</td>
                 <td>
-                    <p-button 
-                    label="Edit"
-                    severity="primary" 
-                    icon="pi pi-file-edit" 
-                    class="mr-2" 
-                    [text]="true"
-                    (onClick)="editQuestion(question)" />
+                    <p-button
+                        label="Edit"
+                        severity="primary"
+                        icon="pi pi-file-edit"
+                        class="mr-2"
+                        [text]="true"
+                        (onClick)="editQuestion(question)" />
                 </td>
             </tr>
         </ng-template>
     </p-table>
 
-    <p-dialog 
-    header="Header" 
-    [(visible)]="isDialogVisible" 
-    [modal]="true" 
-    [style]="{ width: '25rem' }">
+    <p-dialog header="Header" [(visible)]="isDialogVisible" [modal]="true" [style]="{ width: '25rem' }">
         <ng-template pTemplate="header">
             <div class="inline-flex align-items-center justify-content-center gap-2">
-                <span class="font-bold white-space-nowrap">
-                    Create new question
-                </span>
+                <span class="font-bold white-space-nowrap"> Create new question </span>
             </div>
         </ng-template>
 
@@ -84,12 +78,11 @@
                 <label for="title">Title</label>
                 <input
                     formControlName="textTitle"
-                    type="text" 
-                    pInputText 
-                    id="title" 
-                    required 
-                   
-                    class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    type="text"
+                    pInputText
+                    id="title"
+                    required
+                    class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" />
                 <small class="p-error" *ngIf="submitted && (question.title === undefined || !question.title)">
                     Title is required.
                 </small>
@@ -99,27 +92,31 @@
                     <label for="questionTopics">Topics</label>
                     <p-multiSelect
                         required="true"
-                        [style]="{'width':'100%'}"
-                        [options]="topics" 
+                        [style]="{ width: '100%' }"
+                        [options]="topics"
                         formControlName="selectedTopics"
                         optionLabel="label"
-                        optionValue="value" 
-                        placeholder="Select Topics"/>
-                    <small class="p-error" *ngIf="submitted && (question.topics === undefined || question.topics.length === 0)">
+                        optionValue="value"
+                        placeholder="Select Topics" />
+                    <small
+                        class="p-error"
+                        *ngIf="submitted && (question.topics === undefined || question.topics.length === 0)">
                         Topic is required.
                     </small>
                 </div>
                 <div class="field col-12 md:col-6">
                     <label for="questionTopics">Difficulty</label>
-                    <p-dropdown 
+                    <p-dropdown
                         [required]="true"
-                        [style]="{'width':'100%'}"
-                        [options]="difficulties" 
+                        [style]="{ width: '100%' }"
+                        [options]="difficulties"
                         formControlName="selectedDifficulty"
                         optionLabel="label"
                         optionValue="value"
                         placeholder="Select Difficulty" />
-                    <small class="p-error" *ngIf="submitted && (question.difficulty === undefined || !question.difficulty)">
+                    <small
+                        class="p-error"
+                        *ngIf="submitted && (question.difficulty === undefined || !question.difficulty)">
                         Difficulty is required.
                     </small>
                 </div>
@@ -129,28 +126,22 @@
                 <textarea
                     formControlName="textDescription"
                     [required]="true"
-                    id="questionDescription" 
-                    type="text" 
-                    rows="6" 
+                    id="questionDescription"
+                    type="text"
+                    rows="6"
                     class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
                 </textarea>
-                <small class="p-error" *ngIf="submitted && (question.description === undefined || !question.description)">
+                <small
+                    class="p-error"
+                    *ngIf="submitted && (question.description === undefined || !question.description)">
                     Description is required.
                 </small>
             </div>
         </form>
 
         <ng-template pTemplate="footer">
-            <p-button 
-                label="Cancel" 
-                [text]="true" 
-                severity="secondary" 
-                (onClick)="isDialogVisible = false" />
-            <p-button 
-                label="Save" 
-                class="p-button-success"
-                (onClick)="saveQuestion()" 
-              />
+            <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="isDialogVisible = false" />
+            <p-button label="Save" class="p-button-success" (onClick)="saveQuestion()" />
         </ng-template>
     </p-dialog>
 

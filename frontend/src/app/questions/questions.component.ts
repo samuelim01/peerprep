@@ -11,7 +11,6 @@ import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import questionData from './questions.json';
 import { Question, QuestionResponse } from './question.model';
 import { Column } from './column.model';
 import { Topic } from './topic.model';
@@ -87,12 +86,12 @@ export class QuestionsComponent implements OnInit {
                 this.questions = response.data!;
             },
             error: (error: Error) => {
-                console.log(error)
+                console.log(error);
             },
             complete: () => {
-                console.log('complete')
-            }
-        })
+                console.log('complete');
+            },
+        });
 
         // Dummy data for topics
         this.topics = [

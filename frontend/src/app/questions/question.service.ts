@@ -5,18 +5,18 @@ import { Observable } from 'rxjs';
 import { QuestionResponse } from './question.model';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class QuestionService {
     private baseUrl = API_CONFIG.baseUrl;
 
-    constructor(private http: HttpClient) { }
-    
+    constructor(private http: HttpClient) {}
+
     getQuestions(
         title?: string,
         description?: string,
         topics?: string[],
-        difficulty?: string
+        difficulty?: string,
     ): Observable<QuestionResponse> {
         let params = new HttpParams();
 
@@ -37,6 +37,4 @@ export class QuestionService {
         console.log(this.baseUrl + '/questions', { params });
         return this.http.get<QuestionResponse>(this.baseUrl + '/questions', { params });
     }
-
-
 }

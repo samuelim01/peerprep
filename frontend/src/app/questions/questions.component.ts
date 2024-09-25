@@ -12,8 +12,12 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import questionData from './questions.json';
-import { Question, Column, Topic, Difficulty } from './question.model';
+import { Question, QuestionResponse } from './question.model';
+import { Column } from './column.model';
+import { Topic } from './topic.model';
+import { Difficulty } from './difficulty.model';
 import { DifficultyLevels } from './difficulty-levels.enum';
+import { QuestionService } from './question.service';
 
 @Component({
     selector: 'app-questions',
@@ -33,12 +37,14 @@ import { DifficultyLevels } from './difficulty-levels.enum';
         MultiSelectModule,
         DropdownModule,
     ],
-    providers: [ConfirmationService, MessageService],
+    providers: [QuestionService, ConfirmationService, MessageService],
     templateUrl: './questions.component.html',
     styleUrl: './questions.component.css',
 })
 export class QuestionsComponent implements OnInit {
-    questions: Question[] = questionData;
+    questionResponse!: QuestionResponse;
+
+    questions: Question[] = [];
 
     topics!: Topic[];
 
@@ -59,6 +65,7 @@ export class QuestionsComponent implements OnInit {
     cols: Column[] = [];
 
     constructor(
+        private questionService: QuestionService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
     ) {}
@@ -66,11 +73,26 @@ export class QuestionsComponent implements OnInit {
     ngOnInit() {
         // two way binding for forms is not working for some reason unless question is initialised with empty values
         this.question = {
+            _id: '',
+            id: -1,
             title: '',
             topics: [],
             description: '',
             difficulty: '',
         };
+
+        this.questionService.getQuestions().subscribe({
+            next: (response: QuestionResponse) => {
+                console.log(response.data!);
+                this.questions = response.data!;
+            },
+            error: (error: Error) => {
+                console.log(error)
+            },
+            complete: () => {
+                console.log('complete')
+            }
+        })
 
         // Dummy data for topics
         this.topics = [
@@ -124,7 +146,7 @@ export class QuestionsComponent implements OnInit {
 
     openNewQuestion() {
         this.resetFormGroup();
-        this.question = {};
+        this.question = {} as Question;
         this.submitted = false;
         this.isDialogVisible = true;
     }
@@ -135,7 +157,7 @@ export class QuestionsComponent implements OnInit {
             header: 'Delete Confirmation',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.questions = this.questions.filter(val => !this.selectedQuestions?.includes(val));
+                this.questions = this.questions?.filter(val => !this.selectedQuestions?.includes(val));
                 this.selectedQuestions = null;
                 this.messageService.add({
                     severity: 'success',
@@ -161,7 +183,10 @@ export class QuestionsComponent implements OnInit {
 
         if (this.question.id) {
             // update
-            this.questions[this.questions.findIndex(x => x.id == this.question.id)] = this.question;
+            if (this.questions) {
+                this.questions[this.questions.findIndex(x => x.id == this.question.id)] = this.question;
+            }
+
             this.messageService.add({
                 severity: 'success',
                 summary: 'Successful',
@@ -171,7 +196,11 @@ export class QuestionsComponent implements OnInit {
         } else {
             // add
             this.question.id = this.createId();
-            this.questions = [...this.questions, this.question];
+
+            if (this.questions) {
+                this.questions = [...this.questions, this.question];
+            }
+
             this.messageService.add({
                 severity: 'success',
                 summary: 'Successful',
@@ -181,7 +210,7 @@ export class QuestionsComponent implements OnInit {
         }
 
         this.isDialogVisible = false;
-        this.question = {};
+        this.question = {} as Question;
     }
 
     editQuestion(question: Question) {
@@ -197,7 +226,7 @@ export class QuestionsComponent implements OnInit {
 
     // assuming newest question is always appended at the back
     createId() {
-        return Number(this.questions.at(-1)?.id) + 1;
+        return this.questions ? Number(this.questions.at(-1)?.id) + 1 : -1;
     }
 
     resetFormGroup() {

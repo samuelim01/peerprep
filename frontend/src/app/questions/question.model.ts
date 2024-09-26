@@ -4,11 +4,24 @@ export interface QuestionResponse {
     data?: Question[] | null;
 }
 
+export interface SingleQuestionResponse {
+    status: string;
+    message: string;
+    data: Question;
+}
+
 export interface Question {
-    _id: string;
+    _id?: string;
     id: number;
     description: string;
     difficulty: string;
     title: string;
+    topics?: string[];
+}
+
+export interface QuestionBody {
+    description?: string;
+    difficulty?: string;
+    title?: string;
     topics?: string[];
 }

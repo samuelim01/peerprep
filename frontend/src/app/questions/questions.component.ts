@@ -13,7 +13,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { Question, QuestionResponse } from './question.model';
 import { Column } from './column.model';
-import { Topic } from './topic.model';
+import { Topic, TopicResponse } from './topic.model';
 import { Difficulty } from './difficulty.model';
 import { DifficultyLevels } from './difficulty-levels.enum';
 import { QuestionService } from './question.service';
@@ -82,32 +82,34 @@ export class QuestionsComponent implements OnInit {
 
         this.questionService.getQuestions().subscribe({
             next: (response: QuestionResponse) => {
-                console.log(response.data!);
                 this.questions = response.data!;
             },
             error: (error: Error) => {
+                // TODO: prompt an error on unsuccessful fetch
                 console.log(error);
             },
             complete: () => {
+                // TODO: add loading state for this
                 console.log('complete');
             },
         });
 
-        // Dummy data for topics
-        this.topics = [
-            { label: 'Arrays', value: 'Arrays' },
-            { label: 'Dynamic Programming', value: 'Dynamic Programming' },
-            { label: 'Greedy', value: 'Greedy' },
-            { label: 'Hashset', value: 'Hashset' },
-            { label: 'Sorting', value: 'Sorting' },
-            { label: 'Algorithms', value: 'Algorithms' },
-            { label: 'Bit Manipulation', value: 'Bit Manipulation' },
-            { label: 'Brainteaser', value: 'Brainteaser' },
-            { label: 'Data Structures', value: 'Data Structures' },
-            { label: 'Databases', value: 'Databases' },
-            { label: 'Recursion', value: 'Recursion' },
-            { label: 'Strings', value: 'Strings' },
-        ];
+        this.questionService.getTopics().subscribe({
+            next: (response: TopicResponse) => {
+                this.topics = response.data!.map(topic => ({
+                    label: topic,
+                    value: topic
+                }))
+            },
+            error: (error: Error) => {
+                // TODO: prompt an error on unsuccessful fetch
+                console.log(error);
+            },
+            complete: () => {
+                // TODO: add loading state for this
+                console.log('complete');
+            },
+        });
 
         this.difficulties = [
             { label: DifficultyLevels.EASY, value: DifficultyLevels.EASY },

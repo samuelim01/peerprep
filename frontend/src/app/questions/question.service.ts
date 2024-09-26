@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { API_CONFIG } from '../api.config';
 import { Observable } from 'rxjs';
 import { QuestionResponse } from './question.model';
+import { Topic, TopicResponse } from './topic.model';
 
 @Injectable({
     providedIn: 'root',
@@ -34,7 +35,10 @@ export class QuestionService {
         }
 
         // send request
-        console.log(this.baseUrl + '/questions', { params });
         return this.http.get<QuestionResponse>(this.baseUrl + '/questions', { params });
+    }
+
+    getTopics(): Observable<TopicResponse> {
+        return this.http.get<TopicResponse>(this.baseUrl + '/questions/topics');
     }
 }

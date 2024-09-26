@@ -6,6 +6,5 @@ export interface Topic {
 export interface TopicResponse {
     status: string;
     message: string;
-    data?: (string)[] | null;
-  }
-  
+    data?: string[] | null;
+}

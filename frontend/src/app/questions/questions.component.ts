@@ -11,12 +11,13 @@ import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import { Question, QuestionResponse } from './question.model';
+import { Question } from './question.model';
 import { Column } from './column.model';
-import { Topic, TopicResponse } from './topic.model';
+import { Topic } from './topic.model';
 import { Difficulty } from './difficulty.model';
 import { DifficultyLevels } from './difficulty-levels.enum';
 import { QuestionService } from './question.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-questions',
@@ -41,8 +42,6 @@ import { QuestionService } from './question.service';
     styleUrl: './questions.component.css',
 })
 export class QuestionsComponent implements OnInit {
-    questionResponse!: QuestionResponse;
-
     questions: Question[] = [];
 
     topics!: Topic[];
@@ -80,30 +79,28 @@ export class QuestionsComponent implements OnInit {
             difficulty: '',
         };
 
-        this.questionService.getQuestions().subscribe({
-            next: (response: QuestionResponse) => {
-                this.questions = response.data!;
+        forkJoin({
+            questions: this.questionService.getQuestions(),
+            topics: this.questionService.getTopics(),
+        }).subscribe({
+            next: results => {
+                this.questions = results.questions.data || [];
+                this.topics =
+                    results.topics.data?.map(topic => ({
+                        label: topic,
+                        value: topic,
+                    })) || [];
             },
             error: (error: Error) => {
-                // TODO: prompt an error on unsuccessful fetch
-                console.log(error);
-            },
-            complete: () => {
-                // TODO: add loading state for this
-                console.log('complete');
-            },
-        });
-
-        this.questionService.getTopics().subscribe({
-            next: (response: TopicResponse) => {
-                this.topics = response.data!.map(topic => ({
-                    label: topic,
-                    value: topic
-                }))
-            },
-            error: (error: Error) => {
-                // TODO: prompt an error on unsuccessful fetch
-                console.log(error);
+                console.error(error);
+                this.questions = [];
+                this.topics = [];
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to load data. Please try again later.',
+                    life: 3000,
+                });
             },
             complete: () => {
                 // TODO: add loading state for this

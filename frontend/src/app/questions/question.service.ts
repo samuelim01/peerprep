@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { API_CONFIG } from '../api.config';
 import { Observable } from 'rxjs';
 import { QuestionResponse } from './question.model';
-import { Topic, TopicResponse } from './topic.model';
+import { TopicResponse } from './topic.model';
 
 @Injectable({
     providedIn: 'root',

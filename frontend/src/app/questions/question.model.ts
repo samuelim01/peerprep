@@ -11,7 +11,6 @@ export interface SingleQuestionResponse {
 }
 
 export interface Question {
-    _id?: string;
     id: number;
     description: string;
     difficulty: string;

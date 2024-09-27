@@ -286,7 +286,7 @@ uniqueness.
 - **HTTP Method**: `POST`
 - **Endpoint**: `/questions`
 
-### Parameters:
+### Request Body:
 
 - `title` (Required) - The title of the question.
 - `description` (Required) - A description of the question.

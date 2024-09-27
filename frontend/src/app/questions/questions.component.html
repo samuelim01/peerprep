@@ -25,11 +25,13 @@
             </div>
         </p-toolbar>
         <p-table
+            sortField="id"
+            [sortOrder]="1"
             [columns]="cols"
             [value]="questions"
             [(selection)]="selectedQuestions"
             datakey="id"
-            [tableStyle]="{ 'min-width': '50rem' }"
+            [tableStyle]="{ 'table-layout': 'fixed' }"
             [paginator]="true"
             [rows]="5"
             [rowsPerPageOptions]="[5, 10, 20]"
@@ -41,13 +43,13 @@
             </ng-template>
             <ng-template pTemplate="header" let-columns>
                 <tr>
-                    <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-                    <th>Id</th>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Topics</th>
-                    <th>Difficulty</th>
-                    <th></th>
+                    <th style="width: 10%"><p-tableHeaderCheckbox /></th>
+                    <th pSortableColumn="id" style="width: 10%">Id <p-sortIcon field="id" /></th>
+                    <th style="width: 10%">Title</th>
+                    <th style="width: 40%">Description</th>
+                    <th style="width: 10%">Topics</th>
+                    <th style="width: 10%">Difficulty</th>
+                    <th style="width: 10%"></th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-question>

@@ -3,7 +3,7 @@ import { connectToDB, upsertManyQuestions } from './models';
 import { getDemoQuestions } from './utils/data';
 import { initializeCounter } from './utils/sequence';
 
-const port = process.env.QUESTION_SERVICE_PORT || 8081;
+const port = process.env.PORT || 8081;
 
 connectToDB()
     .then(async () => {

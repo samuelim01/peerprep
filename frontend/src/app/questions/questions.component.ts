@@ -17,7 +17,7 @@ import { Column } from './column.model';
 import { Topic } from './topic.model';
 import { Difficulty } from './difficulty.model';
 import { DifficultyLevels } from './difficulty-levels.enum';
-import { QuestionService } from './question.service';
+import { QuestionService } from '../../_services/question.service';
 import { forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 

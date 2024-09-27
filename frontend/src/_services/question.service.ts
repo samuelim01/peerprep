@@ -1,9 +1,9 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { API_CONFIG } from '../api.config';
+import { API_CONFIG } from '../app/api.config';
 import { catchError, Observable, throwError } from 'rxjs';
-import { SingleQuestionResponse, QuestionResponse, QuestionBody } from './question.model';
-import { TopicResponse } from './topic.model';
+import { SingleQuestionResponse, QuestionResponse, QuestionBody } from '../app/questions/question.model';
+import { TopicResponse } from '../app/questions/topic.model';
 
 @Injectable({
     providedIn: 'root',

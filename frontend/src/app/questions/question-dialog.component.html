@@ -38,12 +38,13 @@
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select Topics">
-                <ng-template let-option pTemplate="item">
+                <ng-template class="w-12 p-fluid" let-option pTemplate="item">
                     <span>{{ option.label }}</span>
                 </ng-template>
 
-                <ng-template pTemplate="footer">
+                <ng-template pTemplate="footer" class="w-12 p-fluid">
                     <p-button
+                        class="w-12 p-fluid"
                         *ngIf="isNoResultsFound"
                         type="button"
                         label="Add as New Topic"
@@ -59,7 +60,7 @@
             <label for="questionTopics">Difficulty</label>
 
             <p-dropdown
-                class="w-12 flex align-items-center justify-content-center"
+                class="w-12"
                 autoWidth="false"
                 [required]="true"
                 [style]="{ width: '100%' }"

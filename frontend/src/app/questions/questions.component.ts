@@ -92,7 +92,6 @@ export class QuestionsComponent implements OnInit {
         this.question = {} as Question;
         this.submitted = false;
         this.isDialogVisible = true;
-        console.log('isDialogVisible: ' + this.isDialogVisible);
     }
 
     editQuestion(question: Question) {

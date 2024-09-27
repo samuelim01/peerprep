@@ -10,6 +10,7 @@ import { QuestionService } from '../../_services/question.service';
 import { Difficulty } from './difficulty.model';
 import { Topic } from './topic.model';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-question-dialog',
@@ -22,6 +23,7 @@ import { HttpErrorResponse } from '@angular/common/http';
         MultiSelectModule,
         DropdownModule,
         QuestionDialogComponent,
+        CommonModule,
     ],
     providers: [QuestionService, ConfirmationService, MessageService],
     templateUrl: './question-dialog.component.html',
@@ -44,6 +46,12 @@ export class QuestionDialogComponent implements OnInit {
     submitted = false;
 
     questions: Question[] = [];
+
+    topicSearchValue = '';
+
+    isNoResultsFound = false;
+
+    filteredTopics: Topic[] = [];
 
     constructor(private questionService: QuestionService) {}
 
@@ -152,5 +160,32 @@ export class QuestionDialogComponent implements OnInit {
             title: '',
             description: '',
         });
+    }
+
+    onFilterTopics(event: { filter: string }) {
+        this.topicSearchValue = event.filter;
+
+        this.filteredTopics = this.topics.filter(topic =>
+            topic.label.toLowerCase().includes(this.topicSearchValue.toLowerCase()),
+        );
+
+        this.isNoResultsFound = this.filteredTopics.length == 0;
+    }
+
+    addNewTopic() {
+        const newValue: Topic = {
+            label: this.topicSearchValue,
+            value: this.topicSearchValue,
+        };
+
+        const topicExists = this.topics.some(
+            topic =>
+                topic.label.toLowerCase() === newValue.label.toLowerCase() ||
+                topic.value.toLowerCase() === newValue.value.toLowerCase(),
+        );
+
+        if (!topicExists) {
+            this.topics = [...this.topics, newValue];
+        }
     }
 }

@@ -32,10 +32,24 @@
                     required="true"
                     [style]="{ width: '100%' }"
                     [options]="topics"
+                    (onFilter)="onFilterTopics($event)"
                     formControlName="topics"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="Select Topics" />
+                    placeholder="Select Topics">
+                    <ng-template let-option pTemplate="item">
+                        <span>{{ option.label }}</span>
+                    </ng-template>
+
+                    <ng-template pTemplate="footer">
+                        <p-button
+                            *ngIf="isNoResultsFound"
+                            type="button"
+                            label="Add as New Topic"
+                            icon="pi pi-plus"
+                            (click)="addNewTopic()" />
+                    </ng-template>
+                </p-multiSelect>
                 @if (isTopicsInvalid) {
                     <small class="text-red-300">Topic(s) is required.</small>
                 }

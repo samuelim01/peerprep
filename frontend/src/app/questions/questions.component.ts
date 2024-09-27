@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, Validators } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
@@ -85,6 +85,26 @@ export class QuestionsComponent implements OnInit {
         this.initFormGroup();
 
         this.initListeners();
+    }
+
+    get isTitleInvalid(): boolean {
+        const titleControl = this.questionFormGroup.controls['title'];
+        return titleControl.dirty && titleControl.invalid;
+    }
+
+    get isDescriptionInvalid(): boolean {
+        const descriptionControl = this.questionFormGroup.controls['description'];
+        return descriptionControl.dirty && descriptionControl.invalid;
+    }
+
+    get isDifficultyInvalid(): boolean {
+        const difficultyControl = this.questionFormGroup.controls['selectedDifficulty'];
+        return difficultyControl.dirty && difficultyControl.invalid;
+    }
+
+    get isTopicsInvalid(): boolean {
+        const topicsControl = this.questionFormGroup.controls['selectedTopics'];
+        return topicsControl.dirty && topicsControl.invalid;
     }
 
     openNewQuestion() {
@@ -175,10 +195,10 @@ export class QuestionsComponent implements OnInit {
 
     initFormGroup() {
         this.questionFormGroup = new FormGroup({
-            selectedTopics: new FormControl<string[] | null>([]),
-            selectedDifficulty: new FormControl<Difficulty[] | null>([]),
-            textTitle: new FormControl<string | null>(''),
-            textDescription: new FormControl<string | null>(''),
+            selectedTopics: new FormControl<string[] | null>([], [Validators.required]),
+            selectedDifficulty: new FormControl<Difficulty[] | null>([], [Validators.required]),
+            title: new FormControl<string | null>('', [Validators.required]),
+            description: new FormControl<string | null>('', [Validators.required]),
         });
     }
 

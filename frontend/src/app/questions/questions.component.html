@@ -86,15 +86,15 @@
             <div class="field grid col-12">
                 <label for="title">Title</label>
                 <input
-                    formControlName="textTitle"
+                    formControlName="title"
                     type="text"
                     pInputText
                     id="title"
                     required
                     class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" />
-                <small class="p-error" *ngIf="submitted && (question.title === undefined || !question.title)">
-                    Title is required.
-                </small>
+                @if (isTitleInvalid) {
+                    <small class="text-red-300">Title is required.</small>
+                }
             </div>
             <div class="formgrid grid field">
                 <div class="field col-12 md:col-6">
@@ -107,11 +107,9 @@
                         optionLabel="label"
                         optionValue="value"
                         placeholder="Select Topics" />
-                    <small
-                        class="p-error"
-                        *ngIf="submitted && (question.topics === undefined || question.topics.length === 0)">
-                        Topic is required.
-                    </small>
+                    @if (isTopicsInvalid) {
+                        <small class="text-red-300">Topic(s) is required.</small>
+                    }
                 </div>
                 <div class="field col-12 md:col-6">
                     <label for="questionTopics">Difficulty</label>
@@ -123,34 +121,34 @@
                         optionLabel="label"
                         optionValue="value"
                         placeholder="Select Difficulty" />
-                    <small
-                        class="p-error"
-                        *ngIf="submitted && (question.difficulty === undefined || !question.difficulty)">
-                        Difficulty is required.
-                    </small>
+                    @if (isDifficultyInvalid) {
+                        <small class="text-red-300">Difficulty is required.</small>
+                    }
                 </div>
             </div>
             <div class="field grid col-12" field>
                 <label for="questionDescription">Description</label>
                 <textarea
-                    formControlName="textDescription"
+                    formControlName="description"
                     [required]="true"
                     id="questionDescription"
                     type="text"
                     rows="6"
                     class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
                 </textarea>
-                <small
-                    class="p-error"
-                    *ngIf="submitted && (question.description === undefined || !question.description)">
-                    Description is required.
-                </small>
+                @if (isDescriptionInvalid) {
+                    <small class="text-red-300">Description is required.</small>
+                }
             </div>
         </form>
 
         <ng-template pTemplate="footer">
             <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="isDialogVisible = false" />
-            <p-button label="Save" class="p-button-success" (onClick)="saveQuestion()" />
+            <p-button
+                label="Save"
+                class="p-button-success"
+                (onClick)="saveQuestion()"
+                [disabled]="!questionFormGroup.valid" />
         </ng-template>
     </p-dialog>
 

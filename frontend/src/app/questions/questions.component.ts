@@ -18,6 +18,7 @@ import { Difficulty } from './difficulty.model';
 import { DifficultyLevels } from './difficulty-levels.enum';
 import { QuestionService } from './question.service';
 import { forkJoin } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-questions',
@@ -201,12 +202,12 @@ export class QuestionsComponent implements OnInit {
                     this.questions = [...this.questions, response.data];
                 }
             },
-            error: (error: Error) => {
+            error: (error: HttpErrorResponse) => {
                 console.log(error);
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
-                    detail: 'Failed to add new question. Please try again later.',
+                    detail: 'Failed to add new question. ' + error.error.message,
                     life: 3000,
                 });
             },
@@ -230,12 +231,12 @@ export class QuestionsComponent implements OnInit {
                 this.questions = this.questions?.filter(val => !this.selectedQuestions?.includes(val));
                 this.selectedQuestions = null;
             },
-            error: () => {
+            error: (error: HttpErrorResponse) => {
                 // Handle any errors from the forkJoin if necessary
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
-                    detail: 'Some questions could not be deleted. Please try again later.',
+                    detail: 'Some questions could not be deleted. ' + error.error.message,
                     life: 3000,
                 });
             },
@@ -255,13 +256,13 @@ export class QuestionsComponent implements OnInit {
             next: (response: SingleQuestionResponse) => {
                 this.questions[this.questions.findIndex(x => x.id == id)] = response.data;
             },
-            error: (error: Error) => {
+            error: (error: HttpErrorResponse) => {
                 console.log(error);
                 console.log(question);
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
-                    detail: 'Failed to edit question. Please try again later.',
+                    detail: error.error.message,
                     life: 3000,
                 });
             },

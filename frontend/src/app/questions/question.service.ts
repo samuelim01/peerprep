@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_CONFIG } from '../api.config';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { SingleQuestionResponse, QuestionResponse, QuestionBody } from './question.model';
 import { TopicResponse } from './topic.model';
 
@@ -64,14 +64,18 @@ export class QuestionService {
     }
 
     addQuestion(question: QuestionBody): Observable<SingleQuestionResponse> {
-        return this.http.post<SingleQuestionResponse>(this.baseUrl + '/questions', question, this.httpOptions);
+        return this.http.post<SingleQuestionResponse>(this.baseUrl + '/questions', question, this.httpOptions).pipe(catchError(this.handleError));
     }
 
     updateQuestion(id: number, question: QuestionBody): Observable<SingleQuestionResponse> {
-        return this.http.put<SingleQuestionResponse>(this.baseUrl + '/questions/' + id, question, this.httpOptions);
+        return this.http.put<SingleQuestionResponse>(this.baseUrl + '/questions/' + id, question, this.httpOptions).pipe(catchError(this.handleError));
     }
 
     deleteQuestion(id: number): Observable<SingleQuestionResponse> {
-        return this.http.delete<SingleQuestionResponse>(this.baseUrl + '/questions/' + id);
+        return this.http.delete<SingleQuestionResponse>(this.baseUrl + '/questions/' + id).pipe(catchError(this.handleError));
+    }
+
+    handleError(error: HttpErrorResponse) {
+        return throwError(error);
     }
 }

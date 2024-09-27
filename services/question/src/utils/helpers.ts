@@ -1,52 +1,43 @@
 import { Response } from 'express';
 
 /**
- * Handles errors and sends a 500 response with the error message.
+ * Handles unsuccessful response and sends a 500 response with the error message.
  * @param res
- * @param error
  * @param message
  */
-export const handleError = (res: Response, error: unknown, message = 'An unexpected error occurred') => {
-    console.error(error);
+export const handleError = (res: Response, message = 'An unexpected error occurred') => {
     res.status(500).json({
         status: 'Error',
         message,
-        error,
     });
 };
 
 /**
  * Handles bad requests and sends a 400 response with a custom message.
  * @param res
- * @param error
  * @param message
  */
-export const handleBadRequest = (res: Response, error: unknown, message = 'Bad Request') => {
-    console.error(error);
+export const handleBadRequest = (res: Response, message = 'Bad Request') => {
     res.status(400).json({
         status: 'Error',
         message,
-        error,
     });
 };
 
 /**
  * Handles not found errors and sends a 404 response with a custom message.
  * @param res
- * @param error
  * @param message
  */
-export const handleNotFound = (res: Response, error: unknown, message = 'Not Found') => {
-    console.log(error);
+export const handleNotFound = (res: Response, message = 'Not Found') => {
     res.status(404).json({
         status: 'Error',
         message,
-        error,
     });
 };
 
 /**
- * Handles successful responses and sends a 200 response with the provided data.
+ * Handles successful responses and sends a 200 response message with the provided data.
  * @param res
  * @param data
  * @param message

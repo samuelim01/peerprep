@@ -39,7 +39,7 @@ export const getQuestions = async (req: Request, res: Response) => {
         handleSuccess(res, 200, 'Questions retrieved successfully', questions);
     } catch (error) {
         console.error('Error in getQuestions:', error);
-        handleError(res, error, 'Failed to retrieve questions');
+        handleError(res, 'Failed to retrieve questions');
     }
 };
 
@@ -66,7 +66,7 @@ export const getQuestionById = async (req: Request, res: Response) => {
         handleSuccess(res, 200, 'Question with ID retrieved successfully', question);
     } catch (error) {
         console.error('Error in getQuestionById:', error);
-        handleError(res, error, 'Failed to retrieve question');
+        handleError(res, 'Failed to retrieve question');
     }
 };
 
@@ -116,7 +116,7 @@ export const getQuestionByParameters = async (req: Request, res: Response) => {
         handleSuccess(res, 200, 'Questions with Parameters retrieved successfully', questions);
     } catch (error) {
         console.error('Error in getQuestionByParameters:', error);
-        handleError(res, error, 'Failed to search for questions');
+        handleError(res, 'Failed to search for questions');
     }
 };
 
@@ -136,7 +136,7 @@ export const getTopics = async (req: Request, res: Response) => {
         handleSuccess(res, 200, 'Topics retrieved successfully', topics);
     } catch (error) {
         console.error('Error in getTopics:', error);
-        handleError(res, error, 'Failed to retrieve topics');
+        handleError(res, 'Failed to retrieve topics');
     }
 };
 
@@ -181,7 +181,8 @@ export const addQuestion = async (req: Request, res: Response) => {
         const savedQuestion = await newQuestion.save();
         handleSuccess(res, 201, 'Question created successfully', savedQuestion);
     } catch (error) {
-        handleError(res, error, 'Failed to add question');
+        console.log('Error in addQuestion:', error);
+        handleError(res, 'Failed to add question');
     }
 };
 
@@ -210,7 +211,8 @@ export const updateQuestion = async (req: Request, res: Response) => {
 
         handleSuccess(res, 200, 'Question updated successfully', updatedQuestion);
     } catch (error) {
-        handleError(res, error, 'Failed to update question');
+        console.log('Error in updateQuestion:', error);
+        handleError(res, 'Failed to update question');
     }
 };
 
@@ -232,6 +234,7 @@ export const deleteQuestion = async (req: Request, res: Response) => {
 
         handleSuccess(res, 200, 'Question deleted successfully', deletedQuestion);
     } catch (error) {
-        handleError(res, error, 'Failed to delete question');
+        console.log('Error in deleteQuestion:', error);
+        handleError(res, 'Failed to delete question');
     }
 };

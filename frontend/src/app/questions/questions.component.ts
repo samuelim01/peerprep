@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
-import { FormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
@@ -9,10 +9,10 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { Question, SingleQuestionResponse, QuestionBody } from './question.model';
+import { Question } from './question.model';
 import { Column } from './column.model';
 import { Topic } from './topic.model';
 import { Difficulty } from './difficulty.model';
@@ -20,6 +20,7 @@ import { DifficultyLevels } from './difficulty-levels.enum';
 import { QuestionService } from '../../_services/question.service';
 import { forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { QuestionDialogComponent } from './question-dialog.component';
 
 @Component({
     selector: 'app-questions',
@@ -39,6 +40,7 @@ import { HttpErrorResponse } from '@angular/common/http';
         MultiSelectModule,
         DropdownModule,
         ProgressSpinnerModule,
+        QuestionDialogComponent,
     ],
     providers: [QuestionService, ConfirmationService, MessageService],
     templateUrl: './questions.component.html',
@@ -83,35 +85,19 @@ export class QuestionsComponent implements OnInit {
         this.handleInitData();
 
         this.initDifficulties();
-
-        this.initFormGroup();
-    }
-
-    get isTitleInvalid(): boolean {
-        const titleControl = this.questionFormGroup.controls['title'];
-        return titleControl.dirty && titleControl.invalid;
-    }
-
-    get isDescriptionInvalid(): boolean {
-        const descriptionControl = this.questionFormGroup.controls['description'];
-        return descriptionControl.dirty && descriptionControl.invalid;
-    }
-
-    get isDifficultyInvalid(): boolean {
-        const difficultyControl = this.questionFormGroup.controls['difficulty'];
-        return difficultyControl.dirty && difficultyControl.invalid;
-    }
-
-    get isTopicsInvalid(): boolean {
-        const topicsControl = this.questionFormGroup.controls['topics'];
-        return topicsControl.dirty && topicsControl.invalid;
     }
 
     openNewQuestion() {
         this.dialogHeader = 'Create new question';
-        this.resetFormGroup();
         this.question = {} as Question;
         this.submitted = false;
+        this.isDialogVisible = true;
+        console.log('isDialogVisible: ' + this.isDialogVisible);
+    }
+
+    editQuestion(question: Question) {
+        this.dialogHeader = 'Edit Question';
+        this.question = question;
         this.isDialogVisible = true;
     }
 
@@ -123,55 +109,6 @@ export class QuestionsComponent implements OnInit {
             accept: () => {
                 this.handleDeleteQuestionResponse();
             },
-        });
-    }
-
-    saveQuestion() {
-        this.submitted = true;
-
-        if (!this.questionFormGroup.valid) {
-            return;
-        }
-
-        if (this.question.id) {
-            // update
-            this.handleEditQuestionResponse(this.question.id, this.questionFormGroup.value);
-        } else {
-            // add
-            this.handleAddQuestionResponse();
-        }
-
-        this.isDialogVisible = false;
-        this.question = {} as Question;
-    }
-
-    resetFormGroup() {
-        this.questionFormGroup.reset({
-            topics: [],
-            difficulty: '',
-            title: '',
-            description: '',
-        });
-    }
-
-    editQuestion(question: Question) {
-        this.dialogHeader = 'Edit Question';
-        this.question.id = question.id;
-        this.questionFormGroup.patchValue({
-            title: question.title,
-            description: question.description,
-            topics: question.topics,
-            difficulty: question.difficulty,
-        });
-        this.isDialogVisible = true;
-    }
-
-    initFormGroup() {
-        this.questionFormGroup = new FormGroup({
-            topics: new FormControl<string[] | null>([], [Validators.required]),
-            difficulty: new FormControl<Difficulty[] | null>([], [Validators.required]),
-            title: new FormControl<string | null>('', [Validators.required]),
-            description: new FormControl<string | null>('', [Validators.required]),
         });
     }
 
@@ -193,32 +130,6 @@ export class QuestionsComponent implements OnInit {
         };
     }
 
-    handleAddQuestionResponse() {
-        this.questionService.addQuestion(this.questionFormGroup.value).subscribe({
-            next: (response: SingleQuestionResponse) => {
-                if (this.questions) {
-                    this.questions = [...this.questions, response.data];
-                }
-            },
-            error: (error: HttpErrorResponse) => {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'Failed to add new question. ' + error.error.message,
-                    life: 3000,
-                });
-            },
-            complete: () => {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'New Question Added',
-                    life: 3000,
-                });
-            },
-        });
-    }
-
     handleDeleteQuestionResponse() {
         const deleteRequests = this.selectedQuestions?.map(q => this.questionService.deleteQuestion(q.id));
 
@@ -229,46 +140,10 @@ export class QuestionsComponent implements OnInit {
                 this.selectedQuestions = null;
             },
             error: (error: HttpErrorResponse) => {
-                // Handle any errors from the forkJoin if necessary
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'Some questions could not be deleted. ' + error.error.message,
-                    life: 3000,
-                });
+                this.onErrorReceive('Some questions could not be deleted. ' + error.error.message);
             },
             complete: () => {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Question(s) Deleted',
-                    life: 3000,
-                });
-            },
-        });
-    }
-
-    handleEditQuestionResponse(id: number, question: QuestionBody) {
-        this.questionService.updateQuestion(id, question).subscribe({
-            next: (response: SingleQuestionResponse) => {
-                this.questions[this.questions.findIndex(x => x.id == id)] = response.data;
-                this.questions = [...this.questions];
-            },
-            error: (error: HttpErrorResponse) => {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: error.error.message,
-                    life: 3000,
-                });
-            },
-            complete: () => {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Question has been updated successfully',
-                    life: 3000,
-                });
+                this.onSuccessfulRequest('Question(s) Deleted');
             },
         });
     }
@@ -289,16 +164,42 @@ export class QuestionsComponent implements OnInit {
             error: () => {
                 this.questions = [];
                 this.topics = [];
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'Failed to load data. Please try again later.',
-                    life: 3000,
-                });
+                this.onErrorReceive('Failed to load data. Please try again later.');
             },
             complete: () => {
                 this.loading = false;
             },
+        });
+    }
+
+    onDialogClose() {
+        this.isDialogVisible = false;
+    }
+
+    onQuestionUpdate(question: Question) {
+        this.questions[this.questions.findIndex(x => x.id == question.id)] = question;
+        this.questions = [...this.questions];
+    }
+
+    onQuestionAdd(question: Question) {
+        this.questions = [...this.questions, question];
+    }
+
+    onErrorReceive(errorMessage: string) {
+        this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: errorMessage,
+            life: 3000,
+        });
+    }
+
+    onSuccessfulRequest(successMessage: string) {
+        this.messageService.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: successMessage,
+            life: 3000,
         });
     }
 }

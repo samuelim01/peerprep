@@ -75,82 +75,17 @@
             </ng-template>
         </p-table>
     </ng-container>
-    <p-dialog header="Header" [(visible)]="isDialogVisible" [modal]="true" [style]="{ width: '25rem' }">
-        <ng-template pTemplate="header">
-            <div class="inline-flex align-items-center justify-content-center gap-2">
-                <span class="font-bold white-space-nowrap"> {{ dialogHeader }}</span>
-            </div>
-        </ng-template>
-
-        <form [formGroup]="questionFormGroup">
-            <div class="field grid col-12">
-                <label for="title">Title</label>
-                <input
-                    formControlName="title"
-                    type="text"
-                    pInputText
-                    id="title"
-                    required
-                    class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" />
-                @if (isTitleInvalid) {
-                    <small class="text-red-300">Title is required.</small>
-                }
-            </div>
-            <div class="formgrid grid field">
-                <div class="field col-12 md:col-6">
-                    <label for="questionTopics">Topics</label>
-                    <p-multiSelect
-                        required="true"
-                        [style]="{ width: '100%' }"
-                        [options]="topics"
-                        formControlName="topics"
-                        optionLabel="label"
-                        optionValue="value"
-                        placeholder="Select Topics" />
-                    @if (isTopicsInvalid) {
-                        <small class="text-red-300">Topic(s) is required.</small>
-                    }
-                </div>
-                <div class="field col-12 md:col-6">
-                    <label for="questionTopics">Difficulty</label>
-                    <p-dropdown
-                        [required]="true"
-                        [style]="{ width: '100%' }"
-                        [options]="difficulties"
-                        formControlName="difficulty"
-                        optionLabel="label"
-                        optionValue="value"
-                        placeholder="Select Difficulty" />
-                    @if (isDifficultyInvalid) {
-                        <small class="text-red-300">Difficulty is required.</small>
-                    }
-                </div>
-            </div>
-            <div class="field grid col-12" field>
-                <label for="questionDescription">Description</label>
-                <textarea
-                    formControlName="description"
-                    [required]="true"
-                    id="questionDescription"
-                    type="text"
-                    rows="6"
-                    class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-                </textarea>
-                @if (isDescriptionInvalid) {
-                    <small class="text-red-300">Description is required.</small>
-                }
-            </div>
-        </form>
-
-        <ng-template pTemplate="footer">
-            <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="isDialogVisible = false" />
-            <p-button
-                label="Save"
-                class="p-button-success"
-                (onClick)="saveQuestion()"
-                [disabled]="!questionFormGroup.valid" />
-        </ng-template>
-    </p-dialog>
-
+    <app-question-dialog
+        [isDialogVisible]="isDialogVisible"
+        [headerMessage]="dialogHeader"
+        [topics]="topics"
+        [difficulties]="difficulties"
+        [question]="question"
+        (dialogClose)="onDialogClose()"
+        (questionUpdate)="onQuestionUpdate($event)"
+        (questionAdd)="onQuestionAdd($event)"
+        (errorReceive)="onErrorReceive($event)"
+        (successfulRequest)="onSuccessfulRequest($event)">
+    </app-question-dialog>
     <p-confirmDialog [style]="{ width: '450px' }" />
 </div>

@@ -67,6 +67,8 @@ export class QuestionsComponent implements OnInit {
 
     cols: Column[] = [];
 
+    dialogHeader = '';
+
     constructor(
         private questionService: QuestionService,
         private messageService: MessageService,
@@ -83,8 +85,6 @@ export class QuestionsComponent implements OnInit {
         this.initDifficulties();
 
         this.initFormGroup();
-
-        // this.initListeners();
     }
 
     get isTitleInvalid(): boolean {
@@ -108,6 +108,7 @@ export class QuestionsComponent implements OnInit {
     }
 
     openNewQuestion() {
+        this.dialogHeader = 'Create new question';
         this.resetFormGroup();
         this.question = {} as Question;
         this.submitted = false;
@@ -154,6 +155,7 @@ export class QuestionsComponent implements OnInit {
     }
 
     editQuestion(question: Question) {
+        this.dialogHeader = 'Edit Question';
         this.question.id = question.id;
         this.questionFormGroup.patchValue({
             title: question.title,

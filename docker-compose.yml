@@ -12,7 +12,7 @@ services:
       - ./frontend:/app
     networks:
       - question-network
-      - user-service-network
+      - user-network
   
   question:
     container_name: question
@@ -34,7 +34,7 @@ services:
     networks:
       - question-network
       - question-db-network
-      - user-service-network
+      - user-network
 
   question-db:
     container_name: question-db
@@ -49,11 +49,11 @@ services:
       - question-db-network
     restart: always
 
-  user-service:
-    container_name: user-service
-    image: user-service
+  user:
+    container_name: user
+    image: user
     build:
-      context: services/user-service
+      context: services/user
       dockerfile: Dockerfile
     ports:
       - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
@@ -65,10 +65,10 @@ services:
       USER_SERVICE_PORT: ${USER_SERVICE_PORT}
     volumes:
       - /app/node_modules
-      - ./services/user-service:/app
+      - ./services/user:/app
     networks:
       - question-network
-      - user-service-network
+      - user-network
     restart: always
 
 volumes:
@@ -79,5 +79,5 @@ networks:
     driver: bridge
   question-db-network:
     driver: bridge
-  user-service-network:
+  user-network:
     driver: bridge

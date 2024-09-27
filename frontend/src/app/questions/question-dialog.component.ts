@@ -10,7 +10,7 @@ import { QuestionService } from '../../_services/question.service';
 import { Difficulty } from './difficulty.model';
 import { Topic } from './topic.model';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { DifficultyLevels } from './difficulty-levels.enum';
 
 @Component({
     selector: 'app-question-dialog',
@@ -23,7 +23,6 @@ import { CommonModule } from '@angular/common';
         MultiSelectModule,
         DropdownModule,
         QuestionDialogComponent,
-        CommonModule,
     ],
     providers: [QuestionService, ConfirmationService, MessageService],
     templateUrl: './question-dialog.component.html',
@@ -31,10 +30,7 @@ import { CommonModule } from '@angular/common';
 })
 export class QuestionDialogComponent implements OnInit {
     @Input() question!: Question;
-    @Input() headerMessage!: string;
     @Input() isDialogVisible = false;
-    @Input() topics!: Topic[];
-    @Input() difficulties!: Difficulty[];
     @Output() dialogClose = new EventEmitter<void>();
     @Output() questionUpdate = new EventEmitter<Question>();
     @Output() questionAdd = new EventEmitter<Question>();
@@ -45,9 +41,13 @@ export class QuestionDialogComponent implements OnInit {
 
     submitted = false;
 
-    questions: Question[] = [];
-
     topicSearchValue = '';
+
+    headerMessage = '';
+
+    topics!: Topic[];
+
+    difficulties!: Difficulty[];
 
     isNoResultsFound = false;
 
@@ -57,6 +57,10 @@ export class QuestionDialogComponent implements OnInit {
 
     ngOnInit(): void {
         this.initFormGroup();
+
+        this.initDifficulties();
+
+        this.initTopics();
     }
 
     get isTitleInvalid(): boolean {
@@ -105,6 +109,16 @@ export class QuestionDialogComponent implements OnInit {
 
     show() {
         this.setFormValue();
+        this.setHeaderMessage();
+    }
+
+    setHeaderMessage() {
+        if (this.question.id) {
+            this.headerMessage = 'Edit Question';
+        } else {
+            this.submitted = false;
+            this.headerMessage = 'Create new question';
+        }
     }
 
     handleEditQuestionResponse(id: number, question: QuestionBody) {
@@ -141,6 +155,30 @@ export class QuestionDialogComponent implements OnInit {
             difficulty: new FormControl<Difficulty[] | null>([], [Validators.required]),
             title: new FormControl<string | null>('', [Validators.required]),
             description: new FormControl<string | null>('', [Validators.required]),
+        });
+    }
+
+    initDifficulties() {
+        this.difficulties = [
+            { label: DifficultyLevels.EASY, value: DifficultyLevels.EASY },
+            { label: DifficultyLevels.MEDIUM, value: DifficultyLevels.MEDIUM },
+            { label: DifficultyLevels.HARD, value: DifficultyLevels.HARD },
+        ];
+    }
+
+    initTopics() {
+        this.questionService.getTopics().subscribe({
+            next: response => {
+                this.topics =
+                    response.data?.map(topic => ({
+                        label: topic,
+                        value: topic,
+                    })) || [];
+            },
+            error: (error: HttpErrorResponse) => {
+                this.topics = [];
+                this.errorReceive.emit('Failed to load topics. ' + error.error.message);
+            },
         });
     }
 

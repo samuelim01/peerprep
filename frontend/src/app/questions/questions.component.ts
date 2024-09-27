@@ -9,14 +9,10 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Question } from './question.model';
-import { Column } from './column.model';
-import { Topic } from './topic.model';
-import { Difficulty } from './difficulty.model';
-import { DifficultyLevels } from './difficulty-levels.enum';
 import { QuestionService } from '../../_services/question.service';
 import { forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -51,25 +47,11 @@ export class QuestionsComponent implements OnInit {
 
     questions: Question[] = [];
 
-    topics!: Topic[];
-
-    difficulties!: Difficulty[];
-
-    questionFormGroup!: FormGroup;
-
-    difficulty!: string;
-
     question!: Question;
 
     selectedQuestions!: Question[] | null;
 
-    submitted = false;
-
     isDialogVisible = false;
-
-    cols: Column[] = [];
-
-    dialogHeader = '';
 
     constructor(
         private questionService: QuestionService,
@@ -83,19 +65,14 @@ export class QuestionsComponent implements OnInit {
 
         // fetch data from API call
         this.handleInitData();
-
-        this.initDifficulties();
     }
 
     openNewQuestion() {
-        this.dialogHeader = 'Create new question';
         this.question = {} as Question;
-        this.submitted = false;
         this.isDialogVisible = true;
     }
 
     editQuestion(question: Question) {
-        this.dialogHeader = 'Edit Question';
         this.question = question;
         this.isDialogVisible = true;
     }
@@ -109,14 +86,6 @@ export class QuestionsComponent implements OnInit {
                 this.handleDeleteQuestionResponse();
             },
         });
-    }
-
-    initDifficulties() {
-        this.difficulties = [
-            { label: DifficultyLevels.EASY, value: DifficultyLevels.EASY },
-            { label: DifficultyLevels.MEDIUM, value: DifficultyLevels.MEDIUM },
-            { label: DifficultyLevels.HARD, value: DifficultyLevels.HARD },
-        ];
     }
 
     initQuestion() {
@@ -148,21 +117,12 @@ export class QuestionsComponent implements OnInit {
     }
 
     handleInitData() {
-        forkJoin({
-            questions: this.questionService.getQuestions(),
-            topics: this.questionService.getTopics(),
-        }).subscribe({
-            next: results => {
-                this.questions = results.questions.data || [];
-                this.topics =
-                    results.topics.data?.map(topic => ({
-                        label: topic,
-                        value: topic,
-                    })) || [];
+        this.questionService.getQuestions().subscribe({
+            next: response => {
+                this.questions = response.data || [];
             },
             error: () => {
                 this.questions = [];
-                this.topics = [];
                 this.onErrorReceive('Failed to load data. Please try again later.');
             },
             complete: () => {

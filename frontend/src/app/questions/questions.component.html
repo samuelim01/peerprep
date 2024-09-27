@@ -77,9 +77,6 @@
     </ng-container>
     <app-question-dialog
         [isDialogVisible]="isDialogVisible"
-        [headerMessage]="dialogHeader"
-        [topics]="topics"
-        [difficulties]="difficulties"
         [question]="question"
         (dialogClose)="onDialogClose()"
         (questionUpdate)="onQuestionUpdate($event)"

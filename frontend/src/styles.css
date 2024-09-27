@@ -3,3 +3,8 @@
 @import "primeng/resources/primeng.min.css";
 @import "primeflex/primeflex.min.css";
 @import "primeicons/primeicons.css";
+
+body {
+  height: 100vh;
+  margin: 0px;
+}

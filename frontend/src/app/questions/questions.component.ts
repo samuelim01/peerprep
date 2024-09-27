@@ -55,7 +55,7 @@ export class QuestionsComponent implements OnInit {
 
     questionFormGroup!: FormGroup;
 
-    selectedDifficulty!: string;
+    difficulty!: string;
 
     question!: Question;
 
@@ -84,7 +84,7 @@ export class QuestionsComponent implements OnInit {
 
         this.initFormGroup();
 
-        this.initListeners();
+        // this.initListeners();
     }
 
     get isTitleInvalid(): boolean {
@@ -98,12 +98,12 @@ export class QuestionsComponent implements OnInit {
     }
 
     get isDifficultyInvalid(): boolean {
-        const difficultyControl = this.questionFormGroup.controls['selectedDifficulty'];
+        const difficultyControl = this.questionFormGroup.controls['difficulty'];
         return difficultyControl.dirty && difficultyControl.invalid;
     }
 
     get isTopicsInvalid(): boolean {
-        const topicsControl = this.questionFormGroup.controls['selectedTopics'];
+        const topicsControl = this.questionFormGroup.controls['topics'];
         return topicsControl.dirty && topicsControl.invalid;
     }
 
@@ -128,20 +128,13 @@ export class QuestionsComponent implements OnInit {
     saveQuestion() {
         this.submitted = true;
 
-        if (
-            !this.question.title?.trim() ||
-            !this.question.topics ||
-            this.question.topics?.length == 0 ||
-            !this.question.difficulty?.trim() ||
-            !this.question.description?.trim()
-        ) {
+        if (!this.questionFormGroup.valid) {
             return;
         }
 
         if (this.question.id) {
             // update
-            const { id, ...questionBody } = this.question;
-            this.handleEditQuestionResponse(id, questionBody);
+            this.handleEditQuestionResponse(this.question.id, this.questionFormGroup.value);
         } else {
             // add
             this.handleAddQuestionResponse();
@@ -153,50 +146,28 @@ export class QuestionsComponent implements OnInit {
 
     resetFormGroup() {
         this.questionFormGroup.reset({
-            selectedTopics: [],
-            selectedDifficulty: '',
-            textTitle: '',
-            textDescription: '',
+            topics: [],
+            difficulty: '',
+            title: '',
+            description: '',
         });
     }
 
     editQuestion(question: Question) {
         this.question.id = question.id;
         this.questionFormGroup.patchValue({
-            textTitle: question.title,
-            textDescription: question.description,
-            selectedTopics: question.topics,
-            selectedDifficulty: question.difficulty,
+            title: question.title,
+            description: question.description,
+            topics: question.topics,
+            difficulty: question.difficulty,
         });
         this.isDialogVisible = true;
     }
 
-    initListeners() {
-        // Dropdown difficulty listener
-        this.questionFormGroup.get('selectedDifficulty')?.valueChanges.subscribe(v => {
-            this.question.difficulty = v;
-        });
-
-        // Multiselect topics listener
-        this.questionFormGroup.get('selectedTopics')?.valueChanges.subscribe(v => {
-            this.question.topics = v;
-        });
-
-        // text title listener
-        this.questionFormGroup.get('textTitle')?.valueChanges.subscribe(v => {
-            this.question.title = v;
-        });
-
-        // text description listener
-        this.questionFormGroup.get('textDescription')?.valueChanges.subscribe(v => {
-            this.question.description = v;
-        });
-    }
-
     initFormGroup() {
         this.questionFormGroup = new FormGroup({
-            selectedTopics: new FormControl<string[] | null>([], [Validators.required]),
-            selectedDifficulty: new FormControl<Difficulty[] | null>([], [Validators.required]),
+            topics: new FormControl<string[] | null>([], [Validators.required]),
+            difficulty: new FormControl<Difficulty[] | null>([], [Validators.required]),
             title: new FormControl<string | null>('', [Validators.required]),
             description: new FormControl<string | null>('', [Validators.required]),
         });
@@ -221,14 +192,13 @@ export class QuestionsComponent implements OnInit {
     }
 
     handleAddQuestionResponse() {
-        this.questionService.addQuestion(this.question).subscribe({
+        this.questionService.addQuestion(this.questionFormGroup.value).subscribe({
             next: (response: SingleQuestionResponse) => {
                 if (this.questions) {
                     this.questions = [...this.questions, response.data];
                 }
             },
             error: (error: HttpErrorResponse) => {
-                console.log(error);
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
@@ -280,10 +250,9 @@ export class QuestionsComponent implements OnInit {
         this.questionService.updateQuestion(id, question).subscribe({
             next: (response: SingleQuestionResponse) => {
                 this.questions[this.questions.findIndex(x => x.id == id)] = response.data;
+                this.questions = [...this.questions];
             },
             error: (error: HttpErrorResponse) => {
-                console.log(error);
-                console.log(question);
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
@@ -315,8 +284,7 @@ export class QuestionsComponent implements OnInit {
                         value: topic,
                     })) || [];
             },
-            error: (error: Error) => {
-                console.error(error);
+            error: () => {
                 this.questions = [];
                 this.topics = [];
                 this.messageService.add({

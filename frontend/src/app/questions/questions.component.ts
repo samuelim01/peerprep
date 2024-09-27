@@ -111,6 +111,7 @@ export class QuestionsComponent implements OnInit {
         if (
             !this.question.title?.trim() ||
             !this.question.topics ||
+            this.question.topics?.length == 0 ||
             !this.question.difficulty?.trim() ||
             !this.question.description?.trim()
         ) {

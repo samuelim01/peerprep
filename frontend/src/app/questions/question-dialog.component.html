@@ -12,7 +12,7 @@
     </ng-template>
 
     <form [formGroup]="questionFormGroup">
-        <div class="field grid col-12">
+        <div class="form-field mb-4">
             <label for="title">Title</label>
             <input
                 formControlName="title"
@@ -25,51 +25,54 @@
                 <small class="text-red-300">Title is required.</small>
             }
         </div>
-        <div class="formgrid grid field">
-            <div class="field col-12 md:col-6">
-                <label for="questionTopics">Topics</label>
-                <p-multiSelect
-                    required="true"
-                    [style]="{ width: '100%' }"
-                    [options]="topics"
-                    (onFilter)="onFilterTopics($event)"
-                    formControlName="topics"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Select Topics">
-                    <ng-template let-option pTemplate="item">
-                        <span>{{ option.label }}</span>
-                    </ng-template>
+        <div class="form-field mb-4">
+            <label for="questionTopics">Topics</label>
 
-                    <ng-template pTemplate="footer">
-                        <p-button
-                            *ngIf="isNoResultsFound"
-                            type="button"
-                            label="Add as New Topic"
-                            icon="pi pi-plus"
-                            (click)="addNewTopic()" />
-                    </ng-template>
-                </p-multiSelect>
-                @if (isTopicsInvalid) {
-                    <small class="text-red-300">Topic(s) is required.</small>
-                }
-            </div>
-            <div class="field col-12 md:col-6">
-                <label for="questionTopics">Difficulty</label>
-                <p-dropdown
-                    [required]="true"
-                    [style]="{ width: '100%' }"
-                    [options]="difficulties"
-                    formControlName="difficulty"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Select Difficulty" />
-                @if (isDifficultyInvalid) {
-                    <small class="text-red-300">Difficulty is required.</small>
-                }
-            </div>
+            <p-multiSelect
+                required="true"
+                class="w-12"
+                [style]="{ width: '100%' }"
+                [options]="topics"
+                (onFilter)="onFilterTopics($event)"
+                formControlName="topics"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select Topics">
+                <ng-template let-option pTemplate="item">
+                    <span>{{ option.label }}</span>
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <p-button
+                        *ngIf="isNoResultsFound"
+                        type="button"
+                        label="Add as New Topic"
+                        icon="pi pi-plus"
+                        (click)="addNewTopic()" />
+                </ng-template>
+            </p-multiSelect>
+            @if (isTopicsInvalid) {
+                <small class="text-red-300">Topic(s) is required.</small>
+            }
         </div>
-        <div class="field grid col-12" field>
+        <div class="form-field mb-4">
+            <label for="questionTopics">Difficulty</label>
+
+            <p-dropdown
+                class="w-12 flex align-items-center justify-content-center"
+                autoWidth="false"
+                [required]="true"
+                [style]="{ width: '100%' }"
+                [options]="difficulties"
+                formControlName="difficulty"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select Difficulty" />
+            @if (isDifficultyInvalid) {
+                <small class="text-red-300">Difficulty is required.</small>
+            }
+        </div>
+        <div class="form-field">
             <label for="questionDescription">Description</label>
             <textarea
                 formControlName="description"

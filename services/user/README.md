@@ -237,11 +237,11 @@
 - HTTP Method: `POST`
 - Endpoint: http://localhost:3001/auth/login
 - Body
-  - Required: `email` (string), `password` (string)
+  - Required: `username` (string), `password` (string)
 
     ```json
     {
-      "email": "sample@gmail.com",
+      "username": "sample123",
       "password": "SecurePassword"
     }
     ```

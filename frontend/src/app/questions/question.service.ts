@@ -64,15 +64,21 @@ export class QuestionService {
     }
 
     addQuestion(question: QuestionBody): Observable<SingleQuestionResponse> {
-        return this.http.post<SingleQuestionResponse>(this.baseUrl + '/questions', question, this.httpOptions).pipe(catchError(this.handleError));
+        return this.http
+            .post<SingleQuestionResponse>(this.baseUrl + '/questions', question, this.httpOptions)
+            .pipe(catchError(this.handleError));
     }
 
     updateQuestion(id: number, question: QuestionBody): Observable<SingleQuestionResponse> {
-        return this.http.put<SingleQuestionResponse>(this.baseUrl + '/questions/' + id, question, this.httpOptions).pipe(catchError(this.handleError));
+        return this.http
+            .put<SingleQuestionResponse>(this.baseUrl + '/questions/' + id, question, this.httpOptions)
+            .pipe(catchError(this.handleError));
     }
 
     deleteQuestion(id: number): Observable<SingleQuestionResponse> {
-        return this.http.delete<SingleQuestionResponse>(this.baseUrl + '/questions/' + id).pipe(catchError(this.handleError));
+        return this.http
+            .delete<SingleQuestionResponse>(this.baseUrl + '/questions/' + id)
+            .pipe(catchError(this.handleError));
     }
 
     handleError(error: HttpErrorResponse) {

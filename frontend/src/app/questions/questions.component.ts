@@ -11,6 +11,7 @@ import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Question, SingleQuestionResponse, QuestionBody } from './question.model';
 import { Column } from './column.model';
 import { Topic } from './topic.model';
@@ -37,12 +38,15 @@ import { HttpErrorResponse } from '@angular/common/http';
         ReactiveFormsModule,
         MultiSelectModule,
         DropdownModule,
+        ProgressSpinnerModule,
     ],
     providers: [QuestionService, ConfirmationService, MessageService],
     templateUrl: './questions.component.html',
     styleUrl: './questions.component.css',
 })
 export class QuestionsComponent implements OnInit {
+    loading = true;
+
     questions: Question[] = [];
 
     topics!: Topic[];
@@ -302,8 +306,7 @@ export class QuestionsComponent implements OnInit {
                 });
             },
             complete: () => {
-                // TODO: add loading state for this
-                console.log('complete');
+                this.loading = false;
             },
         });
     }

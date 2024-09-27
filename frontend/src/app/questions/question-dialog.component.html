@@ -29,6 +29,7 @@
             <label for="questionTopics">Topics</label>
 
             <p-multiSelect
+                #topicSelector
                 required="true"
                 class="w-12"
                 [style]="{ width: '100%' }"
@@ -43,8 +44,13 @@
                 </ng-template>
 
                 <ng-template pTemplate="footer" class="w-12 p-fluid">
-                    @if (isNoResultsFound) {
-                        <p-button type="button" label="Add as New Topic" icon="pi pi-plus" (click)="addNewTopic()" />
+                    @if (hasNoResultsFound) {
+                        <p-button
+                            class="w-12 p-fluid"
+                            type="button"
+                            label="Add as New Topic"
+                            icon="pi pi-plus"
+                            (click)="addNewTopic()" />
                     }
                 </ng-template>
             </p-multiSelect>

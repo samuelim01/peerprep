@@ -17,6 +17,7 @@ import { QuestionService } from '../../_services/question.service';
 import { forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { QuestionDialogComponent } from './question-dialog.component';
+import { Column } from './column.model';
 
 @Component({
     selector: 'app-questions',
@@ -46,6 +47,8 @@ export class QuestionsComponent implements OnInit {
     loading = true;
 
     questions: Question[] = [];
+
+    cols: Column[] = [];
 
     question!: Question;
 

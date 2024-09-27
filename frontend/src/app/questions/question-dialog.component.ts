@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
 import { Question, QuestionBody, SingleQuestionResponse } from './question.model';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
-import { MultiSelectModule } from 'primeng/multiselect';
+import { MultiSelect, MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -29,6 +29,7 @@ import { DifficultyLevels } from './difficulty-levels.enum';
     styleUrl: './question-dialog.component.css',
 })
 export class QuestionDialogComponent implements OnInit {
+    @ViewChild('topicSelector') topicSelector!: MultiSelect;
     @Input() question!: Question;
     @Input() isDialogVisible = false;
     @Output() dialogClose = new EventEmitter<void>();
@@ -38,7 +39,6 @@ export class QuestionDialogComponent implements OnInit {
     @Output() successfulRequest = new EventEmitter<string>();
 
     questionFormGroup!: FormGroup;
-
     submitted = false;
 
     topicSearchValue = '';
@@ -49,9 +49,9 @@ export class QuestionDialogComponent implements OnInit {
 
     difficulties!: Difficulty[];
 
-    isNoResultsFound = false;
-
     filteredTopics: Topic[] = [];
+
+    hasNoResultsFound = false;
 
     constructor(private questionService: QuestionService) {}
 
@@ -61,6 +61,10 @@ export class QuestionDialogComponent implements OnInit {
         this.initDifficulties();
 
         this.initTopics();
+    }
+
+    get topicControl(): FormControl {
+        return this.questionFormGroup.controls['topics'] as FormControl;
     }
 
     get isTitleInvalid(): boolean {
@@ -202,28 +206,29 @@ export class QuestionDialogComponent implements OnInit {
 
     onFilterTopics(event: { filter: string }) {
         this.topicSearchValue = event.filter;
-
-        this.filteredTopics = this.topics.filter(topic =>
+        this.hasNoResultsFound = !this.topics.some(topic =>
             topic.label.toLowerCase().includes(this.topicSearchValue.toLowerCase()),
         );
-
-        this.isNoResultsFound = this.filteredTopics.length == 0;
     }
 
     addNewTopic() {
+        const newTopic = this.topicSearchValue;
         const newValue: Topic = {
-            label: this.topicSearchValue,
-            value: this.topicSearchValue,
+            label: newTopic,
+            value: newTopic,
         };
 
-        const topicExists = this.topics.some(
-            topic =>
-                topic.label.toLowerCase() === newValue.label.toLowerCase() ||
-                topic.value.toLowerCase() === newValue.value.toLowerCase(),
-        );
+        const topicExists = this.topics.map(t => t.label).some(l => l.toLowerCase() === newTopic.toLowerCase());
 
-        if (!topicExists) {
-            this.topics = [...this.topics, newValue];
+        if (topicExists) {
+            return;
         }
+
+        this.topics.push(newValue);
+
+        // Immediately add the new topic, and clear the search filter
+        this.topicControl.setValue(this.topicControl.value?.concat([newTopic]) ?? [newTopic]);
+        this.topicSelector.resetFilter();
+        this.hasNoResultsFound = false;
     }
 }

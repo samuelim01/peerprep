@@ -201,7 +201,12 @@ export const updateQuestion = async (req: Request, res: Response) => {
 
     try {
         const existingQuestion = await Question.findOne({
-            $or: [{ title: updates.title }, { description: updates.description }],
+            $and: [
+                {
+                    $or: [{ title: updates.title }, { description: updates.description }],
+                },
+                { id: { $ne: parseInt(id, 10) } },
+            ],
         }).collation({ locale: 'en', strength: 2 });
         if (existingQuestion) {
             return handleBadRequest(res, 'A question with the same title or description already exists.');

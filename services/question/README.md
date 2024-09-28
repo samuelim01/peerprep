@@ -350,7 +350,7 @@ This endpoint allows updating an existing question. Only the title, description,
 | Response Code               | Explanation                                                                        |
 |-----------------------------|------------------------------------------------------------------------------------|
 | 200 (OK)                    | Success, the question is updated successfully.                                     |
-| 404 (Bad Request)           | Invalid request body such as including `id` or duplicate `title` or `description`. |
+| 400 (Bad Request)           | Invalid request body such as including `id` or duplicate `title` or `description`. |
 | 404 (Not Found)             | Question with the specified `id` not found.                                        |
 | 500 (Internal Server Error) | Unexpected error in the database or server.                                        |
 

@@ -6,7 +6,6 @@
 
 ```cmd
 cp .env.sample .env
-cp services/question/.env.sample services/question/.env
 ```
 
 2. After setting up the .env files, build the Docker images and start the containers using the following command:
@@ -247,7 +246,6 @@ This endpoint retrieves all unique topics in the database
 | Response Code               | Explanation                                                         |
 |-----------------------------|---------------------------------------------------------------------|
 | 200 (OK)                    | Success, all topics are returned.                                   |
-| 404 (Not Found)             | No topic found.                                                     |
 | 500 (Internal Server Error) | The server encountered an error and could not complete the request. |
 
 ### Command Line Example:

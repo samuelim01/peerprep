@@ -129,10 +129,6 @@ export const getTopics = async (req: Request, res: Response) => {
     try {
         const topics = await Question.distinct('topics');
 
-        if (!topics || topics.length === 0) {
-            return handleNotFound(res, 'No topics found');
-        }
-
         handleSuccess(res, 200, 'Topics retrieved successfully', topics);
     } catch (error) {
         console.error('Error in getTopics:', error);

@@ -103,7 +103,6 @@ export class QuestionDialogComponent implements OnInit {
         }
 
         this.dialogClose.emit();
-        this.question = {} as Question;
     }
 
     cancel() {
@@ -134,6 +133,7 @@ export class QuestionDialogComponent implements OnInit {
                 this.errorReceive.emit(error.error.message);
             },
             complete: () => {
+                this.question = {} as Question;
                 this.successfulRequest.emit('Question has been updated successfully');
             },
         });
@@ -148,6 +148,7 @@ export class QuestionDialogComponent implements OnInit {
                 this.errorReceive.emit('Failed to add new question. ' + error.error.message);
             },
             complete: () => {
+                this.question = {} as Question;
                 this.successfulRequest.emit('New Question Added');
             },
         });

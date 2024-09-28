@@ -295,11 +295,11 @@ uniqueness.
 
 ### Responses:
 
-| Response Code               | Explanation                                                        |
-|-----------------------------|--------------------------------------------------------------------|
-| 201 (Created)               | The question is created successfully.                              |
-| 400 (Bad Request)           | Required fields are missing or invalid or question already exists. |
-| 500 (Internal Server Error) | Unexpected error in the database or server.                        |
+| Response Code               | Explanation                                                         |
+|-----------------------------|---------------------------------------------------------------------|
+| 201 (Created)               | The question is created successfully.                               |
+| 400 (Bad Request)           | Required fields are missing or invalid, or question already exists. |
+| 500 (Internal Server Error) | Unexpected error in the database or server.                         |
 
 ### Command Line Example:
 
@@ -318,12 +318,9 @@ curl -X POST http://localhost:8081/questions -H "Content-Type: application/json"
     "id": 21,
     "title": "New Question",
     "description": "This is a description for a new question.",
-    "topics": [
-      "Data Structures",
-      "Algorithms"
-    ],
+    "topics": ["Data Structures", "Algorithms"],
     "difficulty": "Medium",
-    "_id": "66eedf739672ca081e9fd5ff"
+    "_id": "66f77e7bf9530832bd839239"
   }
 }
 ```
@@ -350,11 +347,12 @@ This endpoint allows updating an existing question. Only the title, description,
 
 ### Responses:
 
-| Response Code               | Explanation                                    |
-|-----------------------------|------------------------------------------------|
-| 200 (OK)                    | Success, the question is updated successfully. |
-| 404 (Not Found)             | Question with the specified `id` not found.    |
-| 500 (Internal Server Error) | Unexpected error in the database or server.    |
+| Response Code               | Explanation                                                                        |
+|-----------------------------|------------------------------------------------------------------------------------|
+| 200 (OK)                    | Success, the question is updated successfully.                                     |
+| 404 (Bad Request)           | Invalid request body such as including `id` or duplicate `title` or `description`. |
+| 404 (Not Found)             | Question with the specified `id` not found.                                        |
+| 500 (Internal Server Error) | Unexpected error in the database or server.                                        |
 
 ### Command Line Example:
 
@@ -370,14 +368,11 @@ curl -X PUT http://localhost:8081/questions/21 -H "Content-Type: application/jso
   "status": "Success",
   "message": "Question updated successfully",
   "data": {
-    "_id": "66eedf739672ca081e9fd5ff",
+    "_id": "66f77e7bf9530832bd839239",
     "id": 21,
-    "title": "Updated Title",
-    "description": "Updated description for the existing question.",
-    "topics": [
-      "Data Structures",
-      "Algorithms"
-    ],
+    "title": "Updated Question Title",
+    "description": "This is the updated description.",
+    "topics": ["Updated Topic"],
     "difficulty": "Hard"
   }
 }
@@ -418,14 +413,11 @@ curl -X DELETE http://localhost:8081/questions/21
   "status": "Success",
   "message": "Question deleted successfully",
   "data": {
-    "_id": "66eedf739672ca081e9fd5ff",
+    "_id": "66f77e7bf9530832bd839239",
     "id": 21,
-    "title": "Updated Title",
-    "description": "Updated description for the existing question.",
-    "topics": [
-      "Data Structures",
-      "Algorithms"
-    ],
+    "title": "Duplicate Title",
+    "description": "This is the updated description.",
+    "topics": ["Updated Topic"],
     "difficulty": "Hard"
   }
 }

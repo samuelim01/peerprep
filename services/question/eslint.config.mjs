@@ -14,6 +14,7 @@ export default tseslint.config({
     ],
     rules: {
         '@typescript-eslint/no-explicit-any': 'off',
+        "@typescript-eslint/no-extraneous-class": "off",
 
         // https://stackoverflow.com/questions/68816664/get-rid-of-error-delete-eslint-prettier-prettier-and-allow-use-double
         'prettier/prettier': [

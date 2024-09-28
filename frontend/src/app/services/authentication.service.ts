@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { User } from '../models/user.model';
 
@@ -24,16 +24,9 @@ export class AuthenticationService {
     }
 
     login(username: string, password: string) {
-        console.log('in authentication service login');
-        console.log(username, password);
-        console.log(`${environment.UserServiceApiUrl}/auth/login`);
         return this.http.post<any>(`${environment.UserServiceApiUrl}/auth/login`, 
             { "username": username, "password": password })
-            .pipe(
-                tap(response => {
-                    console.log('HTTP POST response:', response);
-                }),
-                map(response => {
+            .pipe(map(response => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 const user = response.data;
                 localStorage.setItem('user', JSON.stringify(user));
@@ -42,10 +35,16 @@ export class AuthenticationService {
             }));
     }
 
+    createAccount(username: string, email: string, password: string) {
+        return this.http.post<any>(`${environment.UserServiceApiUrl}/users`,
+            { "username": username, "email": email, "password": password })
+            .pipe(switchMap(() => this.login(username, password))); // auto login after registration
+    }
+
     logout() {
         // remove user from local storage to log user out
         localStorage.removeItem('user');
         this.userSubject.next(null);
-        this.router.navigate(['/login']);
+        this.router.navigate(['/account/login']);
     }
 }

@@ -33,9 +33,9 @@ export class LoginComponent {
         private route: ActivatedRoute
     ) {
         // redirect to home if already logged in
-        if (this.authenticationService.userValue) { 
-            this.router.navigate(['/']);
-        }
+        // if (this.authenticationService.userValue) { 
+        //     this.router.navigate(['/']);
+        // }
     }
 
     userForm = {
@@ -48,8 +48,8 @@ export class LoginComponent {
     onSubmit() {
         if (this.userForm.username && this.userForm.password) {
             this.isProcessingLogin = true;
+
             // authenticationService returns an observable that we can subscribe to
-            console.log('Logging in');
             this.authenticationService.login(this.userForm.username, this.userForm.password)
             .pipe()
             .subscribe({

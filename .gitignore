@@ -1,3 +1,7 @@
-# Ignore IntelliJ IDEA project files
-.idea/
-.env
+**/node_modules
+**/.env
+**/.idea
+# Vim temp files
+*~
+*.swp
+*.swo

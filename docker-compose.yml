@@ -55,7 +55,7 @@ services:
       context: services/user
       dockerfile: Dockerfile
     ports:
-      - 3001
+      - 3001:3001
     environment:
       USER_SERVICE_CLOUD_URI: ${USER_SERVICE_CLOUD_URI}
       USER_SERVICE_LOCAL_URI: ${USER_SERVICE_LOCAL_URI}

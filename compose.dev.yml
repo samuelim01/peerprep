@@ -10,10 +10,6 @@ services:
       - /app/node_modules
       - ./services/question:/app
 
-  question-db:
-    ports:
-      - 27017:27017
-
   user:
     command: npm run dev
     volumes:

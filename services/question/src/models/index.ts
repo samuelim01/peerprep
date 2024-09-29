@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { IQuestion, Question } from './questionModel';
 
 export async function connectToDB() {
-    const mongoURI = process.env.NODE_ENV === 'production' ? process.env.DB_CLOUD_URI : process.env.DB_LOCAL_URI;
+    const mongoURI = process.env.DB_URI;
 
     console.log('MongoDB URI:', mongoURI);
 

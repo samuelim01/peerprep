@@ -129,10 +129,6 @@ export const getTopics = async (req: Request, res: Response) => {
     try {
         const topics = await Question.distinct('topics');
 
-        if (!topics || topics.length === 0) {
-            return handleNotFound(res, 'No topics found');
-        }
-
         handleSuccess(res, 200, 'Topics retrieved successfully', topics);
     } catch (error) {
         console.error('Error in getTopics:', error);
@@ -200,6 +196,18 @@ export const updateQuestion = async (req: Request, res: Response) => {
     }
 
     try {
+        const existingQuestion = await Question.findOne({
+            $and: [
+                {
+                    $or: [{ title: updates.title }, { description: updates.description }],
+                },
+                { id: { $ne: parseInt(id, 10) } },
+            ],
+        }).collation({ locale: 'en', strength: 2 });
+        if (existingQuestion) {
+            return handleBadRequest(res, 'A question with the same title or description already exists.');
+        }
+
         const updatedQuestion = await Question.findOneAndUpdate({ id: parseInt(id, 10) }, updates, {
             new: true,
             runValidators: true,

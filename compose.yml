@@ -55,26 +55,6 @@ services:
       JWT_SECRET: ${JWT_SECRET}
     restart: always
 
-  user:
-    container_name: user
-    image: user
-    build:
-      context: services/user
-      dockerfile: Dockerfile
-    ports:
-      - 3001:3001
-    environment:
-      USER_SERVICE_CLOUD_URI: ${USER_SERVICE_CLOUD_URI}
-      USER_SERVICE_LOCAL_URI: ${USER_SERVICE_LOCAL_URI}
-      ENV: ${ENV}
-      JWT_SECRET: ${JWT_SECRET}
-    volumes:
-      - /app/node_modules
-      - ./services/user:/app
-    networks:
-      - user-network
-    restart: always
-
 volumes:
   question-db:
 

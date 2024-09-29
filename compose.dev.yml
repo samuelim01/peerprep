@@ -9,9 +9,3 @@ services:
     volumes:
       - /app/node_modules
       - ./services/question:/app
-
-  user:
-    command: npm run dev
-    volumes:
-      - /app/node_modules
-      - ./services/user:/app

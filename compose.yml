@@ -25,21 +25,6 @@ services:
       - question-db-network
     restart: always
 
-  user:
-    container_name: user
-    image: user
-    build:
-      context: services/user
-      dockerfile: Dockerfile
-    ports:
-      - 8082:8082
-    environment:
-      USER_SERVICE_CLOUD_URI: ${USER_SERVICE_CLOUD_URI}
-      USER_SERVICE_LOCAL_URI: ${USER_SERVICE_LOCAL_URI}
-      ENV: ${ENV}
-      JWT_SECRET: ${JWT_SECRET}
-    restart: always
-
 volumes:
   question-db:
 

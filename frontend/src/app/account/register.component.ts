@@ -12,7 +12,7 @@ import { PASSWORD_WEAK, STRONG_PASSWORD_REGEX, weakPasswordValidator } from './_
 import { mismatchPasswordValidator, PASSWORD_MISMATCH } from './_validators/mismatch-password.validator';
 import { invalidUsernameValidator, USERNAME_INVALID } from './_validators/invalid-username.validator';
 import { invalidPasswordValidator, PASSWORD_INVALID } from './_validators/invalid-password.validator';
-import { AuthenticationService } from '../services/authentication.service';
+import { AuthenticationService } from '../../_services/authentication.service';
 
 @Component({
     selector: 'app-register',

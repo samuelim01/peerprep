@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { environment } from '../environments/environment';
-import { User } from '../models/user.model';
+import { environment } from '../_environments/environment';
+import { User } from '../_models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {

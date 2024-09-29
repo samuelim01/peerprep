@@ -2,7 +2,12 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { Injectable } from '@angular/core';
 import { API_CONFIG } from '../app/api.config';
 import { catchError, Observable, throwError } from 'rxjs';
-import { SingleQuestionResponse, QuestionResponse, QuestionBody } from '../app/questions/question.model';
+import {
+    SingleQuestionResponse,
+    QuestionResponse,
+    QuestionBody,
+    UploadQuestionsResponse,
+} from '../app/questions/question.model';
 import { TopicResponse } from '../app/questions/topic.model';
 
 @Injectable({
@@ -67,6 +72,12 @@ export class QuestionService {
         return this.http
             .post<SingleQuestionResponse>(this.baseUrl + '/questions', question, this.httpOptions)
             .pipe(catchError(this.handleError));
+    }
+
+    uploadQuestions(file: File): Observable<UploadQuestionsResponse> {
+        const formData = new FormData();
+        formData.append('file', file);
+        return this.http.post<UploadQuestionsResponse>(this.baseUrl + '/questions/upload', formData);
     }
 
     updateQuestion(id: number, question: QuestionBody): Observable<SingleQuestionResponse> {

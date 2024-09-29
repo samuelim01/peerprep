@@ -7,7 +7,9 @@ import {
     addQuestion,
     deleteQuestion,
     updateQuestion,
+    uploadQuestions,
 } from '../controllers/questionController';
+import { upload } from '../utils/multer';
 
 /**
  * Router for question endpoints.
@@ -27,6 +29,11 @@ questionRouter.get('/:id', getQuestionById);
  * Add a new question to the database.
  */
 questionRouter.post('/', addQuestion);
+
+/**
+ * Bulk write questions to the database.
+ */
+questionRouter.post('/upload', upload.single('file'), uploadQuestions);
 
 /**
  * Update a question in the database.

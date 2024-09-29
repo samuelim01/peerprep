@@ -10,6 +10,12 @@ export interface SingleQuestionResponse {
     data: Question;
 }
 
+export interface UploadQuestionsResponse {
+    status: string;
+    message: string;
+    data: Question[];
+}
+
 export interface Question {
     id: number;
     description: string;

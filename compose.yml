@@ -61,5 +61,3 @@ volumes:
 networks:
   question-db-network:
     driver: bridge
-  user-network:
-    driver: bridge

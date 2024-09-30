@@ -52,18 +52,20 @@ export class LoginComponent {
                         this.router.navigate([returnUrl]);
                     },
                     error: error => {
-                        console.error(error);
+                        console.dir(error);
                         this.isProcessingLogin = false;
                         let errorMessage = 'An unknown error occurred';
                         if (error.status === 400) {
                             errorMessage = 'Missing Fields';
-                        } else if (error.status === 401) {
+                        }
+                        else if (error.status === 401) {
                             errorMessage = 'Invalid username or password';
-                        } else if (error.status === 500) {
+                        }
+                        else if (error.status === 500) {
                             errorMessage = 'Database Server Error';
                         }
                         this.messageService.add({ severity: 'error', summary: 'Log In Error', detail: errorMessage });
-                    },
+                    }
                 });
         } else {
             console.log('Invalid form');

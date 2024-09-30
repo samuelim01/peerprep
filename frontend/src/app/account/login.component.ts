@@ -12,28 +12,20 @@ import { AuthenticationService } from '../../_services/authentication.service';
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [
-        RouterLink,
-        FormsModule, 
-        InputTextModule, 
-        ButtonModule, 
-        SelectButtonModule, 
-        PasswordModule, 
-        ToastModule,
-    ],
+    imports: [RouterLink, FormsModule, InputTextModule, ButtonModule, SelectButtonModule, PasswordModule, ToastModule],
     providers: [MessageService, AuthenticationService],
     templateUrl: './login.component.html',
     styleUrl: './account.component.css',
 })
 export class LoginComponent {
     constructor(
-        private messageService: MessageService, 
+        private messageService: MessageService,
         private authenticationService: AuthenticationService,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
     ) {
         //redirect to home if already logged in
-        if (this.authenticationService.userValue) { 
+        if (this.authenticationService.userValue) {
             this.router.navigate(['/']);
         }
     }
@@ -50,31 +42,29 @@ export class LoginComponent {
             this.isProcessingLogin = true;
 
             // authenticationService returns an observable that we can subscribe to
-            this.authenticationService.login(this.userForm.username, this.userForm.password)
-            .pipe()
-            .subscribe({
-                next: () => {
-                    // get return url from route parameters or default to '/'
-                    const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-                    this.router.navigate([returnUrl]);
-                },
-                error: error => {
-                    console.error(error);
-                    this.isProcessingLogin = false;
-                    let errorMessage = 'An unknown error occurred';
-                    if (error.status === 400) {
-                        errorMessage = 'Missing Fields';
-                    }
-                    else if (error.status === 401) {
-                        errorMessage = 'Invalid username or password';
-                    }
-                    else if (error.status === 500) {
-                        errorMessage = 'Database Server Error';
-                    }
-                    this.messageService.add({ severity: 'error', summary: 'Log In Error', detail: errorMessage });
-                }
-            });
-
+            this.authenticationService
+                .login(this.userForm.username, this.userForm.password)
+                .pipe()
+                .subscribe({
+                    next: () => {
+                        // get return url from route parameters or default to '/'
+                        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+                        this.router.navigate([returnUrl]);
+                    },
+                    error: error => {
+                        console.error(error);
+                        this.isProcessingLogin = false;
+                        let errorMessage = 'An unknown error occurred';
+                        if (error.status === 400) {
+                            errorMessage = 'Missing Fields';
+                        } else if (error.status === 401) {
+                            errorMessage = 'Invalid username or password';
+                        } else if (error.status === 500) {
+                            errorMessage = 'Database Server Error';
+                        }
+                        this.messageService.add({ severity: 'error', summary: 'Log In Error', detail: errorMessage });
+                    },
+                });
         } else {
             console.log('Invalid form');
         }

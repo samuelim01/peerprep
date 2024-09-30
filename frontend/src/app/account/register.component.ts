@@ -37,10 +37,10 @@ export class RegisterComponent {
         private messageService: MessageService,
         private authenticationService: AuthenticationService,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
     ) {
         // redirect to home if already logged in
-        if (this.authenticationService.userValue) { 
+        if (this.authenticationService.userValue) {
             this.router.navigate(['/']);
         }
     }
@@ -93,11 +93,9 @@ export class RegisterComponent {
     onSubmit() {
         if (this.userForm.valid) {
             this.isProcessingRegistration = true;
-            
-            this.authenticationService.createAccount(
-                this.userForm.value.username, 
-                this.userForm.value.email, 
-                this.userForm.value.password)
+
+            this.authenticationService
+                .createAccount(this.userForm.value.username, this.userForm.value.email, this.userForm.value.password)
                 .pipe()
                 .subscribe({
                     next: () => {
@@ -112,17 +110,14 @@ export class RegisterComponent {
                         let errorMessage = 'An unknown error occurred';
                         if (error.status === 400) {
                             errorMessage = 'Missing Fields';
-                        }
-                        else if (error.status === 401) {
+                        } else if (error.status === 401) {
                             errorMessage = 'There is already an account with that username or email';
-                        }
-                        else if (error.status === 500) {
+                        } else if (error.status === 500) {
                             errorMessage = 'Database Server Error';
                         }
                         this.messageService.add({ severity: 'error', summary: 'Log In Error', detail: errorMessage });
-                    }
-                })
-
+                    },
+                });
         } else {
             console.log('Invalid form');
         }

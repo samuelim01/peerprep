@@ -3,9 +3,10 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { environment } from '../_environments/environment';
 import { User } from '../_models/user.model';
+import { UServRes } from '../_models/user.service.response.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
@@ -14,7 +15,7 @@ export class AuthenticationService {
 
     constructor(
         private router: Router,
-        private http: HttpClient
+        private http: HttpClient,
     ) {
         this.userSubject = new BehaviorSubject(JSON.parse(localStorage.getItem('user')!));
         this.user$ = this.userSubject.asObservable();
@@ -25,28 +26,34 @@ export class AuthenticationService {
     }
 
     login(username: string, password: string) {
-        return this.http.post<any>(`${environment.UserServiceApiUrl}/auth/login`, 
-            { "username": username, "password": password })
-            .pipe(map(response => {
-                // store user details and jwt token in local storage to keep user logged in between page refreshes
-                const data = response.data;
-                const user: User = {
-                    id: data.id,
-                    username: data.username,
-                    email: data.email,
-                    accessToken: data.accessToken,
-                    isAdmin: data.isAdmin,
-                    createdAt: data.createdAt
-                }
-                localStorage.setItem('user', JSON.stringify(user));
-                this.userSubject.next(user);
-                return user;
-            }));
+        return this.http
+            .post<UServRes>(`${environment.UserServiceApiUrl}/auth/login`, { username: username, password: password })
+            .pipe(
+                map(response => {
+                    // store user details and jwt token in local storage to keep user logged in between page refreshes
+                    const data = response.data;
+                    const user: User = {
+                        id: data.id,
+                        username: data.username,
+                        email: data.email,
+                        accessToken: data.accessToken,
+                        isAdmin: data.isAdmin,
+                        createdAt: data.createdAt,
+                    };
+                    localStorage.setItem('user', JSON.stringify(user));
+                    this.userSubject.next(user);
+                    return user;
+                }),
+            );
     }
 
     createAccount(username: string, email: string, password: string) {
-        return this.http.post<any>(`${environment.UserServiceApiUrl}/users`,
-            { "username": username, "email": email, "password": password })
+        return this.http
+            .post<UServRes>(`${environment.UserServiceApiUrl}/users`, {
+                username: username,
+                email: email,
+                password: password,
+            })
             .pipe(switchMap(() => this.login(username, password))); // auto login after registration
     }
 

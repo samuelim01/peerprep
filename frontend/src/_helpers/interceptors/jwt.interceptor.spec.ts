@@ -9,11 +9,10 @@ describe('JwtInterceptor', () => {
     let httpMock: HttpTestingController;
     let httpClient: HttpClient;
     let mockAuthService: jasmine.SpyObj<AuthenticationService>;
-    let mockAuthServiceNoUser: jasmine.SpyObj<AuthenticationService>;
 
     beforeEach(() => {
         mockAuthService = jasmine.createSpyObj('AuthenticationService', ['userValue'], {
-            userValue: { accessToken: 'fake-jwt-token' }
+            userValue: { accessToken: 'fake-jwt-token' },
         });
 
         TestBed.configureTestingModule({
@@ -21,8 +20,8 @@ describe('JwtInterceptor', () => {
             providers: [
                 { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
                 { provide: AuthenticationService, useValue: mockAuthService },
-                provideHttpClientTesting()
-            ]
+                provideHttpClientTesting(),
+            ],
         });
 
         httpMock = TestBed.inject(HttpTestingController);
@@ -44,8 +43,8 @@ describe('JwtInterceptor', () => {
     });
 
     it('should not add an Authorization header if the user is not logged in', () => {
-        mockAuthServiceNoUser = jasmine.createSpyObj('AuthenticationService', ['userValue'], {
-            userValue: { }
+        mockAuthService = jasmine.createSpyObj('AuthenticationService', ['userValue'], {
+            userValue: {},
         });
 
         httpClient.get(`${environment.UserServiceApiUrl}/test`).subscribe();

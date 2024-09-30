@@ -9,15 +9,15 @@ import { User } from '../_models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-    private userSubject: BehaviorSubject<User | null>;
-    public user: Observable<User | null>;
+    private userSubject: BehaviorSubject<User | null | undefined>;
+    public user$: Observable<User | null | undefined>;
 
     constructor(
         private router: Router,
         private http: HttpClient
     ) {
         this.userSubject = new BehaviorSubject(JSON.parse(localStorage.getItem('user')!));
-        this.user = this.userSubject.asObservable();
+        this.user$ = this.userSubject.asObservable();
     }
 
     public get userValue() {
@@ -29,7 +29,15 @@ export class AuthenticationService {
             { "username": username, "password": password })
             .pipe(map(response => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
-                const user = response.data;
+                const data = response.data;
+                const user: User = {
+                    id: data.id,
+                    username: data.username,
+                    email: data.email,
+                    accessToken: data.accessToken,
+                    isAdmin: data.isAdmin,
+                    createdAt: data.createdAt
+                }
                 localStorage.setItem('user', JSON.stringify(user));
                 this.userSubject.next(user);
                 return user;

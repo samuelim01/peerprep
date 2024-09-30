@@ -32,10 +32,10 @@ export class LoginComponent {
         private router: Router,
         private route: ActivatedRoute
     ) {
-        // redirect to home if already logged in
-        // if (this.authenticationService.userValue) { 
-        //     this.router.navigate(['/']);
-        // }
+        //redirect to home if already logged in
+        if (this.authenticationService.userValue) { 
+            this.router.navigate(['/']);
+        }
     }
 
     userForm = {

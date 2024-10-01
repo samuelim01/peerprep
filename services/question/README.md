@@ -422,3 +422,41 @@ curl -X DELETE http://localhost:8081/questions/21
 ```
 
 ---
+
+## Delete Questions
+
+This endpoint allows the deletion of multiple questions by the question ID.
+
+- **HTTP Method**: `DELETE`
+- **Endpoint**: `/questions`
+
+### Parameters:
+
+- `ids` (Required) - The IDs of the questions to delete.
+
+### Responses:
+
+| Response Code               | Explanation                                    |
+|-----------------------------|------------------------------------------------|
+| 200 (OK)                    | Success, the question is deleted successfully. |
+| 400 (Bad Request)           | The `id` was not specified                     |
+| 404 (Not Found)             | A question with the specified id not found.    |
+| 500 (Internal Server Error) | Unexpected error in the database or server.    |
+
+### Command Line Example:
+
+```
+curl -X DELETE http://localhost:8081/questions -H "Content-Type: application/json" -d '{"ids": [21]}'
+```
+
+### Example of Response Body for Success:
+
+```json
+{
+  "status": "Success",
+  "message": "Questions deleted successfully",
+  "data": null
+}
+```
+
+---

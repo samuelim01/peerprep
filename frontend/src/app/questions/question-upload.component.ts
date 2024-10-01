@@ -66,8 +66,8 @@ export class QuestionUploadComponent {
                 next: (response: UploadQuestionsResponse) => {
                     this.messageService.add({
                         severity: 'success',
-                        summary: 'Questions added!',
-                        detail: '',
+                        summary: 'Success',
+                        detail: 'Questions added!',
                         life: 3000,
                     });
                     this.questionsUpsert.emit(response.data);
@@ -76,8 +76,8 @@ export class QuestionUploadComponent {
                 error: (error: HttpErrorResponse) => {
                     this.messageService.add({
                         severity: 'error',
-                        summary: `${error.error.message}`,
-                        detail: '',
+                        summary: 'Error',
+                        detail: `${error.error.message}`,
                         life: 3000,
                     });
                     const data = error.error?.data || [];

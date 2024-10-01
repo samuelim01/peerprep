@@ -297,7 +297,7 @@ export const uploadQuestions = async (req: Request, res: Response) => {
 
         try {
             const data = await Question.find({ id: { $in: questions.map(q => q.id) } });
-            handleConflict(res, 'Failed to add some questions', data);
+            handleConflict(res, 'Failed to add some questions!', data);
         } catch {
             handleError(res, 'Failed to add questions');
         }

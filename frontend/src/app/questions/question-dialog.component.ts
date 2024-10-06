@@ -45,7 +45,7 @@ export class QuestionDialogComponent implements OnInit {
 
     headerMessage = '';
 
-    topics!: Topic[];
+    topics?: Topic[];
 
     difficulties!: Difficulty[];
 
@@ -207,7 +207,7 @@ export class QuestionDialogComponent implements OnInit {
 
     onFilterTopics(event: { filter: string }) {
         this.topicSearchValue = event.filter;
-        this.hasNoResultsFound = !this.topics.some(topic =>
+        this.hasNoResultsFound = !this.topics?.some(topic =>
             topic.label.toLowerCase().includes(this.topicSearchValue.toLowerCase()),
         );
     }
@@ -219,13 +219,13 @@ export class QuestionDialogComponent implements OnInit {
             value: newTopic,
         };
 
-        const topicExists = this.topics.map(t => t.label).some(l => l.toLowerCase() === newTopic.toLowerCase());
+        const topicExists = this.topics?.map(t => t.label).some(l => l.toLowerCase() === newTopic.toLowerCase());
 
         if (topicExists) {
             return;
         }
 
-        this.topics.push(newValue);
+        this.topics = (this.topics ?? []).concat(newValue);
 
         // Immediately add the new topic, and clear the search filter
         this.topicControl.setValue(this.topicControl.value?.concat([newTopic]) ?? [newTopic]);

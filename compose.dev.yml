@@ -19,3 +19,9 @@ services:
     volumes:
       - /app/node_modules
       - ./services/user:/app
+
+  collaboration:
+    command: npm run dev
+    volumes:
+      - /app/node_modules
+      - ./services/collaboration:/app

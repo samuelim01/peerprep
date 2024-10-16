@@ -26,6 +26,7 @@ export class AuthenticationService {
     }
 
     login(username: string, password: string) {
+        console.log('login', `${environment.UserServiceApiUrl}/auth/login`);
         return this.http
             .post<UServRes>(`${environment.UserServiceApiUrl}/auth/login`,
                 { username: username, password: password },

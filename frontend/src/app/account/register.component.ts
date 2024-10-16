@@ -110,11 +110,9 @@ export class RegisterComponent {
                         let errorMessage = 'An unknown error occurred';
                         if (status === 400) {
                             errorMessage = 'Missing Fields';
-                        }
-                        else if (status === 409) {
+                        } else if (status === 409) {
                             errorMessage = 'Username or Password already exists';
-                        }   
-                        else if (status === 500) {
+                        } else if (status === 500) {
                             errorMessage = 'Database Server Error';
                         }
                         this.messageService.add({ severity: 'error', summary: 'Log In Error', detail: errorMessage });

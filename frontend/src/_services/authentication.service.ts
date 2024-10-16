@@ -1,9 +1,9 @@
 // Modified from https://jasonwatmore.com/post/2022/11/15/angular-14-jwt-authentication-example-tutorial#login-component-ts
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { environment } from '../_environments/environment';
 import { User } from '../_models/user.model';
 import { UServRes } from '../_models/user.service.response.interface';
@@ -28,14 +28,12 @@ export class AuthenticationService {
     login(username: string, password: string) {
         console.log('login', `${environment.UserServiceApiUrl}/auth/login`);
         return this.http
-            .post<UServRes>(`${environment.UserServiceApiUrl}/auth/login`,
+            .post<UServRes>(
+                `${environment.UserServiceApiUrl}/auth/login`,
                 { username: username, password: password },
-                { observe: 'response' })
+                { observe: 'response' },
+            )
             .pipe(
-                tap(response => {
-                    console.log(response.status);
-                    console.dir(response.body);
-                }),
                 map(response => {
                     // store user details and jwt token in local storage to keep user logged in between page refreshes
                     let user: User = {};
@@ -60,9 +58,11 @@ export class AuthenticationService {
 
     createAccount(username: string, email: string, password: string) {
         return this.http
-            .post<UServRes>(`${environment.UserServiceApiUrl}/users`, 
-                { username: username, email: email, password: password},
-                { observe: 'response' })
+            .post<UServRes>(
+                `${environment.UserServiceApiUrl}/users`,
+                { username: username, email: email, password: password },
+                { observe: 'response' },
+            )
             .pipe(switchMap(() => this.login(username, password))); // auto login after registration
     }
 

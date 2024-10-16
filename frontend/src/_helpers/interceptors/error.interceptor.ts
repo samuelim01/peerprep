@@ -15,7 +15,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                 console.error(err);
 
                 const errorMessage = err.error.message;
-                return throwError(() => new Error(errorMessage, {cause: err}));
+                return throwError(() => new Error(errorMessage, { cause: err }));
             }),
         );
     }

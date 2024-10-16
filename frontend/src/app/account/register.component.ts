@@ -105,15 +105,17 @@ export class RegisterComponent {
                     },
                     // error handling for registration because we assume there will be no errors with auto login
                     error: error => {
-                        console.log('A registration error occured');
-                        console.log(error, error.error);
                         this.isProcessingRegistration = false;
+                        const status = error.cause.status;
                         let errorMessage = 'An unknown error occurred';
-                        // Check if error has a message property
-                        if (error && error.error && error.error.message) {
-                            errorMessage = error.error.message;
-                        } else if (error && error.message) {
-                            errorMessage = error.message;
+                        if (status === 400) {
+                            errorMessage = 'Missing Fields';
+                        }
+                        else if (status === 409) {
+                            errorMessage = 'Username or Password already exists';
+                        }   
+                        else if (status === 500) {
+                            errorMessage = 'Database Server Error';
                         }
                         this.messageService.add({ severity: 'error', summary: 'Log In Error', detail: errorMessage });
                     },

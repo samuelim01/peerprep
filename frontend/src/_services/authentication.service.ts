@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { environment } from '../_environments/environment';
 import { UServRes } from '../_models/user.service.model';
 import { User } from '../_models/user.model';
+import { API_CONFIG } from '../app/api.config';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
@@ -27,10 +27,10 @@ export class AuthenticationService {
     }
 
     login(username: string, password: string) {
-        console.log('login', `${environment.UserServiceApiUrl}/auth/login`);
+        console.log('login', `${API_CONFIG.baseUrl}/auth/login`);
         return this.http
             .post<UServRes>(
-                `${environment.UserServiceApiUrl}/auth/login`,
+                `${API_CONFIG.baseUrl}/auth/login`,
                 { username: username, password: password },
                 { observe: 'response' },
             )
@@ -52,7 +52,7 @@ export class AuthenticationService {
     createAccount(username: string, email: string, password: string) {
         return this.http
             .post<UServRes>(
-                `${environment.UserServiceApiUrl}/users`,
+                `${API_CONFIG.baseUrl}/users`,
                 { username: username, email: email, password: password },
                 { observe: 'response' },
             )

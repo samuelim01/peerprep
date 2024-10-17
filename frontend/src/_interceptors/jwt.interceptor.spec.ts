@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { JwtInterceptor } from './jwt.interceptor';
 import { AuthenticationService } from '../_services/authentication.service';
-import { environment } from '../_environments/environment';
+import { API_CONFIG } from '../app/api.config';
 
 describe('JwtInterceptor', () => {
     let httpMock: HttpTestingController;
@@ -34,9 +34,9 @@ describe('JwtInterceptor', () => {
     });
 
     it('should add an Authorization header', () => {
-        httpClient.get(`${environment.UserServiceApiUrl}/test`).subscribe();
+        httpClient.get(`${API_CONFIG.baseUrl}/test`).subscribe();
 
-        const httpRequest = httpMock.expectOne(`${environment.UserServiceApiUrl}/test`);
+        const httpRequest = httpMock.expectOne(`${API_CONFIG.baseUrl}/test`);
 
         expect(httpRequest.request.headers.has('Authorization')).toBeTruthy();
         expect(httpRequest.request.headers.get('Authorization')).toBe('Bearer fake-jwt-token');
@@ -47,9 +47,9 @@ describe('JwtInterceptor', () => {
             userValue: {},
         });
 
-        httpClient.get(`${environment.UserServiceApiUrl}/test`).subscribe();
+        httpClient.get(`${API_CONFIG.baseUrl}/test`).subscribe();
 
-        const httpRequest = httpMock.expectOne(`${environment.UserServiceApiUrl}/test`);
+        const httpRequest = httpMock.expectOne(`${API_CONFIG.baseUrl}/test`);
 
         expect(httpRequest.request.headers.has('Authorization')).toBeFalsy();
     });

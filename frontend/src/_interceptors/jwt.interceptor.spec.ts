@@ -34,9 +34,9 @@ describe('JwtInterceptor', () => {
     });
 
     it('should add an Authorization header', () => {
-        httpClient.get(`${API_CONFIG.baseUrl}test`).subscribe();
+        httpClient.get(`${API_CONFIG.baseUrl}/user/test`).subscribe();
 
-        const httpRequest = httpMock.expectOne(`${API_CONFIG.baseUrl}test`);
+        const httpRequest = httpMock.expectOne(`${API_CONFIG.baseUrl}/user/test`);
 
         expect(httpRequest.request.headers.has('Authorization')).toBeTruthy();
         expect(httpRequest.request.headers.get('Authorization')).toBe('Bearer fake-jwt-token');
@@ -47,9 +47,9 @@ describe('JwtInterceptor', () => {
             userValue: {},
         });
 
-        httpClient.get(`${API_CONFIG.baseUrl}test`).subscribe();
+        httpClient.get(`${API_CONFIG.baseUrl}/user/test`).subscribe();
 
-        const httpRequest = httpMock.expectOne(`${API_CONFIG.baseUrl}test`);
+        const httpRequest = httpMock.expectOne(`${API_CONFIG.baseUrl}/user/test`);
 
         expect(httpRequest.request.headers.has('Authorization')).toBeFalsy();
     });

@@ -6,10 +6,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { UServRes } from '../_models/user.service.model';
 import { User } from '../_models/user.model';
-import { API_CONFIG } from '../app/api.config';
+import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
-export class AuthenticationService {
+export class AuthenticationService extends ApiService {
+    protected apiPath = 'user';
+
     private userSubject: BehaviorSubject<User | null>;
     public user$: Observable<User | null>;
 
@@ -17,6 +19,7 @@ export class AuthenticationService {
         private router: Router,
         private http: HttpClient,
     ) {
+        super();
         const userData = localStorage.getItem('user');
         this.userSubject = new BehaviorSubject(userData ? JSON.parse(userData) : null);
         this.user$ = this.userSubject.asObservable();
@@ -27,10 +30,10 @@ export class AuthenticationService {
     }
 
     login(username: string, password: string) {
-        console.log('login', `${API_CONFIG.baseUrl}auth/login`);
+        console.log('login', `${this.apiUrl}/auth/login`);
         return this.http
             .post<UServRes>(
-                `${API_CONFIG.baseUrl}auth/login`,
+                `${this.apiUrl}/auth/login`,
                 { username: username, password: password },
                 { observe: 'response' },
             )
@@ -52,7 +55,7 @@ export class AuthenticationService {
     createAccount(username: string, email: string, password: string) {
         return this.http
             .post<UServRes>(
-                `${API_CONFIG.baseUrl}users`,
+                `${this.apiUrl}/users`,
                 { username: username, email: email, password: password },
                 { observe: 'response' },
             )

@@ -60,7 +60,7 @@ export class LoginComponent {
                         } else if (status === 401) {
                             errorMessage = 'Invalid username or password';
                         } else if (status === 500) {
-                            errorMessage = 'Database Server Error';
+                            errorMessage = 'Internal Server Error';
                         }
                         this.messageService.add({ severity: 'error', summary: 'Log In Error', detail: errorMessage });
                     },

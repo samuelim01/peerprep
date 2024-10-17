@@ -4,7 +4,7 @@ import { AuthenticationService } from './authentication.service';
 import { filter, map, Observable, of, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../_environments/environment';
-import { UServRes } from '../_models/user.service.response.interface';
+import { UServRes } from '../_models/user.service.model';
 
 @Injectable()
 export class AuthGuardService implements CanActivate {

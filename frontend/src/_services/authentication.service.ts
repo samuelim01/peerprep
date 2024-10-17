@@ -27,10 +27,10 @@ export class AuthenticationService {
     }
 
     login(username: string, password: string) {
-        console.log('login', `${API_CONFIG.baseUrl}/auth/login`);
+        console.log('login', `${API_CONFIG.baseUrl}auth/login`);
         return this.http
             .post<UServRes>(
-                `${API_CONFIG.baseUrl}/auth/login`,
+                `${API_CONFIG.baseUrl}auth/login`,
                 { username: username, password: password },
                 { observe: 'response' },
             )
@@ -52,7 +52,7 @@ export class AuthenticationService {
     createAccount(username: string, email: string, password: string) {
         return this.http
             .post<UServRes>(
-                `${API_CONFIG.baseUrl}/users`,
+                `${API_CONFIG.baseUrl}users`,
                 { username: username, email: email, password: password },
                 { observe: 'response' },
             )

@@ -25,7 +25,7 @@ export class AuthGuardService implements CanActivate {
                     return of(false); // of() to return an observable to be flattened
                 }
                 // call to user service endpoint '/users/{user_id}' to check user is still valid
-                return this.http.get<UServRes>(`${API_CONFIG.baseUrl}/users/${user.id}`, { observe: 'response' }).pipe(
+                return this.http.get<UServRes>(`${API_CONFIG.baseUrl}users/${user.id}`, { observe: 'response' }).pipe(
                     map(response => {
                         if (response.status === 200) {
                             return true;

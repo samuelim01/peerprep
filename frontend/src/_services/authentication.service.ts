@@ -21,7 +21,8 @@ export class AuthenticationService extends ApiService {
     ) {
         super();
         const userData = localStorage.getItem('user');
-        this.userSubject = new BehaviorSubject(userData ? JSON.parse(userData) : null);
+        const user: User | null = userData ? JSON.parse(userData) : null;
+        this.userSubject = new BehaviorSubject(user);
         this.user$ = this.userSubject.asObservable();
     }
 
@@ -29,8 +30,11 @@ export class AuthenticationService extends ApiService {
         return this.userSubject.value;
     }
 
+    public get isLoggedIn(): boolean {
+        return !!this.userSubject.value;
+    }
+
     login(username: string, password: string) {
-        console.log('login', `${this.apiUrl}/auth/login`);
         return this.http
             .post<UServRes>(
                 `${this.apiUrl}/auth/login`,

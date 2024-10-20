@@ -79,6 +79,22 @@ services:
     command: --quiet
     restart: always
 
+  collaboration:
+    container_name: collaboration
+    image: collaboration
+    build:
+      context: services/collaboration
+      dockerfile: Dockerfile
+    ports:
+      - 8084:8084
+    environment:
+      MONGO_URI: ${MONGO_URI}
+      MONGODB_URI: ${MONGODB_URI}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+    networks:
+      - collaboration-db-network
+    restart: always
+
 volumes:
   question-db:
   user-db:
@@ -89,4 +105,6 @@ networks:
   question-db-network:
     driver: bridge
   user-db-network:
+    driver: bridge
+  collaboration-db-network:
     driver: bridge

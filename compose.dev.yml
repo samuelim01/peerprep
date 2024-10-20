@@ -27,3 +27,9 @@ services:
   user-db:
     ports:
       - 27018:27017
+
+  collaboration:
+    command: npm run dev
+    volumes:
+      - /app/node_modules
+      - ./services/collaboration:/app

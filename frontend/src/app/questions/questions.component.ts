@@ -40,7 +40,7 @@ import { QuestionUploadComponent } from './question-upload.component';
         QuestionDialogComponent,
         QuestionUploadComponent,
     ],
-    providers: [QuestionService, ConfirmationService, MessageService],
+    providers: [ConfirmationService, MessageService],
     templateUrl: './questions.component.html',
     styleUrl: './questions.component.css',
 })

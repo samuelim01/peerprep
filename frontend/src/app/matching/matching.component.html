@@ -49,8 +49,8 @@
 
             <p-button
                 type="submit"
-                [label]="isProcessingMatch ? '' : 'Start Matching'"
-                [loading]="isProcessingMatch"
+                [label]="isProcessingMatch || isInitiatingMatch ? '' : 'Start Matching'"
+                [loading]="isProcessingMatch || isInitiatingMatch"
                 [disabled]="!matchForm.valid"
                 (click)="onMatch()"
                 styleClass="w-full justify-content-center" />
@@ -59,11 +59,15 @@
 
     <app-finding-match
         [userCriteria]="{ topics: topics, difficulty: difficulty }"
+        [matchId]="matchId"
         [isVisible]="isProcessingMatch"
         (matchFailed)="onMatchFailed()"
         (dialogClose)="onMatchDialogClose()" />
     <app-retry-matching
+        [matchId]="matchId"
         [isVisible]="isMatchFailed"
         (retryMatch)="onRetryMatchRequest()"
         (dialogClose)="onRetryMatchDialogClose()" />
+
+    <p-toast position="bottom-right" [breakpoints]="{ '920px': { width: '90%' } }" />
 </div>

@@ -14,6 +14,9 @@ import { QuestionService } from '../../_services/question.service';
 import { MessageService } from 'primeng/api';
 import { HAS_NO_QUESTIONS, hasQuestionsValidator } from './_validators/has-questions.validator';
 import { Difficulty } from './user-criteria.model';
+import { ToastModule } from 'primeng/toast';
+import { MatchService } from '../../_services/match.service';
+import { MatchRequest } from './match.model';
 
 @Component({
     selector: 'app-matching',
@@ -22,6 +25,7 @@ import { Difficulty } from './user-criteria.model';
         FindingMatchComponent,
         RetryMatchingComponent,
         ChipModule,
+        ToastModule,
         MultiSelectModule,
         PanelModule,
         DropdownModule,
@@ -41,12 +45,15 @@ export class MatchingComponent implements OnInit {
     availableDifficulties = ['Easy', 'Medium', 'Hard'];
 
     isLoadingTopics = true;
+    isInitiatingMatch = false;
     isProcessingMatch = false;
     isMatchFailed = false;
+    matchId!: string;
 
     constructor(
         private messageService: MessageService,
         private questionService: QuestionService,
+        private matchService: MatchService,
     ) {}
 
     matchForm!: FormGroup;
@@ -55,7 +62,7 @@ export class MatchingComponent implements OnInit {
         this.fetchTopics();
         this.matchForm = new FormGroup(
             {
-                topics: new FormControl([], [Validators.minLength(1)]),
+                topics: new FormControl([], [Validators.required, Validators.minLength(1)]),
                 difficulty: new FormControl<Difficulty | null>(null, [Validators.required]),
             },
             {
@@ -104,12 +111,21 @@ export class MatchingComponent implements OnInit {
     }
 
     onMatch() {
-        console.log({
-            topic: this.topics,
-            difficulty: this.difficulty,
+        this.isInitiatingMatch = true;
+        const matchRequest: MatchRequest = { topics: this.topics, difficulty: this.difficulty };
+        console.log(matchRequest);
+        this.matchService.createMatchRequest(matchRequest).subscribe({
+            next: response => {
+                this.matchId = response.data._id;
+            },
+            error: () => {
+                this.onErrorReceive('Failed to create a match. Please try again later.');
+            },
+            complete: () => {
+                this.isInitiatingMatch = false;
+                this.isProcessingMatch = true;
+            },
         });
-        this.isProcessingMatch = true;
-        // TODO: Add API request to start matching.
     }
 
     onMatchFailed() {
@@ -120,7 +136,6 @@ export class MatchingComponent implements OnInit {
     onRetryMatchRequest() {
         this.isMatchFailed = false;
         this.isProcessingMatch = true;
-        // TODO: Add API request to retry matching.
     }
 
     onMatchDialogClose() {

@@ -1,4 +1,9 @@
-<p-dialog header="Upload questions" [(visible)]="isVisible" [style]="{ width: '40rem' }" draggable="false">
+<p-dialog
+    header="Upload questions"
+    [(visible)]="isVisible"
+    [modal]="true"
+    [style]="{ width: '40rem' }"
+    draggable="false">
     <p-fileUpload
         #fileUpload
         name="file[]"

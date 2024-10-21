@@ -80,7 +80,7 @@ export class QuestionService extends ApiService {
     uploadQuestions(file: File): Observable<UploadQuestionsResponse> {
         const formData = new FormData();
         formData.append('file', file);
-        return this.http.post<UploadQuestionsResponse>(this.baseUrl + '/questions/upload', formData);
+        return this.http.post<UploadQuestionsResponse>(this.apiUrl + '/upload', formData);
     }
 
     updateQuestion(id: number, question: QuestionBody): Observable<SingleQuestionResponse> {

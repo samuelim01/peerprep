@@ -8,7 +8,7 @@ services:
     ports:
       - 4200:4200
     restart: always
-  
+
   gateway:
     container_name: gateway
     image: nginx:1.27
@@ -22,13 +22,15 @@ services:
       - match
     networks:
       - gateway-network
-  
+
   question:
     container_name: question
     image: question
     build:
       context: services/question
       dockerfile: Dockerfile
+    ports:
+      - 8081:8081
     environment:
       QUESTION_DB_CLOUD_URI: ${QUESTION_DB_CLOUD_URI}
       QUESTION_DB_LOCAL_URI: ${QUESTION_DB_LOCAL_URI}
@@ -37,6 +39,8 @@ services:
     networks:
       - gateway-network
       - question-db-network
+      - match-db-network
+      - collaboration-network
     restart: always
 
   question-db:
@@ -69,7 +73,7 @@ services:
       - gateway-network
       - user-db-network
     restart: always
-  
+
   user-db:
     container_name: user-db
     image: mongo:7.0.14
@@ -82,7 +86,7 @@ services:
       - user-db-network
     command: --quiet
     restart: always
-  
+
   match:
     container_name: match
     image: match
@@ -113,19 +117,24 @@ services:
     networks:
       - match-db-network
     restart: always
-  
+
   match-broker:
     container_name: match-broker
     hostname: match-broker
-    image: rabbitmq:4.0.2
+    image: rabbitmq:management-alpine
     networks:
       - match-db-network
+    ports:
+      - "15672:15672"
     healthcheck:
       test: rabbitmq-diagnostics check_port_connectivity
       interval: 30s
       timeout: 30s
       retries: 10
       start_period: 30s
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
 
   collaboration:
     container_name: collaboration
@@ -138,9 +147,18 @@ services:
     environment:
       COLLAB_CLOUD_MONGO_URI: ${COLLAB_CLOUD_MONGO_URI}
       COLLAB_LOCAL_MONGO_URI: ${COLLAB_LOCAL_MONGO_URI}
+      YJS_CLOUD_MONGO_URI: ${YJS_CLOUD_MONGO_URI}
+      YJS_LOCAL_MONGO_URI: ${YJS_LOCAL_MONGO_URI}
       CORS_ORIGIN: ${CORS_ORIGIN}
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      QUESTION_SERVICE_URL: ${QUESTION_SERVICE_URL}
+    depends_on:
+      match-broker:
+        condition: service_healthy
     networks:
       - collaboration-db-network
+      - match-db-network
+      - collaboration-network
     restart: always
 
 volumes:
@@ -156,5 +174,8 @@ networks:
   user-db-network:
     driver: bridge
   collaboration-db-network:
+    driver: bridge
   match-db-network:
+    driver: bridge
+  collaboration-network:
     driver: bridge

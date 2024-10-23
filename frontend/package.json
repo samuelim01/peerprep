@@ -31,7 +31,8 @@
     "zone.js": "~0.14.10",
     "y-websocket": "^2.0.4",
     "yjs": "^13.6.19",
-    "y-codemirror.next": "^0.3.5"
+    "y-codemirror.next": "^0.3.5",
+    "typeface-poppins": "^1.1.13"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.2",

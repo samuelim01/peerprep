@@ -122,6 +122,8 @@ services:
     container_name: match-broker
     hostname: match-broker
     image: rabbitmq:management-alpine
+    # image: rabbitmq:4.0.2
+    # user: rabbitmq
     networks:
       - match-db-network
     ports:

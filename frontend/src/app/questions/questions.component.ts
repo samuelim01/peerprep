@@ -18,7 +18,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { QuestionDialogComponent } from './question-dialog.component';
 import { Column } from './column.model';
 import { AuthenticationService } from '../../_services/authentication.service';
-import { UServRes } from '../../_models/user.service.response.interface';
 import { User } from '../../_models/user.model';
 
 @Component({

@@ -24,7 +24,7 @@
                     [disabled]="!selectedQuestions || !selectedQuestions.length" />
             </div>
         </p-toolbar>
-        <div class="table-container" style="max-width: 1000px; margin: 0 auto;">
+        <div class="table-container" style="max-width: 1000px; margin: 0 auto">
             <p-table
                 sortField="id"
                 [sortOrder]="1"
@@ -32,7 +32,7 @@
                 [value]="questions"
                 [(selection)]="selectedQuestions"
                 datakey="id"
-                [tableStyle]="{ 'table-layout': 'fixed', 'width': '100%', 'text-align': 'center' }"
+                [tableStyle]="{ 'table-layout': 'fixed', width: '100%', 'text-align': 'center' }"
                 [paginator]="true"
                 [rows]="10"
                 [rowsPerPageOptions]="[10, 25, 50]"

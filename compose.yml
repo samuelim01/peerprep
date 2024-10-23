@@ -164,10 +164,20 @@ services:
       - collaboration-network
     restart: always
 
+  collaboration-db:
+    container_name: collaboration-db
+    image: mongo:7.0.14
+    volumes:
+      - collaboration-db:/data/db
+    networks:
+      - collaboration-db-network
+    restart: always
+
 volumes:
   question-db:
   user-db:
   match-db:
+  collaboration-db:
 
 networks:
   gateway-network:

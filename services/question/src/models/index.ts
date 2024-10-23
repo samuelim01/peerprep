@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { IQuestion, Question } from './questionModel';
 
 export async function connectToDB() {
-    const mongoURI = process.env.QUESTION_DB_CLOUD_URI || "mongodb://localhost:27017/question-";
+    const mongoURI = process.env.QUESTION_DB_CLOUD_URI || "mongodb://question-db:27017/question";
 
     console.log('MongoDB URI:', mongoURI);
     console.log(process.env.DB_USERNAME, process.env.DB_PASSWORD);

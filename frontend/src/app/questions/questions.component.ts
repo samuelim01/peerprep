@@ -40,7 +40,7 @@ import { User } from '../../_models/user.model';
         ProgressSpinnerModule,
         QuestionDialogComponent,
     ],
-    providers: [QuestionService, ConfirmationService, MessageService],
+    providers: [ConfirmationService, MessageService],
     templateUrl: './questions.component.html',
     styleUrl: './questions.component.css',
 })

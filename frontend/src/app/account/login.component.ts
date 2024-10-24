@@ -13,7 +13,7 @@ import { AuthenticationService } from '../../_services/authentication.service';
     selector: 'app-login',
     standalone: true,
     imports: [RouterLink, FormsModule, InputTextModule, ButtonModule, SelectButtonModule, PasswordModule, ToastModule],
-    providers: [MessageService, AuthenticationService],
+    providers: [MessageService],
     templateUrl: './login.component.html',
     styleUrl: './account.component.css',
 })
@@ -26,7 +26,7 @@ export class LoginComponent {
     ) {
         //redirect to home if already logged in
         if (this.authenticationService.userValue) {
-            this.router.navigate(['/']);
+            this.router.navigate(['/matching']);
         }
     }
 
@@ -42,29 +42,24 @@ export class LoginComponent {
             this.isProcessingLogin = true;
 
             // authenticationService returns an observable that we can subscribe to
-            this.authenticationService
-                .login(this.userForm.username, this.userForm.password)
-                .pipe()
-                .subscribe({
-                    next: () => {
-                        // get return url from route parameters or default to '/'
-                        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-                        this.router.navigate([returnUrl]);
-                    },
-                    error: error => {
-                        this.isProcessingLogin = false;
-                        const status = error.cause.status;
-                        let errorMessage = 'An unknown error occurred';
-                        if (status === 400) {
-                            errorMessage = 'Missing Fields';
-                        } else if (status === 401) {
-                            errorMessage = 'Invalid username or password';
-                        } else if (status === 500) {
-                            errorMessage = 'Database Server Error';
-                        }
-                        this.messageService.add({ severity: 'error', summary: 'Log In Error', detail: errorMessage });
-                    },
-                });
+            this.authenticationService.login(this.userForm.username, this.userForm.password).subscribe({
+                next: () => {
+                    this.router.navigate(['/matching']);
+                },
+                error: error => {
+                    this.isProcessingLogin = false;
+                    const status = error.cause.status;
+                    let errorMessage = 'An unknown error occurred';
+                    if (status === 400) {
+                        errorMessage = 'Missing Fields';
+                    } else if (status === 401) {
+                        errorMessage = 'Invalid username or password';
+                    } else if (status === 500) {
+                        errorMessage = 'Internal Server Error';
+                    }
+                    this.messageService.add({ severity: 'error', summary: 'Log In Error', detail: errorMessage });
+                },
+            });
         } else {
             console.log('Invalid form');
         }

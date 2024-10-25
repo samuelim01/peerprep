@@ -21,6 +21,8 @@ docker compose up -d
 docker compose down -v
 ```
 
+---
+
 ## Get Questions
 
 This endpoint allows the retrieval of all the questions in the database. If filter by (optional) parameters, questions
@@ -418,6 +420,45 @@ curl -X DELETE http://localhost:8081/questions/21
     "topics": ["Updated Topic"],
     "difficulty": "Hard"
   }
+}
+```
+
+---
+
+## Delete Questions
+
+This endpoint allows the deletion of multiple questions by their question IDs.
+
+- **HTTP Method**: `POST`
+- **Endpoint**: `/questions/delete`
+
+### Parameters:
+
+- `ids` (Required) - An array of integers representing the IDs of the questions to delete, e.g. `[1, 2, 3]`.
+
+### Responses:
+
+| Response Code               | Explanation                                          |
+|-----------------------------|------------------------------------------------------|
+| 200 (OK)                    | Success, the question is deleted successfully.       |
+| 400 (Bad Request)           | The `ids` parameter was not specified or is invalid. |
+| 404 (Not Found)             | A question with the specified id not found.          |
+| 500 (Internal Server Error) | Unexpected error in the database or server.          |
+
+### Command Line Example:
+
+```
+Delete Questions:
+curl -X POST http://localhost:8081/questions/delete -H "Content-Type: application/json" -d '{"ids": [21, 22]}'
+```
+
+### Example of Response Body for Success:
+
+```json
+{
+  "status": "Success",
+  "message": "Questions deleted successfully",
+  "data": null
 }
 ```
 

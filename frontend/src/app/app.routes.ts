@@ -17,12 +17,12 @@ export const routes: Routes = [
         canActivate: [AuthGuardService],
     },
     {
+        path: 'start',
+        component: CollaborationComponent,
+    },
+    {
         path: 'matching',
         component: MatchingComponent,
         canActivate: [AuthGuardService],
-    },
-    {
-        path: 'start',
-        component: CollaborationComponent,
     },
 ];

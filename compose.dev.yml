@@ -28,6 +28,11 @@ services:
     ports:
       - 27018:27017
 
+  collaboration:
+    command: npm run dev
+    volumes:
+      - /app/node_modules
+      - ./services/collaboration:/app
   match:
     command: npm run dev
     ports:
@@ -43,3 +48,10 @@ services:
   match-broker:
     ports:
       - 5672:5672
+
+  dozzle:
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8000:8080

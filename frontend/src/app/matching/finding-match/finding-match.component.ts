@@ -67,11 +67,14 @@ export class FindingMatchComponent {
                     case MatchStatus.MATCH_FOUND:
                         this.onMatchSuccess();
                         break;
+                    case MatchStatus.COLLAB_CREATED:
+                        this.onMatchSuccess();
+                        // TODO: Redirect to collab URL
+                        break;
                     case MatchStatus.TIME_OUT:
                         this.stopPolling$.next(false);
                         this.onMatchFailed();
                         break;
-                    // TODO: Add case for MatchStatus.COLLAB_CREATED
                 }
             }),
             catchError(() => {

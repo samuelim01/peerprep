@@ -2,9 +2,10 @@ import mongoose from 'mongoose';
 import { IQuestion, Question } from './questionModel';
 
 export async function connectToDB() {
-    const mongoURI = process.env.NODE_ENV === 'production' ? process.env.DB_CLOUD_URI : process.env.DB_LOCAL_URI;
+    const mongoURI = process.env.NODE_ENV === 'production' ? process.env.QUESTION_DB_CLOUD_URI : process.env.QUESTION_DB_LOCAL_URI;
 
     console.log('MongoDB URI:', mongoURI);
+    console.log(process.env.DB_USERNAME, process.env.DB_PASSWORD);
 
     if (!mongoURI) {
         throw new Error('MongoDB URI not specified');

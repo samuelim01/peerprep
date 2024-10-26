@@ -77,11 +77,11 @@ export class EditorComponent implements AfterViewInit, OnInit {
     ) {}
 
     ngOnInit() {
+        this.initRoomId();
         this.initConnection();
     }
 
     ngAfterViewInit() {
-        this.initRoomId();
         this.setTheme();
         this.setProvider();
         this.setEditorState();
@@ -204,6 +204,16 @@ export class EditorComponent implements AfterViewInit, OnInit {
             severity: 'error',
             summary: 'Fail',
             detail: 'Submission failed: Not all participants agreed. Please try again.',
+        });
+        this.isSubmit = false;
+        this.isInitiator = false;
+    }
+
+    onSuccess() {
+        this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'You have successfully submitted!',
         });
         this.isSubmit = false;
         this.isInitiator = false;

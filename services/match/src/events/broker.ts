@@ -1,4 +1,5 @@
 import client, { Channel, Connection } from 'amqplib';
+import config from '../config';
 
 // TODO: Add authentication
 
@@ -17,12 +18,7 @@ class MessageBroker {
         }
 
         try {
-            const brokerUrl = process.env.BROKER_URL;
-            if (!brokerUrl) {
-                throw new Error('Broker URL not specified');
-            }
-
-            this.connection = await client.connect(brokerUrl);
+            this.connection = await client.connect(config.BROKER_URL);
             console.log('Connected to RabbitMQ');
             this.channel = await this.connection.createChannel();
             this.connected = true;

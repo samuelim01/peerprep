@@ -6,12 +6,14 @@ import {
   findRoomById,
   findRoomsByUserId,
   closeRoomById,
+  updateRoomUserStatus,
 } from "../services/mongodbService";
 import axios from "axios";
 import {
   handleNotFound,
   handleSuccess,
   handleServerError,
+  handleBadRequest,
 } from "../utils/helper";
 
 /**
@@ -39,7 +41,16 @@ export const createRoomWithQuestion = async (
       const question = response.data.data[0];
 
       const roomData = {
-        users: [user1, user2],
+        users: [
+          {
+            ...user1,
+            isForfeit: false,
+          },
+          {
+            ...user2,
+            isForfeit: false,
+          },
+        ],
         question_id: question.id,
         createdAt: new Date(),
       };
@@ -129,9 +140,19 @@ export const closeRoomController = async (req: Request, res: Response) => {
   try {
     const roomId = req.params.roomId;
 
+    const room = await findRoomById(roomId);
+    if (!room) {
+      return handleNotFound(res, "Room not found");
+    }
+
+    if (!room.room_status) {
+      console.log(`Room ${roomId} is already closed.`);
+      return handleSuccess(res, `Room ${roomId} is already closed`);
+    }
+
     const result = await closeRoomById(roomId);
     if (result.modifiedCount === 0) {
-      return handleNotFound(res, "Room not found or already closed");
+      return handleNotFound(res, "Room not found");
     }
 
     await deleteYjsDocument(roomId);
@@ -141,5 +162,49 @@ export const closeRoomController = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error closing room:", error);
     return handleServerError(res, "Failed to close room");
+  }
+};
+
+/**
+ * Controller function to update the status of a user in a room
+ * @param req
+ * @param res
+ */
+export const updateUserStatusInRoomController = async (
+  req: Request,
+  res: Response,
+) => {
+  const { roomId, userId } = req.params;
+  const { isForfeit } = req.body;
+
+  if (typeof isForfeit !== "boolean") {
+    return handleBadRequest(
+      res,
+      "Invalid isForfeit value. Must be true or false.",
+    );
+  }
+
+  try {
+    const room = await findRoomById(roomId);
+    if (!room) {
+      return handleNotFound(res, "Room not found");
+    }
+
+    const updatedRoom = await updateRoomUserStatus(roomId, userId, isForfeit);
+
+    if (!updatedRoom) {
+      return handleNotFound(res, "User not found in room");
+    }
+
+    return handleSuccess(res, {
+      message: "User isForfeit status updated successfully",
+      room: updatedRoom,
+    });
+  } catch (error) {
+    console.error("Error updating user isForfeit status in room:", error);
+    return handleServerError(
+      res,
+      "Failed to update user isForfeit status in room",
+    );
   }
 };

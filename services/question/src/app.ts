@@ -5,6 +5,7 @@ import router from './routes';
 import questionRouter from './routes/questionRoutes';
 import bodyParser from 'body-parser';
 import config from './config';
+import { removeApiPrefix } from './middleware/remove-api-prefix';
 
 const app: Express = express();
 
@@ -20,6 +21,8 @@ app.use(
         allowedHeaders: ['Origin', 'X-Request-With', 'Content-Type', 'Accept', 'Authorization'],
     }),
 );
+
+app.use(removeApiPrefix);
 
 // Routes
 app.use('/', router);

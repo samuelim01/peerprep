@@ -3,6 +3,7 @@ import cors from 'cors';
 
 import userRoutes from './routes/user-routes';
 import authRoutes from './routes/auth-routes';
+import { removeApiPrefix } from './middleware/remove-api-prefix';
 
 const app = express();
 
@@ -28,10 +29,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
+app.use(removeApiPrefix);
+
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/ht', (req: Request, res: Response) => {
     console.log('Sending Greetings!');
     res.json({
         message: 'Hello World from user-service',

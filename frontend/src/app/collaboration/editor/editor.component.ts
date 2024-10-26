@@ -4,7 +4,7 @@ import { EditorState, Extension } from '@codemirror/state';
 import { basicSetup } from 'codemirror';
 import { DOCUMENT } from '@angular/common';
 import { EditorView } from 'codemirror';
-import { python } from '@codemirror/lang-python';
+import { java } from '@codemirror/lang-java';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -12,8 +12,19 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
-import { yCollab } from 'y-codemirror.next'
+import { yCollab } from 'y-codemirror.next';
+import * as prettier from 'prettier';
+import * as prettierPluginEstree from 'prettier/plugins/estree';
+import { usercolors } from './user-colors';
+import { WEBSOCKET_CONFIG } from '../../api.config';
+import { AuthenticationService } from '../../../_services/authentication.service';
+import { ActivatedRoute } from '@angular/router';
+// The 'prettier-plugin-java' package does not provide TypeScript declaration files.
+// We are using '@ts-ignore' to bypass TypeScript's missing type declaration error.
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import prettierPluginJava from 'prettier-plugin-java';
 
 @Component({
     selector: 'app-editor',
@@ -36,73 +47,94 @@ export class EditorComponent implements AfterViewInit {
 
     ydoc!: Y.Doc;
 
-    // ytext!: Y.Text;
     ytext = new Y.Text('# type your code here\n');
 
-    yarray!: Y.Array<String>;
+    yarray!: Y.Array<string>;
 
     undoManager!: Y.UndoManager;
 
     wsProvider!: WebsocketProvider;
 
-    usercolors = [
-        { color: '#30bced', light: '#30bced33' },
-        { color: '#6eeb83', light: '#6eeb8333' },
-        { color: '#ffbc42', light: '#ffbc4233' },
-        { color: '#ecd444', light: '#ecd44433' },
-        { color: '#ee6352', light: '#ee635233' },
-        { color: '#9ac2c9', light: '#9ac2c933' },
-        { color: '#8acb88', light: '#8acb8833' },
-        { color: '#1be7ff', light: '#1be7ff33' }
-      ]
+    roomId!: string;
 
     constructor(
         @Inject(DOCUMENT) private document: Document,
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
+        private authService: AuthenticationService,
+        private route: ActivatedRoute,
     ) {}
 
     ngAfterViewInit() {
+        this.getRoomId();
         this.setTheme();
         this.initConnection();
         this.setProvider();
         this.setEditorState();
         this.setEditorView();
-        // this.setCursorPosition();
+        this.setCursorPosition();
     }
 
     initConnection() {
         this.ydoc = new Y.Doc();
-        // TODO: replace hardcoded connection
-        this.wsProvider = new WebsocketProvider('ws://localhost:8084', 'my-room', this.ydoc);
+        this.wsProvider = new WebsocketProvider(WEBSOCKET_CONFIG.baseUrl, this.roomId, this.ydoc);
+        console.log('Entering room: ' + this.roomId);
         this.ytext = this.ydoc.getText('sharedArray');
-        // this.yarray = this.ydoc.getArray('sharedArray');
-        // const binding = new CodemirrorBinding(yarray, this.view, this.wsProvider.awareness);
-        // this.undoManager = new Y.UndoManager(this.yarray);
         this.undoManager = new Y.UndoManager(this.ytext);
     }
 
+    getRoomId() {
+        this.route.queryParams.subscribe(params => {
+            this.roomId = params['roomId'];
+        });
+    }
+
+    async format() {
+        try {
+            const currentCode = this.view.state.doc.toString();
+
+            const formattedCode = prettier.format(currentCode, {
+                parser: 'java',
+                plugins: [prettierPluginJava, prettierPluginEstree], // Add necessary plugins
+            });
+
+            this.view.dispatch({
+                changes: {
+                    from: 0,
+                    to: this.view.state.doc.length,
+                    insert: await formattedCode,
+                },
+            });
+
+            this.view.focus();
+        } catch (e) {
+            console.error('Error formatting code:', e);
+            this.messageService.add({ severity: 'error', summary: 'Formatting Error' });
+        }
+    }
+
     setProvider() {
+        const randomIndex = Math.floor(Math.random() * usercolors.length);
+
+        // TODO: Replace name with real user's username
         this.wsProvider.awareness.setLocalStateField('user', {
-            name: 'Anonymous ' + Math.floor(Math.random() * 100),
-            color: this.usercolors[0].color,
-            colorLight: this.usercolors[0].light
-        })
+            name: this.authService.userValue?.username,
+            color: usercolors[randomIndex].color,
+            colorLight: usercolors[randomIndex].light,
+        });
     }
 
     setEditorState() {
         const undoManager = this.undoManager;
         const myExt: Extension = [
             basicSetup,
-            python(),
+            java(),
             this.customTheme,
             oneDark,
-            yCollab(this.ytext, this.wsProvider.awareness, { undoManager })
+            yCollab(this.ytext, this.wsProvider.awareness, { undoManager }),
         ];
 
-
         this.state = EditorState.create({
-            // doc: '# type your code here\n',
             doc: this.ytext.toString(),
             extensions: myExt,
         });
@@ -133,7 +165,7 @@ export class EditorComponent implements AfterViewInit {
 
     setCursorPosition() {
         // set new cursor position
-        const cursorPosition = this.state.doc.line(2).from;
+        const cursorPosition = this.state.doc.line(1).from;
 
         this.view.dispatch({
             selection: {

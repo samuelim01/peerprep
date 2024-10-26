@@ -9,6 +9,7 @@ import { catchError, Observable, of, Subscription, switchMap, takeUntil, tap, ti
 import { MessageService } from 'primeng/api';
 import { MatchService } from '../../../_services/match.service';
 import { MatchResponse, MatchStatus } from '../match.model';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-finding-match',
@@ -35,6 +36,7 @@ export class FindingMatchComponent {
     constructor(
         private matchService: MatchService,
         private messageService: MessageService,
+        private router: Router,
     ) {}
 
     onMatchFailed() {
@@ -46,6 +48,7 @@ export class FindingMatchComponent {
         this.stopTimer();
         this.isFindingMatch = false;
         this.matchSuccess.emit();
+        this.matchPoll.unsubscribe();
         // Possible to handle routing to workspace here.
     }
 
@@ -69,7 +72,9 @@ export class FindingMatchComponent {
                         break;
                     case MatchStatus.COLLAB_CREATED:
                         this.onMatchSuccess();
-                        // TODO: Redirect to collab URL
+                        setTimeout(() => {
+                            this.redirectToCollab(response.data.collabId!);
+                        }, 2000);
                         break;
                     case MatchStatus.TIME_OUT:
                         this.stopPolling$.next(false);
@@ -126,5 +131,13 @@ export class FindingMatchComponent {
         if (this.matchTimeInterval) {
             clearInterval(this.matchTimeInterval);
         }
+    }
+
+    redirectToCollab(collabId: string) {
+        this.router.navigate(['/start'], {
+            queryParams: {
+                roomId: collabId,
+            },
+        });
     }
 }

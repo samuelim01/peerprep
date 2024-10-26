@@ -1,14 +1,21 @@
-<div class="card flex flex-column" style="height: 100vh">
+<script src="https://unpkg.com/prettier@3.3.3/standalone.js"></script>
+<script src="https://unpkg.com/prettier@3.3.3/plugins/graphql.js"></script>
+<div class="card flex flex-column" style="height: calc(100vh - 80px)">
     <div class="container flex flex-1 flex-column overflow-hidden pb-2 m-4">
         <div class="flex-1 overflow-hidden w-full p-4">
             <p class="m-0 mb-2 header">Editor</p>
-            <p-scrollPanel [style]="{ height: 'calc(100% - 88px)' }" class="h-full w-full scroll-panel overflow-auto">
+            <p-scrollPanel [style]="{ height: 'calc(100% - 75px)' }" class="h-full w-full scroll-panel overflow-auto">
                 <div #editor class="editor-content"></div>
             </p-scrollPanel>
             <footer class="mt-2">
-                <div class="flex flex-row justify-content-end gap-2">
-                    <p-button label="Forfeit" severity="contrast" (onClick)="forfeit()" />
-                    <p-button label="Submit" severity="success" (onClick)="submit()" />
+                <div class="flex flex-row justify-content-between gap-2">
+                    <div>
+                        <p-button icon="pi pi-pen-to-square" label="Format" severity="contrast" (onClick)="format()" />
+                    </div>
+                    <div class="flex flex-row gap-2">
+                        <p-button icon="pi pi-times" label="Forfeit" severity="contrast" (onClick)="forfeit()" />
+                        <p-button icon="pi pi-check" label="Submit" severity="success" (onClick)="submit()" />
+                    </div>
                 </div>
             </footer>
         </div>

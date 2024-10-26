@@ -6,6 +6,7 @@ import matchRequestRouter from './routes/matchRequestRoutes';
 import bodyParser from 'body-parser';
 import { verifyAccessToken } from './middleware/jwt';
 import config from './config';
+import { removeApiPrefix } from './middleware/remove-api-prefix';
 
 const app: Express = express();
 
@@ -21,6 +22,8 @@ app.use(
         allowedHeaders: ['Origin', 'X-Request-With', 'Content-Type', 'Accept', 'Authorization'],
     }),
 );
+
+app.use(removeApiPrefix);
 
 // Routes
 app.use('/', router);

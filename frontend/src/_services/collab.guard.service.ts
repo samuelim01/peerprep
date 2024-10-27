@@ -26,10 +26,14 @@ export class CollabGuardService implements CanActivate {
                     return of(false);
                 }
 
+                // TODO check if room is close
                 return this.collabService.getRoomDetails(roomId).pipe(
                     map(response => {
                         const isFound = response.data.users.some(roomUser => roomUser?.id === user.id);
-                        if (!isFound) {
+                        const isOpen = response.data.room_status;
+                        const isForfeit = response.data.users.find(roomUser => roomUser?.id === user.id)?.isForfeit;
+
+                        if (!isFound || !isOpen || isForfeit) {
                             this.router.navigate(['/matching']);
                             return false;
                         }

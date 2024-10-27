@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, ViewChild, OnInit } from '@angular/core';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { EditorState, Extension } from '@codemirror/state';
 import { basicSetup } from 'codemirror';
@@ -18,43 +18,48 @@ import * as prettierPluginEstree from 'prettier/plugins/estree';
 import { usercolors } from './user-colors';
 import { WEBSOCKET_CONFIG } from '../../api.config';
 import { AuthenticationService } from '../../../_services/authentication.service';
-import { ActivatedRoute } from '@angular/router';
+import { RoomService } from '../room.service';
 // The 'prettier-plugin-java' package does not provide TypeScript declaration files.
 // We are using '@ts-ignore' to bypass TypeScript's missing type declaration error.
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import prettierPluginJava from 'prettier-plugin-java';
+import { SubmitDialogComponent } from '../submit-dialog/submit-dialog.component';
+import { ForfeitDialogComponent } from '../forfeit-dialog/forfeit-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-editor',
     standalone: true,
-    imports: [ScrollPanelModule, ButtonModule, ConfirmDialogModule, ToastModule],
+    imports: [
+        ScrollPanelModule,
+        ButtonModule,
+        ConfirmDialogModule,
+        ToastModule,
+        SubmitDialogComponent,
+        ForfeitDialogComponent,
+    ],
     providers: [ConfirmationService, MessageService],
     templateUrl: './editor.component.html',
     styleUrl: './editor.component.css',
 })
-export class EditorComponent implements AfterViewInit {
+export class EditorComponent implements AfterViewInit, OnInit {
     @ViewChild('editor') editor!: ElementRef;
 
     state!: EditorState;
-
     view!: EditorView;
-
-    customTheme!: Extension;
-
-    isSubmit = false;
-
     ydoc!: Y.Doc;
-
-    ytext = new Y.Text('# type your code here\n');
-
-    yarray!: Y.Array<string>;
-
+    yeditorText = new Y.Text('');
+    ysubmit = new Y.Map<boolean>();
+    yforfeit = new Y.Map<boolean>();
     undoManager!: Y.UndoManager;
-
+    customTheme!: Extension;
     wsProvider!: WebsocketProvider;
 
+    isSubmit = false;
+    isInitiator = false;
+    isForfeitClick = false;
     roomId!: string;
 
     constructor(
@@ -62,13 +67,17 @@ export class EditorComponent implements AfterViewInit {
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
         private authService: AuthenticationService,
-        private route: ActivatedRoute,
+        private roomService: RoomService,
+        private router: Router,
     ) {}
 
-    ngAfterViewInit() {
-        this.getRoomId();
-        this.setTheme();
+    ngOnInit() {
+        this.initRoomId();
         this.initConnection();
+    }
+
+    ngAfterViewInit() {
+        this.setTheme();
         this.setProvider();
         this.setEditorState();
         this.setEditorView();
@@ -76,16 +85,34 @@ export class EditorComponent implements AfterViewInit {
     }
 
     initConnection() {
-        this.ydoc = new Y.Doc();
-        this.wsProvider = new WebsocketProvider(WEBSOCKET_CONFIG.baseUrl, this.roomId, this.ydoc);
-        console.log('Entering room: ' + this.roomId);
-        this.ytext = this.ydoc.getText('sharedArray');
-        this.undoManager = new Y.UndoManager(this.ytext);
+      this.ydoc = new Y.Doc();
+      this.wsProvider = new WebsocketProvider(WEBSOCKET_CONFIG.baseUrl, this.roomId, this.ydoc, {
+        params: {
+          userId: this.authService.userValue?.id as string,
+        },
+      });
+
+      this.wsProvider.ws!.onclose = (event: { code: number; reason: any; }) => {
+        if (event.code === 4000 || event.code === 4001) {
+          console.error("WebSocket authorization failed:", event.reason);
+          this.router.navigate(['/matching']);
+        }
+      };
+
+      this.yeditorText = this.ydoc.getText('editorText');
+      this.ysubmit = this.ydoc.getMap('submit');
+      this.yforfeit = this.ydoc.getMap('forfeit');
+      this.undoManager = new Y.UndoManager(this.yeditorText);
     }
 
-    getRoomId() {
-        this.route.queryParams.subscribe(params => {
-            this.roomId = params['roomId'];
+    showTest() {
+        this.isSubmit = true;
+        this.isInitiator = true;
+    }
+
+    initRoomId() {
+        this.roomService.getRoomId().subscribe(id => {
+            this.roomId = id!;
         });
     }
 
@@ -116,7 +143,6 @@ export class EditorComponent implements AfterViewInit {
     setProvider() {
         const randomIndex = Math.floor(Math.random() * usercolors.length);
 
-        // TODO: Replace name with real user's username
         this.wsProvider.awareness.setLocalStateField('user', {
             name: this.authService.userValue?.username,
             color: usercolors[randomIndex].color,
@@ -131,11 +157,11 @@ export class EditorComponent implements AfterViewInit {
             java(),
             this.customTheme,
             oneDark,
-            yCollab(this.ytext, this.wsProvider.awareness, { undoManager }),
+            yCollab(this.yeditorText, this.wsProvider.awareness, { undoManager }),
         ];
 
         this.state = EditorState.create({
-            doc: this.ytext.toString(),
+            doc: this.yeditorText.toString(),
             extensions: myExt,
         });
     }
@@ -177,27 +203,31 @@ export class EditorComponent implements AfterViewInit {
         this.view.focus();
     }
 
-    submit() {
-        this.isSubmit = true;
-
-        this.confirmationService.confirm({
-            header: 'Submit?',
-            message: 'Please confirm to submit.',
-            accept: () => {
-                console.log('Submitted');
-            },
+    onSubmitDialogClose() {
+        this.messageService.add({
+            severity: 'error',
+            summary: 'Fail',
+            detail: 'Submission failed: Not all participants agreed. Please try again.',
         });
+        this.isSubmit = false;
+        this.isInitiator = false;
+    }
+
+    onSuccess() {
+        this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'You have successfully submitted!',
+        });
+        this.isSubmit = false;
+        this.isInitiator = false;
     }
 
     forfeit() {
-        this.isSubmit = false;
+        this.isForfeitClick = true;
+    }
 
-        this.confirmationService.confirm({
-            header: 'Forfeit?',
-            message: 'Please confirm to forfeit.',
-            accept: () => {
-                console.log('Forfeited');
-            },
-        });
+    onForfeitDialogClose() {
+        this.isForfeitClick = false;
     }
 }

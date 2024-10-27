@@ -43,7 +43,7 @@ app.get('/ht', (req: Request, res: Response) => {
 
 // Handle When No Route Match Is Found
 app.use((req: Request, res: Response, next: NextFunction) => {
-    const error = new Error('Route Not Found');
+    const error = new Error('Route Not Found ' + req.path);
     res.status(404);
     next(error);
 });

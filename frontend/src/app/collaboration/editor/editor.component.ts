@@ -47,25 +47,18 @@ export class EditorComponent implements AfterViewInit, OnInit {
     @ViewChild('editor') editor!: ElementRef;
 
     state!: EditorState;
-
     view!: EditorView;
-
-    customTheme!: Extension;
-
-    isSubmit = false;
-
     ydoc!: Y.Doc;
-
     yeditorText = new Y.Text('');
-
     ysubmit = new Y.Map<boolean>();
-
-    isInitiator = false;
-
+    yforfeit = new Y.Map<boolean>();
     undoManager!: Y.UndoManager;
-
+    customTheme!: Extension;
     wsProvider!: WebsocketProvider;
 
+    isSubmit = false;
+    isInitiator = false;
+    isForfeitClick = false;
     roomId!: string;
 
     constructor(
@@ -98,6 +91,7 @@ export class EditorComponent implements AfterViewInit, OnInit {
         });
         this.yeditorText = this.ydoc.getText('editorText');
         this.ysubmit = this.ydoc.getMap('submit');
+        this.yforfeit = this.ydoc.getMap('forfeit');
         this.undoManager = new Y.UndoManager(this.yeditorText);
     }
 
@@ -209,15 +203,21 @@ export class EditorComponent implements AfterViewInit, OnInit {
         this.isInitiator = false;
     }
 
-    forfeit() {
-        this.isSubmit = false;
-
-        this.confirmationService.confirm({
-            header: 'Forfeit?',
-            message: 'Please confirm to forfeit.',
-            accept: () => {
-                console.log('Forfeited');
-            },
+    onSuccess() {
+        this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'You have successfully submitted!',
         });
+        this.isSubmit = false;
+        this.isInitiator = false;
+    }
+
+    forfeit() {
+        this.isForfeitClick = true;
+    }
+
+    onForfeitDialogClose() {
+        this.isForfeitClick = false;
     }
 }

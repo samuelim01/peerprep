@@ -2,7 +2,7 @@ import { startMongoDB } from './services/mongodbService';
 import { startWebSocketServer } from './services/webSocketService';
 import app from './app';
 import http from 'http';
-import { initializeRoomConsumer } from './events/consumer';
+import { initializeConsumers } from './events/consumer';
 import config from './config';
 
 
@@ -16,8 +16,8 @@ startMongoDB()
             console.log(`Collaboration service running on port ${config.PORT}`);
         });
         startWebSocketServer(server);
+        initializeConsumers();
         console.log("Initializing room consumer");
-        initializeRoomConsumer();
     })
     .catch(error => {
         console.error('Failed to start services:', error);

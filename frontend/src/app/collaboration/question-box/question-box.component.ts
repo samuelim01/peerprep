@@ -42,8 +42,7 @@ export class QuestionBoxComponent implements OnInit {
     initQuestion() {
         this.collabService.getRoomDetails(this.roomId).subscribe({
             next: response => {
-                const questionId = response.data.question_id;
-                this.setQuestion(questionId);
+                this.question = response.data.question;
             },
             error: () => {
                 this.question = {} as Question;
@@ -51,23 +50,6 @@ export class QuestionBoxComponent implements OnInit {
                     severity: 'error',
                     summary: 'Error',
                     detail: 'Failed to retrieve room details',
-                    life: 3000,
-                });
-            },
-        });
-    }
-
-    setQuestion(questionId: number) {
-        this.questionService.getQuestionByID(questionId).subscribe({
-            next: response => {
-                this.question = response.data || [];
-            },
-            error: errorMessage => {
-                this.question = {} as Question;
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: errorMessage,
                     life: 3000,
                 });
             },

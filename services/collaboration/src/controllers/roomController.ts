@@ -8,9 +8,21 @@ import {
     closeRoomById,
     updateRoomUserStatus,
 } from '../services/mongodbService';
-import axios from 'axios';
 import { handleNotFound, handleSuccess, handleServerError, handleBadRequest } from '../utils/helper';
-import config from '../config';
+
+export enum Difficulty {
+  Easy = 'Easy',
+  Medium = 'Medium',
+  Hard = 'Hard',
+}
+
+export interface Question {
+  id: number;
+  description: string;
+  difficulty: Difficulty;
+  title: string;
+  topics?: string[];
+}
 
 /**
  * Create a room with users, question details, and Yjs document
@@ -20,43 +32,17 @@ import config from '../config';
  * @param difficulty
  * @returns roomId
  */
-export const createRoomWithQuestion = async (user1: any, user2: any, topics: string[], difficulty: string) => {
+export const createRoomWithQuestion = async (user1: any, user2: any, question: Question) => {
     try {
-        const questionServiceUrl = config.QUESTION_SERVICE_URL;
-        const topicString = topics.join(',');
-        const response = await axios.get(
-            `${questionServiceUrl}questions/search?topics=${topicString}&difficulty=${difficulty}&limit=1`,
-        );
-
-        if (response.data && response.data.data && response.data.data.length > 0) {
-            const question = response.data.data[0];
-
-            const roomData = {
-                users: [
-                    {
-                        ...user1,
-                        isForfeit: false,
-                    },
-                    {
-                        ...user2,
-                        isForfeit: false,
-                    },
-                ],
-                question_id: question.id,
-                createdAt: new Date(),
-            };
-
-            const room_id = await createRoomInDB(roomData);
-            console.log('Room created with ID:', room_id);
-
-            await createYjsDocument(room_id.toString());
-            console.log('Yjs document created for room ID:', room_id);
-
-            return room_id;
-        } else {
-            console.error('No question found for the given parameters');
-            return null;
-        }
+        const roomData = {
+            users: [{...user1, isForfeit: false}, {...user2, isForfeit: false}],
+            question,
+            createdAt: new Date(),
+          };
+          const roomId = await createRoomInDB(roomData);
+          await createYjsDocument(roomId.toString());
+          console.log("Yjs document created for room ID:", roomId);
+          return roomId;
     } catch (error) {
         console.error('Error fetching question or creating room:', error);
         return null;
@@ -106,7 +92,7 @@ export const getRoomByRoomIdController = async (req: Request, res: Response) => 
         return handleSuccess(res, {
             room_id: room._id,
             users: room.users,
-            question_id: room.question_id,
+            question: room.question,
             createdAt: room.createdAt,
             room_status: room.room_status,
         });

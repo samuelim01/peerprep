@@ -1,3 +1,4 @@
 export const API_CONFIG = {
-    baseUrl: 'https://app.peerprep.org/api/',
+    baseUrl: 'http://localhost:8080/api/',
+    wsUrl: 'ws://localhost:8080/api/',
 };

@@ -21,5 +21,6 @@ export async function produceMatchUpdatedRequest(
 
 export async function produceMatchFound(user1: any, user2: any, topics: string[], difficulty: Difficulty) {
     const message: MatchFoundEvent = { user1, user2, topics, difficulty };
+    console.log('match found published');
     await messageBroker.produce(Queues.MATCH_FOUND, message);
 }

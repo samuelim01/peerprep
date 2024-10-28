@@ -38,6 +38,7 @@ async function consumeMatchUpdated(msg: MatchUpdatedEvent) {
     const user1 = { id: userId, username, requestId };
     const user2 = { id: match.userId, username: match.username, requestId: match.id };
     const commonTopics = findCommonTopics(topics, match.topics);
+    console.log('wait i got here');
     await produceMatchFound(user1, user2, commonTopics, difficulty);
 }
 

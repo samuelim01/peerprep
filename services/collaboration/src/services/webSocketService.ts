@@ -20,7 +20,13 @@ export const startWebSocketServer = (server: Server) => {
         console.log('Incoming WebSocket connection request.');
         console.log('URL Params: ', req.url);
 
-        const path = req.url?.split('?')[0];
+        const url = req.url;
+
+
+        const newUrl = url?.replace('/api/collaboration', '');
+        req.url = newUrl;
+
+        const path = newUrl?.split('?')[0];
         const roomId = path ? path.slice(1) : null;
         console.log('Room ID: ', roomId);
 

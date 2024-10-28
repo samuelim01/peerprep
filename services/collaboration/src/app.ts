@@ -5,6 +5,7 @@ import roomRouter from './routes/roomRoutes';
 import bodyParser from 'body-parser';
 import router from './routes';
 import config from './config';
+import { removeApiPrefix } from './middleware/remove-api-prefix';
 
 const app: Express = express();
 
@@ -24,6 +25,8 @@ app.use(
         allowedHeaders: ['Origin', 'X-Request-With', 'Content-Type', 'Accept', 'Authorization'],
     }),
 );
+
+app.use(removeApiPrefix);
 
 app.use('/', router);
 app.use('/room', roomRouter);

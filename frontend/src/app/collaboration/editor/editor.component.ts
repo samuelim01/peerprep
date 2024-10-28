@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Inject, ViewChild, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { EditorState, Extension } from '@codemirror/state';
 import { basicSetup } from 'codemirror';
@@ -88,11 +88,17 @@ export class EditorComponent implements AfterViewInit, OnInit {
 
     initConnection() {
         this.ydoc = new Y.Doc();
-        this.wsProvider = new WebsocketProvider(API_CONFIG.baseUrl, this.roomId, this.ydoc, {
-            params: {
-                userId: this.authService.userValue?.id as string,
-            },
-        });
+        const wsUrl = API_CONFIG.wsUrl + 'collaboration/';
+        try {
+            this.wsProvider = new WebsocketProvider(wsUrl, this.roomId, this.ydoc, {
+                params: {
+                    userId: this.authService.userValue?.id as string,
+                },
+            });
+            console.log('pass')
+        } catch (error) {
+            console.log(error + 'hi');
+        }
 
         this.wsProvider.ws!.onclose = (event: { code: number; reason: string }) => {
             if (event.code === WebSocketCode.AUTH_FAILED || event.code === WebSocketCode.ROOM_CLOSED) {

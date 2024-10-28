@@ -2,7 +2,6 @@ import { AfterViewInit, Component, ElementRef, Inject, ViewChild, OnInit } from 
 import { oneDark } from '@codemirror/theme-one-dark';
 import { EditorState, Extension } from '@codemirror/state';
 import { basicSetup } from 'codemirror';
-import { DOCUMENT } from '@angular/common';
 import { EditorView } from 'codemirror';
 import { java } from '@codemirror/lang-java';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
@@ -16,7 +15,7 @@ import { yCollab } from 'y-codemirror.next';
 import * as prettier from 'prettier';
 import * as prettierPluginEstree from 'prettier/plugins/estree';
 import { usercolors } from './user-colors';
-import { WEBSOCKET_CONFIG } from '../../api.config';
+import { API_CONFIG } from '../../api.config';
 import { AuthenticationService } from '../../../_services/authentication.service';
 import { RoomService } from '../room.service';
 // The 'prettier-plugin-java' package does not provide TypeScript declaration files.
@@ -68,9 +67,7 @@ export class EditorComponent implements AfterViewInit, OnInit {
     roomId!: string;
 
     constructor(
-        @Inject(DOCUMENT) private document: Document,
         private messageService: MessageService,
-        private confirmationService: ConfirmationService,
         private authService: AuthenticationService,
         private roomService: RoomService,
         private router: Router,
@@ -91,7 +88,7 @@ export class EditorComponent implements AfterViewInit, OnInit {
 
     initConnection() {
         this.ydoc = new Y.Doc();
-        this.wsProvider = new WebsocketProvider(WEBSOCKET_CONFIG.baseUrl, this.roomId, this.ydoc, {
+        this.wsProvider = new WebsocketProvider(API_CONFIG.baseUrl, this.roomId, this.ydoc, {
             params: {
                 userId: this.authService.userValue?.id as string,
             },

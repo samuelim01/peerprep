@@ -20,7 +20,8 @@ export const routes: Routes = [
     {
         path: 'start',
         component: CollaborationComponent,
-        canActivate: [AuthGuardService, CollabGuardService],
+        // canActivate: [AuthGuardService, CollabGuardService],
+        canActivate: [AuthGuardService],
     },
     {
         path: 'matching',

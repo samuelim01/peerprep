@@ -4,6 +4,7 @@ import { EditorState, Extension } from '@codemirror/state';
 import { basicSetup } from 'codemirror';
 import { EditorView } from 'codemirror';
 import { java } from '@codemirror/lang-java';
+import { javascript } from '@codemirror/lang-javascript';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -33,6 +34,8 @@ enum WebSocketCode {
     AUTH_FAILED = 4000,
     ROOM_CLOSED = 4001,
 }
+// import { autocompletion, Completion, CompletionSource } from '@codemirror/autocomplete';
+// import { linter, Diagnostic } from '@codemirror/lint';
 
 @Component({
     selector: 'app-editor',
@@ -184,6 +187,7 @@ export class EditorComponent implements AfterViewInit, OnInit, OnDestroy {
         const myExt: Extension = [
             basicSetup,
             java(),
+            javascript(),
             this.customTheme,
             oneDark,
             yCollab(this.yeditorText, this.wsProvider.awareness, { undoManager }),

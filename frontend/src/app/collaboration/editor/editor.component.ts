@@ -1,21 +1,21 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { EditorState, Extension } from '@codemirror/state';
-import { basicSetup } from 'codemirror';
-import { EditorView } from 'codemirror';
-import { java } from '@codemirror/lang-java';
-import { javascript } from '@codemirror/lang-javascript';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Inject,
+    ViewChild,
+    OnInit,
+    ChangeDetectorRef,
+    Input,
+} from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ButtonModule } from 'primeng/button';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
-import * as Y from 'yjs';
-import { WebsocketProvider } from 'y-websocket';
-import { yCollab } from 'y-codemirror.next';
-import * as prettier from 'prettier';
-import * as prettierPluginEstree from 'prettier/plugins/estree';
-import { usercolors } from './user-colors';
+import { MessageService } from 'primeng/api';
 import { AuthenticationService } from '../../../_services/authentication.service';
 import { RoomService } from '../room.service';
 // The 'prettier-plugin-java' package does not provide TypeScript declaration files.
@@ -24,18 +24,27 @@ import { RoomService } from '../room.service';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import prettierPluginJava from 'prettier-plugin-java';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import prettierPluginPhp from '@prettier/plugin-php';
+import prettierPluginXml from '@prettier/plugin-xml';
+import * as prettierPluginRust from 'prettier-plugin-rust';
+import prettierPluginSql from 'prettier-plugin-sql';
+import parserBabel from 'prettier/plugins/babel';
+import * as prettier from 'prettier';
+import * as prettierPluginEstree from 'prettier/plugins/estree';
+import { oneDark } from '@codemirror/theme-one-dark';
+import { EditorState, Extension } from '@codemirror/state';
+import { basicSetup } from 'codemirror';
+import { EditorView } from 'codemirror';
+import { yCollab } from 'y-codemirror.next';
+import * as Y from 'yjs';
+import { WebsocketProvider } from 'y-websocket';
 import { SubmitDialogComponent } from '../submit-dialog/submit-dialog.component';
 import { ForfeitDialogComponent } from '../forfeit-dialog/forfeit-dialog.component';
-import { Router } from '@angular/router';
+import { languageMap, parserMap, LanguageOption } from './languages';
 import { awarenessData } from '../collab.model';
-import { environment } from '../../../environments/environment';
-
-enum WebSocketCode {
-    AUTH_FAILED = 4000,
-    ROOM_CLOSED = 4001,
-}
-// import { autocompletion, Completion, CompletionSource } from '@codemirror/autocomplete';
-// import { linter, Diagnostic } from '@codemirror/lint';
+import { usercolors } from './user-colors';
 
 @Component({
     selector: 'app-editor',
@@ -47,6 +56,8 @@ enum WebSocketCode {
         ToastModule,
         SubmitDialogComponent,
         ForfeitDialogComponent,
+        DropdownModule,
+        FormsModule,
     ],
     providers: [ConfirmationService, MessageService],
     templateUrl: './editor.component.html',
@@ -62,6 +73,7 @@ export class EditorComponent implements AfterViewInit, OnInit, OnDestroy {
     yeditorText = new Y.Text('');
     ysubmit = new Y.Map<boolean>();
     yforfeit = new Y.Map<boolean>();
+    ylanguage = new Y.Map<string>();
     undoManager!: Y.UndoManager;
     customTheme!: Extension;
     wsProvider!: WebsocketProvider;
@@ -71,6 +83,8 @@ export class EditorComponent implements AfterViewInit, OnInit, OnDestroy {
     isForfeitClick = false;
     roomId!: string;
     numUniqueUsers = 0;
+    selectedLanguage = 'java';
+    languages: LanguageOption[] = [];
 
     constructor(
         private messageService: MessageService,
@@ -86,39 +100,57 @@ export class EditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.initRoomId();
-        this.initConnection();
+        this.initYdoc();
+        this.initDoctListener();
         this.getNumOfConnectedUsers();
+        this.populateLanguages();
     }
 
     ngAfterViewInit() {
         this.setTheme();
         this.setProvider();
-        this.setEditorState();
+        this.setEditorState(this.selectedLanguage);
         this.setEditorView();
         this.setCursorPosition();
     }
 
-    initConnection() {
-        this.ydoc = new Y.Doc();
-        const websocketUrl = environment.wsUrl + 'collaboration/';
-        this.wsProvider = new WebsocketProvider(websocketUrl, this.roomId, this.ydoc, {
-            params: {
-                accessToken: this.authService.userValue?.accessToken || '',
-            },
-        });
+    populateLanguages() {
+        this.languages = Object.keys(languageMap).map(lang => ({
+            label: lang.charAt(0).toUpperCase() + lang.slice(1),
+            value: lang,
+        }));
+    }
 
-        this.wsProvider.ws!.onclose = (event: { code: number; reason: string }) => {
-            if (event.code === WebSocketCode.AUTH_FAILED || event.code === WebSocketCode.ROOM_CLOSED) {
-                console.error('WebSocket authorization failed:', event.reason);
-                this.router.navigate(['/matching']);
-            }
-        };
+    changeLanguage(language: string) {
+        const languageExtension = languageMap[language];
 
+        this.selectedLanguage = language.toLowerCase();
+        this.ylanguage.set('selected', language);
+        if (languageExtension) {
+            this.setEditorState(language);
+
+            this.view.setState(this.state);
+        }
+    }
+
+    initYdoc() {
         this.yeditorText = this.ydoc.getText('editorText');
         this.ysubmit = this.ydoc.getMap('submit');
         this.yforfeit = this.ydoc.getMap('forfeit');
+        this.ylanguage = this.ydoc.getMap('language');
         this.undoManager = new Y.UndoManager(this.yeditorText);
+
+        const firstEntry = this.ysubmit.entries().next().value;
+
+        if (firstEntry && firstEntry[0] === undefined) {
+            this.ylanguage.set('selected', 'java');
+        }
+    }
+
+    initDoctListener() {
+        this.ylanguage.observe(() => {
+            this.selectedLanguage = this.ylanguage.entries().next().value[1];
+        });
     }
 
     getNumOfConnectedUsers() {
@@ -150,10 +182,18 @@ export class EditorComponent implements AfterViewInit, OnInit, OnDestroy {
     async format() {
         try {
             const currentCode = this.view.state.doc.toString();
-
+            const selectedParser = parserMap[this.selectedLanguage];
             const formattedCode = prettier.format(currentCode, {
-                parser: 'java',
-                plugins: [prettierPluginJava, prettierPluginEstree], // Add necessary plugins
+                parser: selectedParser,
+                plugins: [
+                    parserBabel,
+                    prettierPluginJava,
+                    prettierPluginEstree,
+                    prettierPluginPhp,
+                    prettierPluginXml,
+                    prettierPluginRust,
+                    prettierPluginSql,
+                ],
             });
 
             this.view.dispatch({
@@ -182,13 +222,12 @@ export class EditorComponent implements AfterViewInit, OnInit, OnDestroy {
         });
     }
 
-    setEditorState() {
+    setEditorState(language: string) {
         const undoManager = this.undoManager;
         const myExt: Extension = [
             EditorView.lineWrapping,
             basicSetup,
-            java(),
-            javascript(),
+            languageMap[language],
             this.customTheme,
             oneDark,
             yCollab(this.yeditorText, this.wsProvider.awareness, { undoManager }),

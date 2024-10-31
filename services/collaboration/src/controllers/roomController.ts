@@ -10,6 +10,8 @@ import {
 } from '../services/mongodbService';
 import { handleHttpNotFound, handleHttpSuccess, handleHttpServerError, handleHttpBadRequest } from '../utils/helper';
 import { Room } from './types';
+import { produceUpdateHistory } from '../events/producer';
+import { HistoryStatus } from '../types/message';
 
 export enum Difficulty {
     Easy = 'Easy',
@@ -114,6 +116,12 @@ export const closeRoomController = async (req: Request, res: Response) => {
         }
 
         await deleteYjsDocument(roomId);
+        await Promise.all(
+            room.users
+                .filter(user => !user.isForfeit)
+                .map(user => produceUpdateHistory(roomId, user.id, HistoryStatus.COMPLETED)),
+        );
+
         console.log(`Room ${roomId} closed and Yjs document removed`);
 
         return handleHttpSuccess(res, `Room ${roomId} successfully closed`);
@@ -148,6 +156,7 @@ export const updateUserStatusInRoomController = async (req: Request, res: Respon
             return handleHttpNotFound(res, 'User not found in room');
         }
 
+        await produceUpdateHistory(roomId, userId, HistoryStatus.FORFEITED);
         return handleHttpSuccess(res, {
             message: 'User isForfeit status updated successfully',
             room: updatedRoom,

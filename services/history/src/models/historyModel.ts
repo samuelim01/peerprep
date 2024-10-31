@@ -15,7 +15,7 @@ export enum HistoryStatus {
 }
 
 export interface User {
-    id: Types.ObjectId;
+    _id: Types.ObjectId;
     username: string;
 }
 
@@ -46,13 +46,10 @@ const questionSchema = new Schema<Question>({
     id: {
         type: Number,
         required: true,
-        unique: true,
-        immutable: true,
     },
     title: {
         type: String,
         required: true,
-        unique: true,
     },
     description: {
         type: String,
@@ -71,6 +68,10 @@ const questionSchema = new Schema<Question>({
 
 const historySchema = new Schema<History>(
     {
+        roomId: {
+            type: Schema.Types.ObjectId,
+            required: true,
+        },
         user: userSchema,
         collaborator: userSchema,
         question: questionSchema,

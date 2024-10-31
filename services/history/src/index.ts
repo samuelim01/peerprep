@@ -1,7 +1,8 @@
 import app from './app';
+import config from './config';
 import { connectToDB } from './models/repository';
 
-const port = process.env.PORT || 8086;
+const port = config.PORT;
 
 connectToDB()
     .then(() => {

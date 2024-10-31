@@ -2,8 +2,10 @@ import express, { Express } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import router from './routes';
+import historyRouter from './routes/historyRoutes';
 import bodyParser from 'body-parser';
 import config from './config';
+import { verifyAccessToken } from './middleware/jwt';
 
 const app: Express = express();
 
@@ -23,5 +25,6 @@ app.use(
 
 // Routes
 app.use('/', router);
+app.use('/api/history', verifyAccessToken, historyRouter);
 
 export default app;

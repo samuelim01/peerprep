@@ -17,7 +17,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { AuthenticationService } from '../../../_services/authentication.service';
-import { RoomService } from '../room.service';
 // The 'prettier-plugin-java' package does not provide TypeScript declaration files.
 // We are using '@ts-ignore' to bypass TypeScript's missing type declaration error.
 
@@ -59,45 +58,40 @@ import { usercolors } from './user-colors';
         DropdownModule,
         FormsModule,
     ],
-    providers: [ConfirmationService, MessageService],
+    providers: [MessageService],
     templateUrl: './editor.component.html',
     styleUrl: './editor.component.css',
 })
-export class EditorComponent implements AfterViewInit, OnInit, OnDestroy {
+export class EditorComponent implements AfterViewInit, OnInit {
     @ViewChild('editor') editor!: ElementRef;
     @ViewChild(ForfeitDialogComponent) forfeitChild!: ForfeitDialogComponent;
 
+    @Input() ydoc!: Y.Doc;
+    @Input() wsProvider!: WebsocketProvider;
+    @Input() roomId!: string;
+
     state!: EditorState;
     view!: EditorView;
-    ydoc!: Y.Doc;
     yeditorText = new Y.Text('');
     ysubmit = new Y.Map<boolean>();
     yforfeit = new Y.Map<boolean>();
     ylanguage = new Y.Map<string>();
     undoManager!: Y.UndoManager;
     customTheme!: Extension;
-    wsProvider!: WebsocketProvider;
 
     isSubmit = false;
     isInitiator = false;
     isForfeitClick = false;
-    roomId!: string;
     numUniqueUsers = 0;
     selectedLanguage!: string;
     languages: LanguageOption[] = [];
 
     constructor(
+        @Inject(DOCUMENT) private document: Document,
         private messageService: MessageService,
         private authService: AuthenticationService,
-        private roomService: RoomService,
-        private router: Router,
         private changeDetector: ChangeDetectorRef,
     ) {}
-
-    ngOnDestroy() {
-        // This lets the client to disconnect from the websocket on re-route to another page.
-        this.wsProvider.destroy();
-    }
 
     ngOnInit() {
         this.initYdoc();

@@ -81,7 +81,7 @@ const historySchema = new Schema<History>(
             default: HistoryStatus.IN_PROGRESS,
         },
     },
-    { timestamps: true },
+    { versionKey: false, timestamps: true },
 );
 
 export const HistoryModel = model<History>('History', historySchema);

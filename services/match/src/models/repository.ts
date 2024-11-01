@@ -1,37 +1,19 @@
-import mongoose, { Types } from 'mongoose';
+import mongoose from 'mongoose';
 import { Difficulty, MatchRequestModel } from './matchRequestModel';
 import { oneMinuteAgo } from '../utils/date';
-
-type IdType = string | Types.ObjectId;
+import config from '../config';
+import { IdType } from '../types/request';
 
 export async function connectToDB() {
-    const mongoURI = process.env.NODE_ENV === 'production' ? process.env.DB_CLOUD_URI : process.env.DB_LOCAL_URI;
-
-    console.log('MongoDB URI:', mongoURI);
-
-    if (!mongoURI) {
-        throw new Error('MongoDB URI not specified');
-    } else if (!process.env.DB_USERNAME || !process.env.DB_PASSWORD) {
-        throw Error('MongoDB credentials not specified');
-    }
-
-    await mongoose.connect(mongoURI, {
+    await mongoose.connect(config.DB_URI, {
         authSource: 'admin',
-        user: process.env.DB_USERNAME,
-        pass: process.env.DB_PASSWORD,
+        user: config.DB_USERNAME,
+        pass: config.DB_PASSWORD,
     });
 }
 
 export async function createMatchRequest(userId: IdType, username: string, topics: string[], difficulty: Difficulty) {
     return await new MatchRequestModel({ userId, username, topics, difficulty }).save();
-}
-
-export async function findMatchRequestAndUpdate(id: IdType, userId: IdType) {
-    return await MatchRequestModel.findOneAndUpdate(
-        { _id: id, userId, pairId: null },
-        { $set: { updatedAt: Date.now() } },
-        { new: true },
-    );
 }
 
 export async function findMatchRequestAndDelete(id: IdType, userId: IdType) {
@@ -72,4 +54,8 @@ export async function findMatchRequestByIdAndAssignPair(id: IdType, pairId: IdTy
 
 export async function findAndAssignCollab(requestId1: IdType, requestId2: IdType, collabId: IdType) {
     await MatchRequestModel.updateMany({ _id: { $in: [requestId1, requestId2] } }, { $set: { collabId } });
+}
+
+export async function findAndMarkError(requestId1: IdType, requestId2: IdType) {
+    await MatchRequestModel.updateMany({ _id: { $in: [requestId1, requestId2] } }, { $set: { hasError: true } });
 }

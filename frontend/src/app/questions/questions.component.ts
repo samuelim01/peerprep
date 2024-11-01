@@ -81,6 +81,7 @@ export class QuestionsComponent implements OnInit {
     editQuestion(question: Question) {
         this.question = question;
         this.isDialogVisible = true;
+        this.isPanelVisible = false;
     }
 
     deleteSelectedQuestions() {
@@ -135,7 +136,9 @@ export class QuestionsComponent implements OnInit {
 
     onRowSelect(question: Question) {
         this.clickedOnQuestion = question;
-        this.isPanelVisible = true;
+        if (!this.isDialogVisible) {
+            this.isPanelVisible = true;
+        }
     }
 
     closePanel() {

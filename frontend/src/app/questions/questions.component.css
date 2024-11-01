@@ -41,3 +41,7 @@
 .panel-content p {
     margin-bottom: 1rem; /* Add margin to paragraphs for spacing */
 }
+
+tr:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}

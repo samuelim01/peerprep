@@ -8,7 +8,10 @@
         <p-toast />
     } @else {
         <ng-container>
-            <div [ngStyle]="isAdmin ? {'max-width': '1150px', 'margin': '0 auto'} : {'max-width': '900px', 'margin': '0 auto'}">
+            <div
+                [ngStyle]="
+                    isAdmin ? { 'max-width': '1150px', margin: '0 auto' } : { 'max-width': '900px', margin: '0 auto' }
+                ">
                 @if (isAdmin) {
                     <p-toolbar styleClass="mt-4 mb-2 gap-2">
                         <div class="p-justify-end">
@@ -18,7 +21,7 @@
                                 [outlined]="true"
                                 label="New"
                                 class="mr-2"
-                                (onClick)="openNewQuestion()"/>
+                                (onClick)="openNewQuestion()" />
                             <p-button
                                 icon="pi pi-trash"
                                 severity="danger"
@@ -28,7 +31,7 @@
                         </div>
                     </p-toolbar>
                 } @else {
-                    <div style="height: 50px;"></div>
+                    <div style="height: 50px"></div>
                 }
                 <div class="table-container">
                     <p-table
@@ -67,13 +70,14 @@
                         </ng-template>
                         <ng-template pTemplate="body" let-question>
                             <tr (click)="onRowSelect(question)">
-                                @ if (isAdmin) {
+                                @if (isAdmin) {
                                     <td><p-tableCheckbox [value]="question" /></td>
                                     <td>{{ question.id }}</td>
                                     <td>{{ question.title }}</td>
                                     <td>{{ question.topics.join(', ') }}</td>
                                     <td>{{ question.difficulty }}</td>
-                                    <td><p-button
+                                    <td>
+                                        <p-button
                                             label="Edit"
                                             severity="primary"
                                             icon="pi pi-file-edit"

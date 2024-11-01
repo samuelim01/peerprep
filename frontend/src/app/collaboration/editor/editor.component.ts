@@ -34,7 +34,7 @@ import parserBabel from 'prettier/plugins/babel';
 import * as prettier from 'prettier';
 import * as prettierPluginEstree from 'prettier/plugins/estree';
 import { oneDark } from '@codemirror/theme-one-dark';
-import { EditorState, Extension } from '@codemirror/state';
+import { EditorState, Extension, StateEffect } from '@codemirror/state';
 import { basicSetup } from 'codemirror';
 import { EditorView } from 'codemirror';
 import { yCollab } from 'y-codemirror.next';
@@ -122,18 +122,21 @@ export class EditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     changeLanguage(language: string) {
-        const languageExtension = languageMap[language];
         this.selectedLanguage = language.toLowerCase();
         this.ylanguage.set('selected', language);
-
-        if (languageExtension) {
-            this.updateEditor(language);
-        }
     }
 
     updateEditor(language: string) {
         this.setEditorState(language);
         this.view.setState(this.state);
+    }
+
+    updateLanguageExtension(language: string) {
+        if (languageMap[language]) {
+            this.view.dispatch({
+                effects: StateEffect.reconfigure.of([this.getEditorExtensions(language)]),
+            });
+        }
     }
 
     initYdoc() {
@@ -153,90 +156,18 @@ export class EditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     initDoctListener() {
-        this.ylanguage.observe(() => {
-            this.selectedLanguage = this.ylanguage.entries().next().value[1];
-            this.updateEditor(this.selectedLanguage);
-        });
-    }
+        this.ylanguage.observe(ymapEvent => {
+            ymapEvent.changes.keys.forEach((change, key) => {
+                if (change.action === 'update') {
+                    this.selectedLanguage = this.ylanguage.get(key)!;
+                    const languageExtension = languageMap[this.selectedLanguage];
 
-    getNumOfConnectedUsers() {
-        this.wsProvider.awareness.on('change', () => {
-            const data = Array.from(this.wsProvider.awareness.getStates().values());
-            const uniqueIds = new Set(
-                data
-                    .map(x => (x as awarenessData).user?.userId)
-                    .filter((userId): userId is string => userId !== undefined),
-            );
-
-            this.numUniqueUsers = uniqueIds.size;
-
-            this.changeDetector.detectChanges();
-        });
-    }
-
-    showSubmitDialog() {
-        this.isSubmit = true;
-        this.isInitiator = true;
-    }
-
-    initRoomId() {
-        this.roomService.getRoomId().subscribe(id => {
-            this.roomId = id!;
-        });
-    }
-
-    async format() {
-        try {
-            const selectedParser = parserMap[this.selectedLanguage.toLowerCase()];
-
-            if (selectedParser === undefined) {
-                this.messageService.add({
-                    severity: 'info',
-                    summary: 'Info Message',
-                    detail: `The selected language ${this.selectedLanguage.toLowerCase()} is currently not supported for auto formatting.`,
-                });
-
-                return;
-            }
-
-            const currentCode = this.view.state.doc.toString();
-            const formattedCode = prettier.format(currentCode, {
-                parser: selectedParser,
-                plugins: [
-                    parserBabel,
-                    prettierPluginJava,
-                    prettierPluginEstree,
-                    prettierPluginPhp,
-                    prettierPluginXml,
-                    prettierPluginRust,
-                    prettierPluginSql,
-                ],
+                    if (languageExtension) {
+                        this.updateLanguageExtension(this.selectedLanguage);
+                    }
+                }
             });
-
-            this.view.dispatch({
-                changes: {
-                    from: 0,
-                    to: this.view.state.doc.length,
-                    insert: await formattedCode,
-                },
-            });
-
-            this.view.focus();
-        } catch (error) {
-            if (error instanceof SyntaxError || error instanceof Error) {
-                this.messageService.add({
-                    severity: 'warn',
-                    summary: 'Formatting Error',
-                    detail: "There's a syntax error in your code. Please fix it and try formatting again.",
-                });
-            } else {
-                this.messageService.add({
-                    severity: 'warn',
-                    summary: 'Formatting Error',
-                    detail: 'An error occurred while formatting. Please check your code and try again.',
-                });
-            }
-        }
+        });
     }
 
     setProvider() {
@@ -251,20 +182,21 @@ export class EditorComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     setEditorState(language: string) {
-        const undoManager = this.undoManager;
-        const myExt: Extension = [
+        this.state = EditorState.create({
+            doc: this.yeditorText.toString(),
+            extensions: this.getEditorExtensions(language),
+        });
+    }
+
+    getEditorExtensions(language: string): Extension[] {
+        return [
             EditorView.lineWrapping,
             basicSetup,
             languageMap[language],
             this.customTheme,
             oneDark,
-            yCollab(this.yeditorText, this.wsProvider.awareness, { undoManager }),
+            yCollab(this.yeditorText, this.wsProvider.awareness, { undoManager: this.undoManager }),
         ];
-
-        this.state = EditorState.create({
-            doc: this.yeditorText.toString(),
-            extensions: myExt,
-        });
     }
 
     setEditorView() {
@@ -302,6 +234,89 @@ export class EditorComponent implements AfterViewInit, OnInit, OnDestroy {
         });
 
         this.view.focus();
+    }
+
+    getNumOfConnectedUsers() {
+        this.wsProvider.awareness.on('change', () => {
+            const data = Array.from(this.wsProvider.awareness.getStates().values());
+            const uniqueIds = new Set(
+                data
+                    .map(x => (x as awarenessData).user?.userId)
+                    .filter((userId): userId is string => userId !== undefined),
+            );
+
+            this.numUniqueUsers = uniqueIds.size;
+
+            this.changeDetector.detectChanges();
+        });
+    }
+
+    async format() {
+        try {
+            const selectedParser = parserMap[this.selectedLanguage.toLowerCase()];
+
+            if (selectedParser === undefined) {
+                this.notifyUnsupported();
+                return;
+            }
+
+            const currentCode = this.view.state.doc.toString();
+            const formattedCode = this.prettierFormat(currentCode, selectedParser);
+
+            this.view.dispatch({
+                changes: {
+                    from: 0,
+                    to: this.view.state.doc.length,
+                    insert: await formattedCode,
+                },
+            });
+
+            this.view.focus();
+        } catch (error) {
+            if (error instanceof SyntaxError || error instanceof Error) {
+                this.notifyFormattingErr(
+                    "There's a syntax error in your code. Please fix it and try formatting again.",
+                );
+            } else {
+                this.notifyFormattingErr('An error occurred while formatting. Please check your code and try again.');
+            }
+        }
+    }
+
+    prettierFormat(currentCode: string, selectedParser: string): Promise<string> {
+        return prettier.format(currentCode, {
+            parser: selectedParser,
+            plugins: [
+                parserBabel,
+                prettierPluginJava,
+                prettierPluginEstree,
+                prettierPluginPhp,
+                prettierPluginXml,
+                prettierPluginRust,
+                prettierPluginSql,
+            ],
+        });
+    }
+
+    notifyFormattingErr(message: string) {
+        this.messageService.add({
+            severity: 'warn',
+            summary: 'Formatting Error',
+            detail: message,
+        });
+    }
+
+    notifyUnsupported() {
+        this.messageService.add({
+            severity: 'info',
+            summary: 'Info Message',
+            detail: `The selected language ${this.selectedLanguage.toLowerCase()} is currently not supported for auto formatting.`,
+        });
+    }
+
+    showSubmitDialog() {
+        this.isSubmit = true;
+        this.isInitiator = true;
     }
 
     onSubmitDialogClose(numForfeit: number) {

@@ -89,12 +89,12 @@ export async function updateUser(req: Request, res: Response) {
         }
         if (username || email) {
             const userByUsername = await _findUserByUsername(username);
-            if (userByUsername?.id !== userId) {
+            if (userByUsername && userByUsername.id !== userId) {
                 handleConflict(res, 'username already exists');
                 return;
             }
             const userByEmail = await _findUserByEmail(email);
-            if (userByEmail?.id !== userId) {
+            if (userByEmail && userByEmail.id !== userId) {
                 handleConflict(res, 'email already exists');
                 return;
             }

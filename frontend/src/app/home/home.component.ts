@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit {
     getActiveSessions() {
         this.collabService.getRoomsWithQuery(true).subscribe({
             next: response => {
-                this.activeSessions = response.data;
+                this.activeSessions = Array.isArray(response.data) ? response.data : [];
             },
             error: () => {
                 this.messageService.add({

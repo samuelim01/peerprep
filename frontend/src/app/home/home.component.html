@@ -1,16 +1,22 @@
 <div class="grid w-full" style="height: calc(100vh - 80px)">
-    <p-progressSpinner
-        class="flex align-items-center justify-content-center h-screen"
-        *ngIf="loading"
-        styleClass="w-4rem h-4rem"
-        strokeWidth="8"
-        animationDuration=".5s" />
-    <div class="col-12 lg:col-6 xl:col-6 flex align-items-center justify-content-center flex-order-2 lg:flex-order-1">
-        <div class="flex flex-column align-items-center justify-content-center" style="width: 80%; height: auto">
-            <img src="/pair-programming.png" alt="Web illustrations by Storyset" style="width: 100%; height: auto" />
-            <!-- <a lass="align-items-center justify-content-center" href="https://storyset.com/web">Web illustrations by Storyset</a> -->
+    @if (loading) {
+        <p-progressSpinner
+            class="flex col-12 align-items-center justify-content-center"
+            styleClass="w-4rem h-4rem"
+            strokeWidth="8"
+            animationDuration=".5s" />
+    } @else {
+        <div
+            class="col-12 lg:col-6 xl:col-6 flex align-items-center justify-content-center flex-order-2 lg:flex-order-1">
+            <div class="flex flex-column align-items-center justify-content-center" style="width: 80%; height: auto">
+                <img
+                    src="/pair-programming.png"
+                    alt="Web illustrations by Storyset"
+                    style="width: 100%; height: auto" />
+                <!-- <a lass="align-items-center justify-content-center" href="https://storyset.com/web">Web illustrations by Storyset</a> -->
+            </div>
         </div>
-    </div>
+    }
     <div
         class="col-12 lg:col-6 xl:col-6 flex align-items-center justify-content-center flex-order-1 lg:flex-order-2 custom-height-lg">
         <div class="col-10" style="padding: 20px">
@@ -29,7 +35,7 @@
                             <h3 class="m-0">Active Sessions</h3>
                         </div>
                     </ng-template>
-                    @if (activeSessions.length > 0) {
+                    @if (activeSessions) {
                         <ng-template pTemplate="header">
                             <tr>
                                 <th style="width: 35%">Question</th>
@@ -69,18 +75,18 @@
                                 </td>
                             </tr>
                         </ng-template>
-                    }
-                    <ng-template pTemplate="footer">
-                        <div class="flex flex-column w-full align-items-center justify-content-center px-4 pb-0 pt-2">
-                            <!-- @if (activeSessions.length === 0) { -->
-                            <div>
-                                <p>You currently have no active sessions.</p>
+                    } @else {
+                        <ng-template pTemplate="footer">
+                            <div
+                                class="flex flex-column w-full align-items-center justify-content-center px-4 pb-0 pt-2">
+                                <div>
+                                    <p>You currently have no active sessions.</p>
+                                </div>
                             </div>
-                        </div>
-                    </ng-template>
+                        </ng-template>
+                    }
                 </p-table>
             </div>
-
             <div class="col-12 m-0 p-0 w-full" style="width: 50%">
                 <p-button
                     label="Start Matching Now!"

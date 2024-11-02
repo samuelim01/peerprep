@@ -4,6 +4,7 @@ import { Observable, of, combineLatest } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CollabService } from './collab.service';
 import { AuthenticationService } from './authentication.service';
+import { ToastService } from './toast.service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,6 +14,7 @@ export class CollabGuardService implements CanActivate {
         private collabService: CollabService,
         private router: Router,
         private authService: AuthenticationService,
+        private toastService: ToastService,
     ) {}
 
     canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
@@ -33,6 +35,15 @@ export class CollabGuardService implements CanActivate {
                         const isForfeit = response.data.users.find(roomUser => roomUser?.id === user.id)?.isForfeit;
 
                         if (!isFound || !isOpen || isForfeit) {
+                            if (!isOpen) {
+                                this.toastService.showToast('You cannot enter this session as it already had ended.');
+                            }
+                            if (isForfeit) {
+                                this.toastService.showToast('You have already forfeited in this session.');
+                            }
+                            if (!isFound) {
+                                this.toastService.showToast('Are you sure you are in the right session room?');
+                            }
                             this.router.navigate(['/home']);
                             return false;
                         }

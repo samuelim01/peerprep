@@ -10,6 +10,7 @@ import { RoomData, CollabUser } from '../collaboration/collab.model';
 import { ToastModule } from 'primeng/toast';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ToastService } from '../../_services/toast.service';
 
 @Component({
     selector: 'app-home',
@@ -30,10 +31,22 @@ export class HomeComponent implements OnInit {
         private messageService: MessageService,
         private authService: AuthenticationService,
         private router: Router,
+        private toastService: ToastService,
     ) {}
 
     ngOnInit() {
         this.getActiveSessions();
+        this.getUserId();
+        this.initToastService();
+    }
+
+    initToastService() {
+        this.toastService.toast$.subscribe(message => {
+            this.messageService.add({ severity: 'warn', summary: 'Warning', detail: message });
+        });
+    }
+
+    getUserId() {
         this.userId = this.authService.userValue!.id;
     }
 

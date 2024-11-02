@@ -161,7 +161,14 @@ export const getRoomsByUserIdAndStatusController = async (req: Request, res: Res
     const roomStatus = roomStatusParam === 'true';
     const isForfeit = isForfeitParam === 'true';
 
-    console.log('Received request for user ID:', userId, 'with room status:', roomStatus, 'with forfeit status:', isForfeit);
+    console.log(
+        'Received request for user ID:',
+        userId,
+        'with room status:',
+        roomStatus,
+        'with forfeit status:',
+        isForfeit,
+    );
 
     try {
         const rooms = await findRoomsByUserId(userId, roomStatus, isForfeit);

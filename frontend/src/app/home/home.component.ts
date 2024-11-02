@@ -69,7 +69,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     getActiveSessions() {
         this.collabService.getRoomsWithQuery(true, false).subscribe({
             next: response => {
-                console.log(response.data);
                 this.activeSessions = Array.isArray(response.data) ? response.data : [];
             },
             error: () => {

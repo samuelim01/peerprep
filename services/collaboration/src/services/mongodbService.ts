@@ -67,8 +67,10 @@ export const startMongoDB = async (): Promise<void> => {
 
 /**
  * Save room data in the MongoDB rooms database and create a Yjs document
- * @param roomData
  * @returns roomId
+ * @param user1
+ * @param user2
+ * @param question
  */
 export const createRoomInDB = async (user1: any, user2: any, question: Question): Promise<string> => {
     try {
@@ -142,8 +144,8 @@ export const deleteYjsDocument = async (roomId: string) => {
 /**
  * Find rooms by user ID and room status
  * @param userId
- * @param roomStatus - Room status filter (true for open, false for closed)
- * @returns Array of Room objects
+ * @param roomStatus
+ * @returns
  */
 export const findRoomsByUserId = async (
     userId: string,

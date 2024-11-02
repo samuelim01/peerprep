@@ -183,7 +183,7 @@ export const getRoomsByUserIdAndStatusController = async (req: Request, res: Res
     try {
         const rooms = await findRoomsByUserId(userId, roomStatus);
         if (!rooms || rooms.length === 0) {
-            return handleHttpNotFound(res, 'No rooms found for the given user and status');
+            return handleHttpSuccess(res, 'No rooms found for the given user and status');
         }
 
         const roomDetails = rooms.map(room => ({

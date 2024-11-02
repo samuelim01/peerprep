@@ -145,10 +145,16 @@ export const deleteYjsDocument = async (roomId: string) => {
  * @param roomStatus - Room status filter (true for open, false for closed)
  * @returns Array of Room objects
  */
-export const findRoomsByUserId = async (userId: string, roomStatus: boolean, isForfeit: boolean): Promise<WithId<Room>[]> => {
+export const findRoomsByUserId = async (
+    userId: string,
+    roomStatus: boolean,
+    isForfeit: boolean,
+): Promise<WithId<Room>[]> => {
     try {
         const db = await connectToRoomDB();
-        console.log(`Querying for rooms with user ID: ${userId}, room status: ${roomStatus} and isForfeit status; ${isForfeit}`);
+        console.log(
+            `Querying for rooms with user ID: ${userId}, room status: ${roomStatus} and isForfeit status; ${isForfeit}`,
+        );
 
         const rooms = await db
             .collection<Room>('rooms')
@@ -161,7 +167,10 @@ export const findRoomsByUserId = async (userId: string, roomStatus: boolean, isF
         console.log('Rooms found:', rooms);
         return rooms;
     } catch (error) {
-        console.error(`Error querying rooms for user ID ${userId} with room status ${roomStatus} and isForfeit status; ${isForfeit}:`, error);
+        console.error(
+            `Error querying rooms for user ID ${userId} with room status ${roomStatus} and isForfeit status; ${isForfeit}:`,
+            error,
+        );
         throw error;
     }
 };

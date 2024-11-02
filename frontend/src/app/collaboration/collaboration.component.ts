@@ -5,11 +5,11 @@ import { SplitterModule } from 'primeng/splitter';
 import { ChatBoxComponent } from './chat-box/chat-box.component';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
-import { WEBSOCKET_CONFIG } from '../api.config';
 import { RoomService } from './room.service';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { WebSocketCode } from './websocket-code.enum';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-collaboration',
@@ -48,10 +48,10 @@ export class CollaborationComponent implements OnInit, OnDestroy {
     initConnection() {
         this.ydoc = new Y.Doc();
 
-        const websocketUrl = WEBSOCKET_CONFIG.baseUrl + 'collaboration/';
+        const websocketUrl = environment.wsUrl + 'collaboration/';
         this.wsProvider = new WebsocketProvider(websocketUrl, this.roomId, this.ydoc, {
             params: {
-              accessToken: this.authService.userValue?.accessToken || '',
+                accessToken: this.authService.userValue?.accessToken || '',
             },
         });
 

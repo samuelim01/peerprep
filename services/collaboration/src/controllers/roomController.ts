@@ -44,29 +44,6 @@ export const createRoomWithQuestion = async (user1: any, user2: any, question: Q
 };
 
 /**
- * Controller function to get room IDs by user ID (roomStatus is true)
- * @param req
- * @param res
- */
-export const getRoomIdsByUserIdController = async (req: Request, res: Response) => {
-    const userId = req.user.id;
-
-    console.log('Received request for user ID:', userId);
-    try {
-        const rooms = await findRoomsByUserId(userId, true);
-        if (!rooms || rooms.length === 0) {
-            return handleHttpNotFound(res, 'No rooms found for the given user');
-        }
-
-        const roomIds = rooms.map(room => (room as Room)._id);
-        return handleHttpSuccess(res, roomIds);
-    } catch (error) {
-        console.error('Error fetching rooms by user ID:', error);
-        return handleHttpServerError(res, 'Failed to retrieve room IDs by user ID');
-    }
-};
-
-/**
  * Controller function to get room details by room ID
  * @param req
  * @param res
@@ -171,17 +148,23 @@ export const updateUserStatusInRoomController = async (req: Request, res: Respon
 export const getRoomsByUserIdAndStatusController = async (req: Request, res: Response) => {
     const userId = req.user.id;
     const roomStatusParam = req.params.room_status;
+    const isForfeitParam = req.params.isForfeit;
 
     if (roomStatusParam !== 'true' && roomStatusParam !== 'false') {
         return handleHttpBadRequest(res, 'Invalid room_status value. Must be "true" or "false".');
     }
 
-    const roomStatus = roomStatusParam === 'true';
+    if (isForfeitParam !== 'true' && isForfeitParam !== 'false') {
+        return handleHttpBadRequest(res, 'Invalid isForfeit value. Must be "true" or "false".');
+    }
 
-    console.log('Received request for user ID:', userId, 'with room status:', roomStatus);
+    const roomStatus = roomStatusParam === 'true';
+    const isForfeit = isForfeitParam === 'true';
+
+    console.log('Received request for user ID:', userId, 'with room status:', roomStatus, 'with forfeit status:', isForfeit);
 
     try {
-        const rooms = await findRoomsByUserId(userId, roomStatus);
+        const rooms = await findRoomsByUserId(userId, roomStatus, isForfeit);
         if (!rooms || rooms.length === 0) {
             return handleHttpSuccess(res, 'No rooms found for the given user and status');
         }

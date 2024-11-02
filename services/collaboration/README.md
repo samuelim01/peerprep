@@ -122,84 +122,13 @@ curl -X GET http://localhost:8080/api/collaboration/room/user/rooms \
 
 ---
 
-## Get Room by Room ID
-
-This endpoint retrieves the details of a room by its room ID. The room status is set to `true` for open rooms.
-
-- **HTTP Method**: `GET`
-- **Endpoint**: `/api/collaboration/room/{roomId}`
-
-### Authorization
-
-This endpoint requires a valid JWT token in the Authorization header.
-
-### Parameters:
-
-- `roomId` (Required) - The ID of the room to retrieve.
-
-### Responses:
-
-| Response Code               | Explanation                                 |
-|-----------------------------|---------------------------------------------|
-| 200 (OK)                    | Success, room details returned.             |
-| 404 (Not Found)             | Room not found.                             |
-| 500 (Internal Server Error) | Unexpected error in the server or database. |
-
-### Command Line Example:
-
-```bash
-curl -X GET http://localhost:8080/api/collaboration/room/6724e9d892fb3e9f04c2e280 \
-     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjRlOTZlNDNjMmNjNWQ5ODA5NmM2OSIsInVzZXJuYW1lIjoiVGVzdGluZzEiLCJyb2xlIjoidXNlciIsImlhdCI6MTczMDQ3MjMwMywiZXhwIjoxNzMwNTU4NzAzfQ.x92l-NIgWj_dpM-EC-xOKAGB8zrgGAdKbDpAu3UD5vE" \
-     -H "Content-Type: application/json"
-```
-
-### Example of Response Body for Success:
-
-```json
-{
-  "status": "Success",
-  "data": {
-    "room_id": "6724e9d892fb3e9f04c2e280",
-    "users": [
-      {
-        "id": "6724e96e43c2cc5d98096c69",
-        "username": "Testing1",
-        "requestId": "6724e9d7a752183798494a85",
-        "isForfeit": false
-      },
-      {
-        "id": "6724e94843c2cc5d98096c63",
-        "username": "Testing",
-        "requestId": "6724e9d6a752183798494a80",
-        "isForfeit": false
-      }
-    ],
-    "question": {
-      "_id": "6724e8b47cdb78e50482a119",
-      "id": 4,
-      "description": "Given two binary strings a and b, return their sum as a binary string.",
-      "difficulty": "Easy",
-      "title": "Add Binary",
-      "topics": [
-        "Bit Manipulation",
-        "Algorithms"
-      ]
-    },
-    "createdAt": "2024-11-01T14:46:48.085Z",
-    "room_status": true
-  }
-}
-```
-
----
-
-## Get Rooms by User ID and Room Status
+## Get Rooms by User ID, Room Status, and User's isForfeit status
 
 This endpoint retrieves the details of rooms associated with the authenticated user, filtered by the specified room
 status.
 
 - **HTTP Method**: `GET`
-- **Endpoint**: `/user/rooms/roomStatus/{room_status}`
+- **Endpoint**: `/user/rooms/roomStatus/{room_status}/isForfeit/{isForfeit}`
 
 ### Authorization
 
@@ -208,19 +137,19 @@ This endpoint requires a valid JWT token in the Authorization header.
 ### Parameters:
 
 - `room_status` (Required) - The status of the room to filter by (`true` for open rooms, `false` for closed rooms).
+- `isForfeit` (Required) - The status of the user in a room to filter by (`true` for rooms forfeited by the user, `false` for rooms not forfeited by the user).
 
 ### Responses:
 
-| Response Code               | Explanation                                  |
-|-----------------------------|----------------------------------------------|
-| 200 (OK)                    | Success, room details returned.              |
-| 404 (Not Found)             | No rooms found for the user and room status. |
-| 500 (Internal Server Error) | Unexpected error in the server or database.  |
+| Response Code               | Explanation                                                                               |
+|-----------------------------|-------------------------------------------------------------------------------------------|
+| 200 (OK)                    | Success, room details returned. If no rooms are found, success message is still returned. |
+| 500 (Internal Server Error) | Unexpected error in the server or database.                                               |
 
 ### Command Line Example:
 
 ```bash
-curl -X GET http://localhost:8080/api/collaboration/room/user/rooms/roomStatus/true \
+curl -X GET http://localhost:8080/api/collaboration/room/user/rooms/roomStatus/true/isForfeit/false \
      -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjFhNWZiZWFlNjBjOGViMWU1ZWYzNCIsInVzZXJuYW1lIjoiVGVzdGluZzEiLCJyb2xlIjoidXNlciIsImlhdCI6MTczMDQ3MjY2NCwiZXhwIjoxNzMwNTYxMDY0fQ.DF9CaChoG3-UmeZgZG9SlpjtTknVzeVSBAJDJRdqGk0" \
      -H "Content-Type: application/json"
 ```

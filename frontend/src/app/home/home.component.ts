@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DifficultyLevels } from '../questions/difficulty-levels.enum';
@@ -20,7 +20,7 @@ import { ToastService } from '../../_services/toast.service';
     templateUrl: './home.component.html',
     styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
     loading = true;
     activeSessions: RoomData[] = [];
     difficultyLevels = DifficultyLevels;
@@ -33,6 +33,10 @@ export class HomeComponent implements OnInit {
         private router: Router,
         private toastService: ToastService,
     ) {}
+
+    ngOnDestroy() {
+        this.activeSessions = [];
+    }
 
     ngOnInit() {
         this.getActiveSessions();
@@ -63,8 +67,9 @@ export class HomeComponent implements OnInit {
     }
 
     getActiveSessions() {
-        this.collabService.getRoomsWithQuery(true).subscribe({
+        this.collabService.getRoomsWithQuery(true, false).subscribe({
             next: response => {
+                console.log(response.data);
                 this.activeSessions = Array.isArray(response.data) ? response.data : [];
             },
             error: () => {

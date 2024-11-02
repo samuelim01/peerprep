@@ -34,19 +34,22 @@ export class CollabGuardService implements CanActivate {
                         const isOpen = response.data.room_status;
                         const isForfeit = response.data.users.find(roomUser => roomUser?.id === user.id)?.isForfeit;
 
-                        if (!isFound || !isOpen || isForfeit) {
-                            if (!isOpen) {
-                                this.toastService.showToast('You cannot enter this session as it already had ended.');
-                            }
-                            if (isForfeit) {
-                                this.toastService.showToast('You have already forfeited in this session.');
-                            }
-                            if (!isFound) {
-                                this.toastService.showToast('Are you sure you are in the right session room?');
-                            }
+                        if (!isOpen) {
+                            this.toastService.showToast('You cannot enter this session as it already had ended.');
                             this.router.navigate(['/home']);
                             return false;
                         }
+                        if (isForfeit) {
+                            this.toastService.showToast('You have already forfeited in this session.');
+                            this.router.navigate(['/home']);
+                            return false;
+                        }
+                        if (!isFound) {
+                            this.toastService.showToast('Are you sure you are in the right session room?');
+                            this.router.navigate(['/home']);
+                            return false;
+                        }
+
                         return true;
                     }),
                     catchError(() => {

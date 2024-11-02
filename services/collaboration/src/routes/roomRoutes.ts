@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import {
-    getRoomIdsByUserIdController,
     getRoomByRoomIdController,
     closeRoomController,
     updateUserStatusInRoomController,
@@ -11,11 +10,6 @@ import {
  * Router for room endpoints.
  */
 const router = Router();
-
-/**
- * Get room IDs by user ID (userId is now obtained from the JWT token)
- */
-router.get('/user/rooms', getRoomIdsByUserIdController);
 
 /**
  * Get room by room ID
@@ -33,8 +27,8 @@ router.patch('/:roomId/close', closeRoomController);
 router.patch('/:roomId/user/isForfeit', updateUserStatusInRoomController);
 
 /**
- * Get rooms by user ID and room status
+ * Get rooms by user ID, room status and isForfeit status
  */
-router.get('/user/rooms/roomStatus/:room_status', getRoomsByUserIdAndStatusController);
+router.get('/user/rooms/roomStatus/:room_status/isForfeit/:isForfeit', getRoomsByUserIdAndStatusController);
 
 export default router;

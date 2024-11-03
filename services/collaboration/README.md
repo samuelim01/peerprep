@@ -128,7 +128,7 @@ This endpoint retrieves the details of rooms associated with the authenticated u
 status and isForfeit status using query parameters.
 
 - **HTTP Method**: `GET`
-- **Endpoint**: `/api/collaboration/rooms`
+- **Endpoint**: `/api/collaboration/room/`
 
 ### Authorization
 
@@ -150,7 +150,7 @@ This endpoint requires a valid JWT token in the Authorization header.
 ### Command Line Example:
 
 ```bash
-curl -X GET "http://localhost:8080/api/collaboration/rooms?roomStatus=true&isForfeit=false" \
+curl -X GET "http://localhost:8080/api/collaboration/room/?roomStatus=true&isForfeit=false" \
      -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjFhNWZiZWFlNjBjOGViMWU1ZWYzNCIsInVzZXJuYW1lIjoiVGVzdGluZzEiLCJyb2xlIjoidXNlciIsImlhdCI6MTczMDQ3MjY2NCwiZXhwIjoxNzMwNTYxMDY0fQ.DF9CaChoG3-UmeZgZG9SlpjtTknVzeVSBAJDJRdqGk0" \
      -H "Content-Type: application/json"
 ```

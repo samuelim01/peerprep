@@ -11,22 +11,23 @@
   overflow: hidden;
 }
 
-.messages {
+:host ::ng-deep .messages {
   flex: 1;
   overflow-y: auto;
   padding: 10px;
-  background-color: #121212;
+  background-color: var(--surface-section);
   color: #ffffff;
   border-radius: 5px;
   margin-top: 5px;
   width: 100%;
+  scrollbar-width: none;
 }
 
 .input-container {
   display: flex;
   align-items: center;
   padding: 10px 0;
-  background-color: #1a1a1a;
+  background-color: var(--surface-section);
   width: 100%;
 }
 

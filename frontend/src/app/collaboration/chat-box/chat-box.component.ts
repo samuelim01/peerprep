@@ -3,11 +3,12 @@ import * as Y from 'yjs';
 import { AuthenticationService } from '../../../_services/authentication.service';
 import { WebsocketProvider } from 'y-websocket';
 import { NgClass, NgForOf } from '@angular/common';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
 
 @Component({
     selector: 'app-chat-box',
     standalone: true,
-    imports: [NgForOf, NgClass],
+    imports: [NgForOf, NgClass, ScrollPanelModule],
     templateUrl: './chat-box.component.html',
     styleUrls: ['./chat-box.component.css'],
 })

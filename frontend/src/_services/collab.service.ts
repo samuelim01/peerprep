@@ -20,9 +20,12 @@ export class CollabService extends ApiService {
     }
 
     getRoomsWithQuery(isActive: boolean, isForfeit: boolean) {
-        return this.http.get<RoomsResponse>(
-            this.apiUrl + '/user/rooms/roomStatus/' + isActive + '/isForfeit/' + isForfeit,
-        );
+        const params = new URLSearchParams({
+            roomStatus: isActive.toString(),
+            isForfeit: isForfeit.toString(),
+        }).toString();
+
+        return this.http.get<RoomsResponse>(`${this.apiUrl}/?${params}`);
     }
 
     /**

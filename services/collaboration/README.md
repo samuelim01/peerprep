@@ -125,10 +125,10 @@ curl -X GET http://localhost:8080/api/collaboration/room/user/rooms \
 ## Get Rooms by User ID, Room Status, and User's isForfeit status
 
 This endpoint retrieves the details of rooms associated with the authenticated user, filtered by the specified room
-status.
+status and isForfeit status using query parameters.
 
 - **HTTP Method**: `GET`
-- **Endpoint**: `/user/rooms/roomStatus/{room_status}/isForfeit/{isForfeit}`
+- **Endpoint**: `/api/collaboration/rooms`
 
 ### Authorization
 
@@ -136,8 +136,9 @@ This endpoint requires a valid JWT token in the Authorization header.
 
 ### Parameters:
 
-- `room_status` (Required) - The status of the room to filter by (`true` for open rooms, `false` for closed rooms).
-- `isForfeit` (Required) - The status of the user in a room to filter by (`true` for rooms forfeited by the user, `false` for rooms not forfeited by the user).
+- `roomStatus` (Required) - The status of the room to filter by (`true` for open rooms, `false` for closed rooms).
+- `isForfeit` (Required) - The status of the user in a room to filter by (`true` for rooms forfeited by the
+  user, `false` for rooms not forfeited by the user).
 
 ### Responses:
 
@@ -149,7 +150,7 @@ This endpoint requires a valid JWT token in the Authorization header.
 ### Command Line Example:
 
 ```bash
-curl -X GET http://localhost:8080/api/collaboration/room/user/rooms/roomStatus/true/isForfeit/false \
+curl -X GET "http://localhost:8080/api/collaboration/rooms?roomStatus=true&isForfeit=false" \
      -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjFhNWZiZWFlNjBjOGViMWU1ZWYzNCIsInVzZXJuYW1lIjoiVGVzdGluZzEiLCJyb2xlIjoidXNlciIsImlhdCI6MTczMDQ3MjY2NCwiZXhwIjoxNzMwNTYxMDY0fQ.DF9CaChoG3-UmeZgZG9SlpjtTknVzeVSBAJDJRdqGk0" \
      -H "Content-Type: application/json"
 ```

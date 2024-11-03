@@ -27,8 +27,8 @@ router.patch('/:roomId/close', closeRoomController);
 router.patch('/:roomId/user/isForfeit', updateUserStatusInRoomController);
 
 /**
- * Get rooms by user ID, room status and isForfeit status
+ * Get rooms by room status and isForfeit status for the authenticated user
  */
-router.get('/user/rooms/roomStatus/:room_status/isForfeit/:isForfeit', getRoomsByUserIdAndStatusController);
+router.get('/', getRoomsByUserIdAndStatusController);
 
 export default router;

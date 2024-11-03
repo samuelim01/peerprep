@@ -147,11 +147,11 @@ export const updateUserStatusInRoomController = async (req: Request, res: Respon
  */
 export const getRoomsByUserIdAndStatusController = async (req: Request, res: Response) => {
     const userId = req.user.id;
-    const roomStatusParam = req.params.room_status;
-    const isForfeitParam = req.params.isForfeit;
+    const roomStatusParam = req.query.roomStatus as string;
+    const isForfeitParam = req.query.isForfeit as string;
 
     if (roomStatusParam !== 'true' && roomStatusParam !== 'false') {
-        return handleHttpBadRequest(res, 'Invalid room_status value. Must be "true" or "false".');
+        return handleHttpBadRequest(res, 'Invalid roomStatus value. Must be "true" or "false".');
     }
 
     if (isForfeitParam !== 'true' && isForfeitParam !== 'false') {

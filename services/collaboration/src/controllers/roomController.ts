@@ -43,24 +43,6 @@ export const createRoomWithQuestion = async (user1: any, user2: any, question: Q
     }
 };
 
-export const getRoomIdsByUserIdController = async (req: Request, res: Response) => {
-    const userId = req.user.id;
-
-    console.log('Received request for user ID:', userId);
-    try {
-        const rooms = await findRoomsByUserId(userId);
-        if (!rooms || rooms.length === 0) {
-            return handleHttpNotFound(res, 'No rooms found for the given user');
-        }
-
-        const roomIds = rooms.map(room => (room as Room)._id);
-        return handleHttpSuccess(res, roomIds);
-    } catch (error) {
-        console.error('Error fetching rooms by user ID:', error);
-        return handleHttpServerError(res, 'Failed to retrieve room IDs by user ID');
-    }
-};
-
 /**
  * Controller function to get room details by room ID
  * @param req
@@ -155,5 +137,55 @@ export const updateUserStatusInRoomController = async (req: Request, res: Respon
     } catch (error) {
         console.error('Error updating user isForfeit status in room:', error);
         return handleHttpServerError(res, 'Failed to update user isForfeit status in room');
+    }
+};
+
+/**
+ * Controller function to get room details (including question details) by authenticated user, filtered by room status
+ * @param req
+ * @param res
+ */
+export const getRoomsByUserIdAndStatusController = async (req: Request, res: Response) => {
+    const userId = req.user.id;
+    const roomStatusParam = req.query.roomStatus as string;
+    const isForfeitParam = req.query.isForfeit as string;
+
+    if (roomStatusParam !== 'true' && roomStatusParam !== 'false') {
+        return handleHttpBadRequest(res, 'Invalid roomStatus value. Must be "true" or "false".');
+    }
+
+    if (isForfeitParam !== 'true' && isForfeitParam !== 'false') {
+        return handleHttpBadRequest(res, 'Invalid isForfeit value. Must be "true" or "false".');
+    }
+
+    const roomStatus = roomStatusParam === 'true';
+    const isForfeit = isForfeitParam === 'true';
+
+    console.log(
+        'Received request for user ID:',
+        userId,
+        'with room status:',
+        roomStatus,
+        'with forfeit status:',
+        isForfeit,
+    );
+
+    try {
+        const rooms = await findRoomsByUserId(userId, roomStatus, isForfeit);
+        if (!rooms || rooms.length === 0) {
+            return handleHttpSuccess(res, 'No rooms found for the given user and status');
+        }
+
+        const roomDetails = rooms.map(room => ({
+            room_id: room._id,
+            users: room.users,
+            question: room.question,
+            createdAt: room.createdAt,
+            room_status: room.room_status,
+        }));
+        return handleHttpSuccess(res, roomDetails);
+    } catch (error) {
+        console.error('Error fetching rooms by user ID and status:', error);
+        return handleHttpServerError(res, 'Failed to retrieve rooms by user ID and status');
     }
 };

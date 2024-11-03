@@ -27,7 +27,7 @@ docker compose down -v
 
 - This endpoint retrieves the history of a user.
 - **HTTP Method**: `GET`
-- **Endpoint**: http://localhost:8086/api/histor
+- **Endpoint**: http://localhost:8086/api/history
 - **Headers**
   - `Authorization: Bearer <JWT_ACCESS_TOKEN>` (Required)
   - The endpoint requires the user to include a JWT (JSON Web Token) in the HTTP Request Header for authentication and authorization. This token is generated during the authentication process (i.e., login) and contains information about the user's identity. The server verifies this token to ensure that the client is authorized to access the data.
@@ -112,7 +112,7 @@ docker compose down -v
 ### Update History Consumer
 
 - This consumer updates the user history for the users upon forfeiting or completing the collaborative session.
-- **Queue**: `CREATE_HISTORY` - This message is emitted when a user forfeits or completes a collaborative session.
+- **Queue**: `UPDATE_HISTORY` - This message is emitted when a user forfeits or completes a collaborative session.
 - **Data Consumed**
   - `roomId` - The ID of the collaboration room.
   - `userId` - The user associated with the update.

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { MatchingHistory } from '../app/account/history/history.model';
+import { historyResponse, MatchingHistory } from '../app/account/history/history.model';
 import { ApiService } from './api.service';
 
 @Injectable({
@@ -16,7 +16,7 @@ export class HistoryService extends ApiService {
     }
 
     getHistories(): Observable<MatchingHistory[]> {
-        return this.http.get<{ status: string; message: string; data: any[] }>(`${this.apiUrl}`).pipe(
+        return this.http.get<historyResponse>(`${this.apiUrl}`).pipe(
             map(response =>
                 response.data.map(item => ({
                     id: item._id,

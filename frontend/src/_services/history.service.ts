@@ -16,10 +16,9 @@ export class HistoryService extends ApiService {
     }
 
     getHistories(): Observable<MatchingHistory[]> {
-        return this.http
-            .get<{ status: string; message: string; data: any[] }>(`${this.apiUrl}`)
-            .pipe(
-                map(response => response.data.map(item => ({
+        return this.http.get<{ status: string; message: string; data: any[] }>(`${this.apiUrl}`).pipe(
+            map(response =>
+                response.data.map(item => ({
                     id: item._id,
                     collaborator: item.collaborator.username,
                     question: item.question.title,
@@ -27,7 +26,8 @@ export class HistoryService extends ApiService {
                     difficulty: item.question.difficulty,
                     status: item.status,
                     time: item.createdAt,
-                })))
-            );
+                })),
+            ),
+        );
     }
 }

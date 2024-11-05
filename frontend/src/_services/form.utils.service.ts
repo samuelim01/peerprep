@@ -37,35 +37,43 @@ export class FormUtilsService {
     }
 
     get passwordHasNoLowercase(): (form: FormGroup) => boolean {
-        return (form: FormGroup) => this.passwordControl(form).pristine || this.passwordControl(form).hasError(PASSWORD_LOWERCASE);
+        return (form: FormGroup) =>
+            this.passwordControl(form).pristine || this.passwordControl(form).hasError(PASSWORD_LOWERCASE);
     }
 
     get passwordHasNoUppercase(): (form: FormGroup) => boolean {
-        return (form: FormGroup) => this.passwordControl(form).pristine || this.passwordControl(form).hasError(PASSWORD_UPPERCASE);
+        return (form: FormGroup) =>
+            this.passwordControl(form).pristine || this.passwordControl(form).hasError(PASSWORD_UPPERCASE);
     }
 
     get passwordHasNoNumeric(): (form: FormGroup) => boolean {
-        return (form: FormGroup) => this.passwordControl(form).pristine || this.passwordControl(form).hasError(PASSWORD_NUMERIC);
+        return (form: FormGroup) =>
+            this.passwordControl(form).pristine || this.passwordControl(form).hasError(PASSWORD_NUMERIC);
     }
 
     get passwordHasNoSpecial(): (form: FormGroup) => boolean {
-        return (form: FormGroup) => this.passwordControl(form).pristine || this.passwordControl(form).hasError(PASSWORD_SPECIAL);
+        return (form: FormGroup) =>
+            this.passwordControl(form).pristine || this.passwordControl(form).hasError(PASSWORD_SPECIAL);
     }
 
     get isPasswordShort(): (form: FormGroup) => boolean {
-        return (form: FormGroup) => this.passwordControl(form).pristine || this.passwordControl(form).hasError(PASSWORD_SHORT);
+        return (form: FormGroup) =>
+            this.passwordControl(form).pristine || this.passwordControl(form).hasError(PASSWORD_SHORT);
     }
 
     get isPasswordWeak(): (form: FormGroup) => boolean {
-        return (form: FormGroup) => this.passwordControl(form).dirty && this.passwordControl(form).hasError(PASSWORD_WEAK);
+        return (form: FormGroup) =>
+            this.passwordControl(form).dirty && this.passwordControl(form).hasError(PASSWORD_WEAK);
     }
 
     get isPasswordStrong(): (form: FormGroup) => boolean {
-        return (form: FormGroup) => this.passwordControl(form).dirty && !this.passwordControl(form).hasError(PASSWORD_WEAK);
+        return (form: FormGroup) =>
+            this.passwordControl(form).dirty && !this.passwordControl(form).hasError(PASSWORD_WEAK);
     }
 
     get isPasswordInvalid(): (form: FormGroup) => boolean {
-        return (form: FormGroup) => this.passwordControl(form).dirty && this.passwordControl(form).hasError(PASSWORD_INVALID);
+        return (form: FormGroup) =>
+            this.passwordControl(form).dirty && this.passwordControl(form).hasError(PASSWORD_INVALID);
     }
 
     get hasPasswordMismatch(): (form: FormGroup) => boolean {

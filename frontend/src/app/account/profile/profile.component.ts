@@ -8,6 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
+import { InputTextModule } from 'primeng/inputtext';
 import { invalidUsernameValidator } from '../_validators/invalid-username.validator';
 import { mismatchPasswordValidator } from '../_validators/mismatch-password.validator';
 import { invalidPasswordValidator } from '../_validators/invalid-password.validator';
@@ -23,12 +24,13 @@ import { Router } from '@angular/router';
 @Component({
     standalone: true,
     imports: [
-        CommonModule, 
-        ReactiveFormsModule, 
-        ButtonModule, 
+        CommonModule,
+        ReactiveFormsModule,
+        ButtonModule,
         PasswordModule,
         ToastModule,
-        DividerModule
+        DividerModule,
+        InputTextModule,
     ],
     providers: [MessageService],
     templateUrl: './profile.component.html',
@@ -46,15 +48,13 @@ export class ProfileComponent implements OnInit {
         private messageService: MessageService,
         private router: Router,
         public formUtils: FormUtilsService,
-    ) {};
+    ) {}
 
-    editProfileForm: FormGroup = new FormGroup(
-        {
-            username: new FormControl('', [Validators.required, invalidUsernameValidator()]),
-            email: new FormControl('', [Validators.required, Validators.email]),
-            password: new FormControl(''),
-        },
-    );
+    editProfileForm: FormGroup = new FormGroup({
+        username: new FormControl('', [Validators.required, invalidUsernameValidator()]),
+        email: new FormControl('', [Validators.required, Validators.email]),
+        password: new FormControl(''),
+    });
 
     editPasswordForm: FormGroup = new FormGroup(
         {
@@ -80,7 +80,10 @@ export class ProfileComponent implements OnInit {
         { msg: 'At least one lowercase', check: () => this.formUtils.passwordHasNoLowercase(this.editPasswordForm) },
         { msg: 'At least one uppercase', check: () => this.formUtils.passwordHasNoUppercase(this.editPasswordForm) },
         { msg: 'At least one numeric', check: () => this.formUtils.passwordHasNoNumeric(this.editPasswordForm) },
-        { msg: 'At least one special character', check: () => this.formUtils.passwordHasNoSpecial(this.editPasswordForm) },
+        {
+            msg: 'At least one special character',
+            check: () => this.formUtils.passwordHasNoSpecial(this.editPasswordForm),
+        },
         { msg: 'Minimum 8 characters', check: () => this.formUtils.isPasswordShort(this.editPasswordForm) },
     ];
 
@@ -107,53 +110,65 @@ export class ProfileComponent implements OnInit {
             this.isProcessingEdit = true;
 
             // Check if password is correct first
-            this.authenticationService.login(this.user!.username, this.editProfileForm.get('password')?.value).subscribe({
-                next: () => {
-                    this.authenticationService.updateAccount(
-                        this.editProfileForm.get('username')?.value,
-                        this.editProfileForm.get('email')?.value,
-                        this.editProfileForm.get('password')?.value,
-                    ).subscribe({
-                        next: () => {
-                            this.router.navigateByUrl('/account', { skipLocationChange: true }).then(() => {
-                                this.router.navigate(['/account/profile']);
+            this.authenticationService
+                .login(this.user!.username, this.editProfileForm.get('password')?.value)
+                .subscribe({
+                    next: () => {
+                        this.authenticationService
+                            .updateAccount(
+                                this.editProfileForm.get('username')?.value,
+                                this.editProfileForm.get('email')?.value,
+                                this.editProfileForm.get('password')?.value,
+                            )
+                            .subscribe({
+                                next: () => {
+                                    this.router.navigateByUrl('/account', { skipLocationChange: true }).then(() => {
+                                        this.router.navigate(['/account/profile']);
+                                    });
+                                },
+                                error: error => {
+                                    this.isProcessingEdit = false;
+                                    const status = error.cause.status;
+                                    let errorMessage = 'An unknown error occurred';
+                                    if (status === 400) {
+                                        errorMessage = 'Missing Fields';
+                                    } else if (status === 401) {
+                                        errorMessage = 'Unauthorized. Invalid/Expired JWT Token';
+                                    } else if (status === 403) {
+                                        errorMessage = 'Forbidden Access';
+                                    } else if (status === 404) {
+                                        errorMessage = 'User ID Not Found';
+                                    } else if (status === 409) {
+                                        errorMessage = 'Username or Email already exists';
+                                    } else if (status === 500) {
+                                        errorMessage = 'Internal Server Error';
+                                    }
+                                    this.messageService.add({
+                                        severity: 'error',
+                                        summary: 'Editing Profile Erorr',
+                                        detail: errorMessage,
+                                    });
+                                },
                             });
-                        },
-                        error: error => {
-                            this.isProcessingEdit = false;
-                            const status = error.cause.status;
-                            let errorMessage = 'An unknown error occurred';
-                            if (status === 400) {
-                                errorMessage = 'Missing Fields';
-                            } else if (status === 401) {
-                                errorMessage = 'Unauthorized. Invalid/Expired JWT Token';
-                            } else if (status === 403) {
-                                errorMessage = 'Forbidden Access';
-                            } else if (status === 404) {
-                                errorMessage = 'User ID Not Found';
-                            } else if (status === 409) {
-                                errorMessage = 'Username or Email already exists';
-                            } else if (status === 500) {
-                                errorMessage = 'Internal Server Error';
-                            }
-                            this.messageService.add({ severity: 'error', summary: 'Editing Profile Erorr', detail: errorMessage });
-                        },
-                    });
-                },
-                error: error => {
-                    this.isProcessingEdit = false;
-                    const status = error.cause.status;
-                    let errorMessage = 'An unknown error occurred';
-                    if (status === 400) {
-                        errorMessage = 'Missing Fields';
-                    } else if (status === 401) {
-                        errorMessage = 'Invalid username or password';
-                    } else if (status === 500) {
-                        errorMessage = 'Internal Server Error';
-                    }
-                    this.messageService.add({ severity: 'error', summary: 'Submission Error', detail: errorMessage });
-                },
-            });
+                    },
+                    error: error => {
+                        this.isProcessingEdit = false;
+                        const status = error.cause.status;
+                        let errorMessage = 'An unknown error occurred';
+                        if (status === 400) {
+                            errorMessage = 'Missing Fields';
+                        } else if (status === 401) {
+                            errorMessage = 'Invalid username or password';
+                        } else if (status === 500) {
+                            errorMessage = 'Internal Server Error';
+                        }
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Submission Error',
+                            detail: errorMessage,
+                        });
+                    },
+                });
         }
     }
 
@@ -162,54 +177,65 @@ export class ProfileComponent implements OnInit {
             this.isProcessingPassword = true;
 
             // Check if password is correct first
-            this.authenticationService.login(this.user!.username, this.editPasswordForm.get('oldPassword')?.value).subscribe({
-                next: () => {
-                    this.authenticationService.updateAccount(
-                        this.user!.username,
-                        this.user!.email,
-                        this.editPasswordForm.get('password')?.value,
-                    ).subscribe({
-                        next: () => {
-                            this.router.navigateByUrl('/account', { skipLocationChange: true }).then(() => {
-                                this.router.navigate(['/account/profile']);
+            this.authenticationService
+                .login(this.user!.username, this.editPasswordForm.get('oldPassword')?.value)
+                .subscribe({
+                    next: () => {
+                        this.authenticationService
+                            .updateAccount(
+                                this.user!.username,
+                                this.user!.email,
+                                this.editPasswordForm.get('password')?.value,
+                            )
+                            .subscribe({
+                                next: () => {
+                                    this.router.navigateByUrl('/account', { skipLocationChange: true }).then(() => {
+                                        this.router.navigate(['/account/profile']);
+                                    });
+                                },
+                                error: error => {
+                                    this.isProcessingPassword = false;
+                                    const status = error.cause.status;
+                                    let errorMessage = 'An unknown error occurred';
+                                    if (status === 400) {
+                                        errorMessage = 'Missing Fields';
+                                    } else if (status === 401) {
+                                        errorMessage = 'Unauthorized. Invalid/Expired JWT Token';
+                                    } else if (status === 403) {
+                                        errorMessage = 'Forbidden Access';
+                                    } else if (status === 404) {
+                                        errorMessage = 'User ID Not Found';
+                                    } else if (status === 409) {
+                                        errorMessage = 'Username or Email already exists';
+                                    } else if (status === 500) {
+                                        errorMessage = 'Internal Server Error';
+                                    }
+                                    this.messageService.add({
+                                        severity: 'error',
+                                        summary: 'Editing Password Erorr',
+                                        detail: errorMessage,
+                                    });
+                                },
                             });
-                        },
-                        error: error => {
-                            this.isProcessingPassword = false;
-                            const status = error.cause.status;
-                            let errorMessage = 'An unknown error occurred';
-                            if (status === 400) {
-                                errorMessage = 'Missing Fields';
-                            } else if (status === 401) {
-                                errorMessage = 'Unauthorized. Invalid/Expired JWT Token';
-                            } else if (status === 403) {
-                                errorMessage = 'Forbidden Access';
-                            } else if (status === 404) {
-                                errorMessage = 'User ID Not Found';
-                            } else if (status === 409) {
-                                errorMessage = 'Username or Email already exists';
-                            } else if (status === 500) {
-                                errorMessage = 'Internal Server Error';
-                            }
-                            this.messageService.add({ severity: 'error', summary: 'Editing Password Erorr', detail: errorMessage });
-                        },
-                    });
-                },
-                error: error => {
-                    this.isProcessingPassword = false;
-                    const status = error.cause.status;
-                    let errorMessage = 'An unknown error occurred';
-                    if (status === 400) {
-                        errorMessage = 'Missing Fields';
-                    } else if (status === 401) {
-                        errorMessage = 'Invalid username or password';
-                    } else if (status === 500) {
-                        errorMessage = 'Internal Server Error';
-                    }
-                    this.messageService.add({ severity: 'error', summary: 'Submission Error', detail: errorMessage });
-                },
-            });
+                    },
+                    error: error => {
+                        this.isProcessingPassword = false;
+                        const status = error.cause.status;
+                        let errorMessage = 'An unknown error occurred';
+                        if (status === 400) {
+                            errorMessage = 'Missing Fields';
+                        } else if (status === 401) {
+                            errorMessage = 'Invalid username or password';
+                        } else if (status === 500) {
+                            errorMessage = 'Internal Server Error';
+                        }
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Submission Error',
+                            detail: errorMessage,
+                        });
+                    },
+                });
         }
     }
-
 }

@@ -52,10 +52,6 @@ services:
     ports:
       - 27020:27017
   
-  collaboration-db:
-    ports:
-      - 27020:27017
-  
   history:
     command: npm run dev
     ports:

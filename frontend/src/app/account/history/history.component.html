@@ -31,10 +31,15 @@
                 <td>{{ history.topics.join(', ') }}</td>
                 <td>{{ history.collaborator }}</td>
                 <td>
-                    <i *ngIf="history.status === 'COMPLETED'" class="pi pi-check" style="color: green;"></i>
-                    <i *ngIf="history.status === 'FORFEITED'" class="pi pi-times" style="color: red;"></i>
+                    @if (history.status === 'COMPLETED') {
+                        <i class="pi pi-check" style="color: green; font-size: large"></i>
+                    } @else if (history.status === 'FORFEITED') {
+                        <i class="pi pi-times" style="color: red; font-size: large"></i>
+                    } @else if (history.status === 'IN_PROGRESS') {
+                        <i class="pi pi-spin pi-spinner" style="color: white; font-size: large"></i>
+                    }
                 </td>
-                <td>{{ history.time | date:'short' }}</td>
+                <td>{{ history.time | date: 'short' }}</td>
             </tr>
         </ng-template>
     </p-table>

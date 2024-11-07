@@ -9,7 +9,7 @@ import { ApiService } from './api.service';
     providedIn: 'root',
 })
 export class HistoryService extends ApiService {
-    protected apiPath = 'history';
+    protected apiPath = 'history/history';
 
     constructor(private http: HttpClient) {
         super();

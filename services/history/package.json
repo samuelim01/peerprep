@@ -1,13 +1,13 @@
 {
   "name": "history",
   "version": "0.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "build": "npx tsc",
-    "start": "npm run build && node ./dist/index.js",
-    "dev": "nodemon --files ./src/index.ts",
-    "lint": "npx eslint .",
-    "lint:fix": "npx eslint . --fix",
+    "build": "npx tsc --build src/tsconfig.json",
+    "start": "npm run build && node ./dist/server.js",
+    "dev": "nodemon --files ./src/server.ts",
+    "lint": "npx eslint src tests",
+    "lint:fix": "npx eslint src tests --fix",
     "test": "mocha --require ts-node/register tests/**/*.spec.ts --exit"
   },
   "author": "",

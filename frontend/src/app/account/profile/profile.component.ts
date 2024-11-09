@@ -131,13 +131,9 @@ export class ProfileComponent implements OnInit {
                                     const status = error.cause.status;
                                     let errorMessage = 'An unknown error occurred';
                                     if (status === 401) {
-                                        errorMessage = 'Try loging out and log back in. Expired token';
-                                    } else if (status === 404) {
-                                        errorMessage = 'Try loging out and log back in. User ID Not Found';
+                                        errorMessage = 'Your session has expired. Please log out and log back in.';
                                     } else if (status === 409) {
-                                        errorMessage = 'Username or Email already exists';
-                                    } else if (status === 500) {
-                                        errorMessage = 'Internal Server Error';
+                                        errorMessage = 'The username or email already exists.';
                                     }
                                     this.messageService.add({
                                         severity: 'error',

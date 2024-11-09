@@ -132,9 +132,10 @@ export const createYjsDocument = async (roomId: string) => {
  */
 export const deleteYjsDocument = async (roomId: string) => {
     try {
+        console.log(`Attempting to delete Yjs document collection for room: ${roomId}`);
         const db = await connectToYJSDB();
-        await db.collection(roomId).drop();
-        console.log(`Yjs document collection for room ${roomId} deleted`);
+        const result = await db.collection(roomId).drop();
+        console.log(`Yjs document collection for room ${roomId} deleted successfully: ${result}`);
     } catch (error) {
         console.error(`Failed to delete Yjs document for room ${roomId}:`, error);
         throw error;
@@ -196,6 +197,12 @@ export const closeRoomById = async (roomId: string) => {
     }
 };
 
+/**
+ * Update the user isForfeit status in a room
+ * @param roomId
+ * @param userId
+ * @param isForfeit
+ */
 export const updateRoomUserStatus = async (roomId: string, userId: string, isForfeit: boolean) => {
     try {
         const db = await connectToRoomDB();

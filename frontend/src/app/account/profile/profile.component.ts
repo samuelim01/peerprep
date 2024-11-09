@@ -53,12 +53,12 @@ export class ProfileComponent implements OnInit {
     editProfileForm: FormGroup = new FormGroup({
         username: new FormControl('', [Validators.required, invalidUsernameValidator()]),
         email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl(''),
+        password: new FormControl('', [Validators.required]),
     });
 
     editPasswordForm: FormGroup = new FormGroup(
         {
-            oldPassword: new FormControl(''),
+            oldPassword: new FormControl('', [Validators.required]),
             password: new FormControl('', [
                 Validators.required,
                 invalidPasswordValidator(),
@@ -130,14 +130,10 @@ export class ProfileComponent implements OnInit {
                                     this.isProcessingEdit = false;
                                     const status = error.cause.status;
                                     let errorMessage = 'An unknown error occurred';
-                                    if (status === 400) {
-                                        errorMessage = 'Missing Fields';
-                                    } else if (status === 401) {
-                                        errorMessage = 'Unauthorized. Invalid/Expired JWT Token';
-                                    } else if (status === 403) {
-                                        errorMessage = 'Forbidden Access';
+                                    if (status === 401) {
+                                        errorMessage = 'Try loging out and log back in. Expired token';
                                     } else if (status === 404) {
-                                        errorMessage = 'User ID Not Found';
+                                        errorMessage = 'Try loging out and log back in. User ID Not Found';
                                     } else if (status === 409) {
                                         errorMessage = 'Username or Email already exists';
                                     } else if (status === 500) {
@@ -197,14 +193,10 @@ export class ProfileComponent implements OnInit {
                                     this.isProcessingPassword = false;
                                     const status = error.cause.status;
                                     let errorMessage = 'An unknown error occurred';
-                                    if (status === 400) {
-                                        errorMessage = 'Missing Fields';
-                                    } else if (status === 401) {
-                                        errorMessage = 'Unauthorized. Invalid/Expired JWT Token';
-                                    } else if (status === 403) {
-                                        errorMessage = 'Forbidden Access';
+                                    if (status === 401) {
+                                        errorMessage = 'Try loging out and log back in. Expired token';
                                     } else if (status === 404) {
-                                        errorMessage = 'User ID Not Found';
+                                        errorMessage = 'Try loging out and log back in. User ID Not Found';
                                     } else if (status === 409) {
                                         errorMessage = 'Username or Email already exists';
                                     } else if (status === 500) {

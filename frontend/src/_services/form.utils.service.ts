@@ -13,6 +13,8 @@ import { PASSWORD_INVALID } from '../app/account/_validators/invalid-password.va
 @Injectable({
     providedIn: 'root',
 })
+
+// This service is used to validate the form fields in the register and profile components
 export class FormUtilsService {
     get isUsernameInvalid(): (form: FormGroup) => boolean {
         return (form: FormGroup) => {

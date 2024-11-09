@@ -6,11 +6,11 @@
             <div class="profile-field">
                 <div class="flex flex-row align-items-center gap-2">
                     <i class="pi pi-user"></i>
-                    <label for="current username">Username</label>
+                    <label for="currentUsername">Username</label>
                 </div>
                 <input
                     pInputText
-                    id="current username"
+                    id="currentUsername"
                     [value]="user?.username"
                     type="text"
                     readonly
@@ -19,11 +19,11 @@
             <div class="profile-field">
                 <div class="flex flex-row align-items-center gap-2">
                     <i class="pi pi-envelope"></i>
-                    <label for="current email">Email</label>
+                    <label for="currentEmail">Email</label>
                 </div>
                 <input
                     pInputText
-                    id="current email"
+                    id="currentEmail"
                     [value]="user?.email"
                     type="email"
                     readonly
@@ -81,10 +81,10 @@
                     <div class="form-field">
                         <div class="flex flex-row align-items-center gap-2">
                             <i class="pi pi-lock"></i>
-                            <label for="password">Password</label>
+                            <label for="editProfilePassword">Password</label>
                         </div>
                         <p-password
-                            inputId="password"
+                            inputId="editProfilePassword"
                             name="password"
                             class="p-fluid"
                             formControlName="password"
@@ -118,11 +118,11 @@
                     <div class="form-field">
                         <div class="flex flex-row align-items-center gap-2">
                             <i class="pi pi-lock"></i>
-                            <label for="password">Old Password</label>
+                            <label for="editPasswordPassword">Old Password</label>
                         </div>
                         <p-password
-                            inputId="password"
-                            name="password"
+                            inputId="editPasswordPassword"
+                            name="editPasswordPassword"
                             class="p-fluid"
                             formControlName="oldPassword"
                             [toggleMask]="true"
@@ -133,11 +133,11 @@
                     <div class="form-field">
                         <div class="flex flex-row align-items-center gap-2">
                             <i class="pi pi-lock"></i>
-                            <label for="password">New Password</label>
+                            <label for="editPasswordNewPassword">New Password</label>
                         </div>
                         <p-password
-                            inputId="password"
-                            name="password"
+                            inputId="editPasswordNewPassword"
+                            name="editPasswordNewPassword"
                             class="p-fluid"
                             formControlName="password"
                             [toggleMask]="true"

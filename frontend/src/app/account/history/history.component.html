@@ -16,12 +16,18 @@
         </ng-template>
         <ng-template pTemplate="header" let-columns>
             <tr>
-                <th style="width: 25%">Question</th>
-                <th style="width: 10%">Difficulty</th>
-                <th style="width: 30%">Topics</th>
-                <th style="width: 12%">Collaborator</th>
-                <th style="width: 8%">Status</th>
-                <th style="width: 15%">Time</th>
+                <th pSortableColumn="question" style="width: 20%">
+                    Question<p-sortIcon field="question"></p-sortIcon>
+                </th>
+                <th pSortableColumn="difficulty" style="width: 14%">
+                    Difficulty<p-sortIcon field="difficulty"></p-sortIcon>
+                </th>
+                <th pSortableColumn="topics" style="width: 25%">Topics<p-sortIcon field="topics"></p-sortIcon></th>
+                <th pSortableColumn="collaborator" style="width: 17%">
+                    Collaborator<p-sortIcon field="collaborator"></p-sortIcon>
+                </th>
+                <th pSortableColumn="status" style="width: 12%">Status<p-sortIcon field="status"></p-sortIcon></th>
+                <th pSortableColumn="time" style="width: 12%">Time<p-sortIcon field="time"></p-sortIcon></th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-history>

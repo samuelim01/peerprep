@@ -1,40 +1,35 @@
 <div class="container w-full sm:w-22rem">
-    <h2 class="mt-0 align-self-start">Profile</h2>
-
     <div class="profile-container">
+        <h2 class="mt-0 align-self-start">Profile</h2>
         <div class="profile-field">
             <div class="flex flex-row align-items-center gap-2">
-                <i class="pi pi-user"></i>
-                <label for="currentUsername">Username</label>
+                <i class="pi pi-user text-lg text-gray-400"></i>
+                <p class="my-0 text-lg">{{ user?.username ?? 'No Username Found' }}</p>
             </div>
-            <input
-                pInputText
-                id="currentUsername"
-                [value]="user?.username"
-                type="text"
-                readonly
-                style="font-size: 1rem" />
         </div>
         <div class="profile-field">
             <div class="flex flex-row align-items-center gap-2">
-                <i class="pi pi-envelope"></i>
-                <label for="currentEmail">Email</label>
+                <i class="pi pi-envelope text-lg text-gray-400"></i>
+                <p class="my-0 text-lg">{{ user?.email ?? 'No Email Found' }}</p>
             </div>
-            <input pInputText id="currentEmail" [value]="user?.email" type="email" readonly style="font-size: 1rem" />
         </div>
     </div>
 
-    <p-button
-        type="button"
-        label="Update Username and/or Email"
-        styleClass="w-full justify-content-center mt-4"
-        (click)="onUpdateProfile()" />
+    <div class="w-full">
+        <p-button
+            type="button"
+            label="Update Username and/or Email"
+            styleClass="mt-4 col-12 text-lg"
+            [outlined]="true"
+            (click)="onUpdateProfile()" />
 
-    <p-button
-        type="button"
-        label="Update Password"
-        styleClass="w-full justify-content-center mt-4"
-        (click)="onUpdatePassword()" />
+        <p-button
+            type="button"
+            label="Update Password"
+            styleClass="mt-2 col-12 text-lg"
+            [outlined]="true"
+            (click)="onUpdatePassword()" />
+    </div>
 
     <app-edit-profile-dialog [isVisible]="showEditProfile" [user]="user" (dialogClose)="onEditProfileDialogClose()" />
     <app-edit-password-dialog

@@ -64,7 +64,7 @@ export class HistoryComponent implements OnInit {
         if (history.code && history.language) {
             this.initializeEditor(history.code, history.language);
         } else {
-            console.log("why no message?")
+            console.log('why no message?');
             this.messageService.add({
                 severity: 'warn',
                 summary: 'Code Not Found',

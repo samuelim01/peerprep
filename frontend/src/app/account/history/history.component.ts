@@ -9,15 +9,13 @@ import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { oneDark } from '@codemirror/theme-one-dark';
-import { EditorState, Extension, StateEffect } from '@codemirror/state';
+import { EditorState } from '@codemirror/state';
 import { EditorView, basicSetup } from 'codemirror';
-import { keymap } from '@codemirror/view';
-import { indentWithTab } from '@codemirror/commands';
-import { languageMap, parserMap, LanguageOption } from '../../collaboration/editor/languages';
+import { languageMap } from '../../collaboration/editor/languages';
 
 @Component({
     standalone: true,
-    imports: [TableModule, CommonModule, InputTextModule, ButtonModule, IconFieldModule, InputIconModule, ],
+    imports: [TableModule, CommonModule, InputTextModule, ButtonModule, IconFieldModule, InputIconModule],
     providers: [MessageService, DatePipe],
     templateUrl: './history.component.html',
     styleUrl: './history.component.css',
@@ -42,7 +40,7 @@ export class HistoryComponent implements OnInit {
             next: data => {
                 this.histories = data.map(history => ({
                     ...history,
-                    time: this.datePipe.transform(history.time, 'short') // Pipe to format date for searching
+                    time: this.datePipe.transform(history.time, 'short'), // Pipe to format date for searching
                 }));
                 this.loading = false;
                 console.log(this.histories);
@@ -79,14 +77,10 @@ export class HistoryComponent implements OnInit {
                 this.editorView.destroy();
             }
 
-            const languageExtension = languageMap[language] || languageMap["java"];
+            const languageExtension = languageMap[language] || languageMap['java'];
             const state = EditorState.create({
                 doc: code,
-                extensions: [
-                    basicSetup,
-                    languageExtension,
-                    oneDark,
-                ],
+                extensions: [basicSetup, languageExtension, oneDark],
             });
 
             this.editorView = new EditorView({

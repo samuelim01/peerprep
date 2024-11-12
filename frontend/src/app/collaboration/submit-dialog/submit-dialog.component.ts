@@ -58,7 +58,6 @@ export class SubmitDialogComponent implements AfterViewInit {
         this.userId = this.authService.userValue?.id || '';
     }
 
-
     initDocListener() {
         this.ysubmit.observe(() => {
             const firstEntry = this.ysubmit.entries().next().value;

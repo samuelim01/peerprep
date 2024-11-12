@@ -98,7 +98,6 @@ const historySchema = new Schema<History>(
             default: HistoryStatus.IN_PROGRESS,
         },
         snapshot: snapshotSchema,
-
     },
     { versionKey: false, timestamps: true },
 );

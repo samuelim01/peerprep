@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnInit, input } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';

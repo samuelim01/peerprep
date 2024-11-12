@@ -14,7 +14,11 @@ export async function createHistory(roomId: IdType, user1: User, user2: User, qu
 }
 
 export async function updateHistory(roomId: IdType, userId: IdType, status: HistoryStatus, snapshot: Snapshot) {
-    return await HistoryModel.findOneAndUpdate({ roomId, 'user._id': userId }, { $set: { status, snapshot } }, { new: true });
+    return await HistoryModel.findOneAndUpdate(
+        { roomId, 'user._id': userId },
+        { $set: { status, snapshot } },
+        { new: true },
+    );
 }
 
 export async function retrieveHistoryByUserId(userId: IdType) {

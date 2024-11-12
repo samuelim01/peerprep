@@ -14,8 +14,8 @@ export interface MatchingHistory {
     topics: string[]; // question topics
     status: statusValues; // status of the session
     time: string | null; // time of the session
-    language: string | null; // language used during the session
-    code: string | null; // code written during the session
+    language: string | undefined; // language used during the session
+    code: string | undefined; // code written during the session
 }
 
 export interface User {
@@ -33,8 +33,8 @@ export interface Question {
 }
 
 export interface Snapshot {
-    language: string | null;
-    code: string | null;
+    language: string;
+    code: string;
 }
 
 export interface sessionHistory {
@@ -46,7 +46,7 @@ export interface sessionHistory {
     status: statusValues;
     createdAt: string;
     updatedAt: string;
-    snapshot: Snapshot;
+    snapshot?: Snapshot;
 }
 
 export interface historyResponse {

@@ -12,10 +12,11 @@ import { oneDark } from '@codemirror/theme-one-dark';
 import { EditorState } from '@codemirror/state';
 import { EditorView, basicSetup } from 'codemirror';
 import { languageMap } from '../../collaboration/editor/languages';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
     standalone: true,
-    imports: [TableModule, CommonModule, InputTextModule, ButtonModule, IconFieldModule, InputIconModule],
+    imports: [TableModule, CommonModule, InputTextModule, ButtonModule, IconFieldModule, InputIconModule, ToastModule],
     providers: [MessageService, DatePipe],
     templateUrl: './history.component.html',
     styleUrl: './history.component.css',
@@ -43,7 +44,6 @@ export class HistoryComponent implements OnInit {
                     time: this.datePipe.transform(history.time, 'short'), // Pipe to format date for searching
                 }));
                 this.loading = false;
-                console.log(this.histories);
             },
             error: () => {
                 this.histories = [];
@@ -63,6 +63,14 @@ export class HistoryComponent implements OnInit {
         this.isPanelVisible = true;
         if (history.code && history.language) {
             this.initializeEditor(history.code, history.language);
+        } else {
+            console.log("why no message?")
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Code Not Found',
+                detail: 'Your colaboration session might not have ended',
+                life: 3000,
+            });
         }
     }
 

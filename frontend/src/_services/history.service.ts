@@ -26,8 +26,8 @@ export class HistoryService extends ApiService {
                     difficulty: item.question.difficulty,
                     status: item.status,
                     time: item.createdAt,
-                    language: item.snapshot.language,
-                    code: item.snapshot.code,
+                    language: item.snapshot?.language,
+                    code: item.snapshot?.code,
                 })),
             ),
         );

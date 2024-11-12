@@ -14,28 +14,28 @@ export interface RequestUser {
 }
 
 export const usernameSchema = z
-  .string({
-    invalid_type_error: UserValidationErrors.INVALID,
-    required_error: UserValidationErrors.REQUIRED,
-  })
-  .regex(/^[a-zA-Z0-9._-]+$/, UserValidationErrors.INVALID);
+    .string({
+        invalid_type_error: UserValidationErrors.INVALID,
+        required_error: UserValidationErrors.REQUIRED,
+    })
+    .regex(/^[a-zA-Z0-9._-]+$/, UserValidationErrors.INVALID);
 
 export const emailSchema = z
-  .string({
-    invalid_type_error: UserValidationErrors.INVALID,
-    required_error: UserValidationErrors.REQUIRED,
-  })
-  .email(UserValidationErrors.INVALID);
+    .string({
+        invalid_type_error: UserValidationErrors.INVALID,
+        required_error: UserValidationErrors.REQUIRED,
+    })
+    .email(UserValidationErrors.INVALID);
 
 export const passwordSchema = z
-  .string({
-    invalid_type_error: UserValidationErrors.INVALID,
-    required_error: UserValidationErrors.REQUIRED,
-  })
-  .regex(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})(?=.*[!"#$%&'()*+,-.:;<=>?@\\/\\[\]^_`{|}~])/,
-    UserValidationErrors.INVALID,
-  );
+    .string({
+        invalid_type_error: UserValidationErrors.INVALID,
+        required_error: UserValidationErrors.REQUIRED,
+    })
+    .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})(?=.*[!"#$%&'()*+,-.:;<=>?@\\/\\[\]^_`{|}~])/,
+        UserValidationErrors.INVALID,
+    );
 
 export const registrationSchema = z.object({
     username: usernameSchema,

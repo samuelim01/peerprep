@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { AuthenticationService } from '../../../_services/authentication.service';
 import { User } from '../../../_models/user.model';
@@ -9,28 +8,23 @@ import { PasswordModule } from 'primeng/password';
 import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
 import { InputTextModule } from 'primeng/inputtext';
-import { invalidUsernameValidator } from '../_validators/invalid-username.validator';
-import { mismatchPasswordValidator } from '../_validators/mismatch-password.validator';
-import { invalidPasswordValidator } from '../_validators/invalid-password.validator';
-import { lowercasePasswordValidator } from '../_validators/lowercase-password';
-import { uppercasePasswordValidator } from '../_validators/uppercase-password';
-import { numericPasswordValidator } from '../_validators/numeric-password';
-import { specialPasswordValidator } from '../_validators/special-password';
-import { shortPasswordValidator } from '../_validators/short-password';
-import { weakPasswordValidator } from '../_validators/weak-password.validator';
 import { FormUtilsService } from '../../../_services/form.utils.service';
 import { Router } from '@angular/router';
+import { EditProfileDialogComponent } from './edit-profile-dialog/edit-profile-dialog.component';
+import { EditPasswordDialogComponent } from './edit-password-dialog/edit-password-dialog.component';
 
 @Component({
     standalone: true,
     imports: [
+        EditProfileDialogComponent,
+        EditPasswordDialogComponent,
         CommonModule,
-        ReactiveFormsModule,
         ButtonModule,
         PasswordModule,
         ToastModule,
         DividerModule,
         InputTextModule,
+        EditProfileDialogComponent,
     ],
     providers: [MessageService],
     templateUrl: './profile.component.html',
@@ -40,8 +34,6 @@ export class ProfileComponent implements OnInit {
     user: User | null = null;
     showEditProfile = false;
     showEditPassword = false;
-    isProcessingEdit = false;
-    isProcessingPassword = false;
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -50,51 +42,10 @@ export class ProfileComponent implements OnInit {
         public formUtils: FormUtilsService,
     ) {}
 
-    editProfileForm: FormGroup = new FormGroup({
-        username: new FormControl('', [Validators.required, invalidUsernameValidator()]),
-        email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl('', [Validators.required]),
-    });
-
-    editPasswordForm: FormGroup = new FormGroup(
-        {
-            oldPassword: new FormControl('', [Validators.required]),
-            password: new FormControl('', [
-                Validators.required,
-                invalidPasswordValidator(),
-                lowercasePasswordValidator(),
-                uppercasePasswordValidator(),
-                numericPasswordValidator(),
-                specialPasswordValidator(),
-                shortPasswordValidator(),
-                weakPasswordValidator(),
-            ]),
-            confirmPassword: new FormControl('', [Validators.required]),
-        },
-        {
-            validators: mismatchPasswordValidator('password', 'confirmPassword'),
-        },
-    );
-
-    passwordRequirements = [
-        { msg: 'At least one lowercase', check: () => this.formUtils.passwordHasNoLowercase(this.editPasswordForm) },
-        { msg: 'At least one uppercase', check: () => this.formUtils.passwordHasNoUppercase(this.editPasswordForm) },
-        { msg: 'At least one numeric', check: () => this.formUtils.passwordHasNoNumeric(this.editPasswordForm) },
-        {
-            msg: 'At least one special character',
-            check: () => this.formUtils.passwordHasNoSpecial(this.editPasswordForm),
-        },
-        { msg: 'Minimum 8 characters', check: () => this.formUtils.isPasswordShort(this.editPasswordForm) },
-    ];
-
     ngOnInit() {
         this.authenticationService.user$.subscribe(() => {
             this.user = this.authenticationService.userValue as User;
         });
-        this.showEditProfile = false;
-        this.showEditPassword = false;
-        this.isProcessingEdit = false;
-        this.isProcessingPassword = false;
     }
 
     onUpdateProfile() {
@@ -103,149 +54,15 @@ export class ProfileComponent implements OnInit {
     }
 
     onUpdatePassword() {
+        this.showEditProfile = false;
         this.showEditPassword = true;
+    }
+
+    onEditProfileDialogClose() {
         this.showEditProfile = false;
     }
 
-    onEditSubmit() {
-        if (this.editProfileForm.valid) {
-            this.isProcessingEdit = true;
-
-            // Check if password is correct first
-            this.authenticationService
-                .login(this.user!.username, this.editProfileForm.get('password')?.value)
-                .subscribe({
-                    next: () => {
-                        this.authenticationService
-                            .updateUsernameAndEmail(
-                                this.editProfileForm.get('username')?.value,
-                                this.editProfileForm.get('email')?.value,
-                                this.editProfileForm.get('password')?.value,
-                            )
-                            .subscribe({
-                                next: () => {
-                                    // Reset states and forms on success
-                                    this.showEditProfile = false;
-                                    this.showEditPassword = false;
-                                    this.isProcessingEdit = false;
-                                    this.isProcessingPassword = false;
-                                    this.editProfileForm.reset();
-                                    this.editPasswordForm.reset();
-
-                                    this.messageService.add({
-                                        severity: 'success',
-                                        summary: 'Profile Updated',
-                                        detail: 'Your profile has been updated successfully!',
-                                    });
-                                },
-                                error: error => {
-                                    this.isProcessingEdit = false;
-                                    const status = error.cause.status;
-                                    let errorMessage = 'An unknown error occurred';
-                                    if (status === 401) {
-                                        errorMessage = 'Your session has expired. Please log out and log back in.';
-                                    } else if (status === 409) {
-                                        errorMessage = 'The username or email already exists.';
-                                    }
-                                    this.messageService.add({
-                                        severity: 'error',
-                                        summary: 'Editing Profile Erorr',
-                                        detail: errorMessage,
-                                    });
-                                },
-                            });
-                    },
-                    error: error => {
-                        this.isProcessingEdit = false;
-                        const status = error.cause.status;
-                        let errorMessage = 'An unknown error occurred';
-                        if (status === 400) {
-                            errorMessage = 'Missing/Invalid passwords';
-                        } else if (status === 401) {
-                            errorMessage = 'Your old password is invalid';
-                        } else if (status === 500) {
-                            errorMessage = 'Internal Server Error';
-                        }
-                        this.messageService.add({
-                            severity: 'error',
-                            summary: 'Submission Error',
-                            detail: errorMessage,
-                        });
-                    },
-                });
-        }
-    }
-
-    onPasswordSubmit() {
-        if (this.editPasswordForm.valid) {
-            this.isProcessingPassword = true;
-
-            // Check if password is correct first
-            this.authenticationService
-                .login(this.user!.username, this.editPasswordForm.get('oldPassword')?.value)
-                .subscribe({
-                    next: () => {
-                        this.authenticationService
-                            .updatePassword(
-                                this.user!.username,
-                                this.editPasswordForm.get('oldPassword')?.value,
-                                this.editPasswordForm.get('password')?.value,
-                            )
-                            .subscribe({
-                                next: () => {
-                                    // Reset states and forms on success
-                                    this.showEditProfile = false;
-                                    this.showEditPassword = false;
-                                    this.isProcessingEdit = false;
-                                    this.isProcessingPassword = false;
-                                    this.editProfileForm.reset();
-                                    this.editPasswordForm.reset();
-
-                                    this.messageService.add({
-                                        severity: 'success',
-                                        summary: 'Password Updated',
-                                        detail: 'Your password has been updated successfully!',
-                                    });
-                                },
-                                error: error => {
-                                    this.isProcessingPassword = false;
-                                    const status = error.cause.status;
-                                    let errorMessage = 'An unknown error occurred';
-                                    if (status === 401) {
-                                        errorMessage = 'Try loging out and log back in. Expired token';
-                                    } else if (status === 404) {
-                                        errorMessage = 'Try loging out and log back in. User ID Not Found';
-                                    } else if (status === 409) {
-                                        errorMessage = 'Username or Email already exists';
-                                    } else if (status === 500) {
-                                        errorMessage = 'Internal Server Error';
-                                    }
-                                    this.messageService.add({
-                                        severity: 'error',
-                                        summary: 'Editing Password Erorr',
-                                        detail: errorMessage,
-                                    });
-                                },
-                            });
-                    },
-                    error: error => {
-                        this.isProcessingPassword = false;
-                        const status = error.cause.status;
-                        let errorMessage = 'An unknown error occurred';
-                        if (status === 400) {
-                            errorMessage = 'Missing/Invalid passwords';
-                        } else if (status === 401) {
-                            errorMessage = 'Your old password is invalid';
-                        } else if (status === 500) {
-                            errorMessage = 'Internal Server Error';
-                        }
-                        this.messageService.add({
-                            severity: 'error',
-                            summary: 'Submission Error',
-                            detail: errorMessage,
-                        });
-                    },
-                });
-        }
+    onEditPasswordDialogClose() {
+        this.showEditPassword = false;
     }
 }

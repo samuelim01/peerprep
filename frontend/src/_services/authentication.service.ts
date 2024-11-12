@@ -68,14 +68,24 @@ export class AuthenticationService extends ApiService {
             .pipe(switchMap(() => this.login(username, password))); // auto login after registration
     }
 
-    updateAccount(username: string, email: string, password: string) {
+    updateUsernameAndEmail(username: string, email: string, password: string) {
         return this.http
             .patch<UServRes>(
-                `${this.apiUrl}/users/${this.userValue!.id}`,
+                `${this.apiUrl}/users/username-email/${this.userValue!.id}`,
                 { username: username, email: email, password: password },
                 { observe: 'response' },
             )
             .pipe(switchMap(() => this.login(username, password))); // login to update local storage and subject
+    }
+
+    updatePassword(username: string, oldPassword: string, newPassword: string) {
+        return this.http
+            .patch<UServRes>(
+                `${this.apiUrl}/users/password/${this.userValue!.id}`,
+                { oldPassword: oldPassword, newPassword: newPassword },
+                { observe: 'response' },
+            )
+            .pipe(switchMap(() => this.login(username, newPassword))); // login to update local storage and subject
     }
 
     logout() {

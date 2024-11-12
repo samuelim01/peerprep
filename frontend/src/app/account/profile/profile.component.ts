@@ -117,7 +117,7 @@ export class ProfileComponent implements OnInit {
                 .subscribe({
                     next: () => {
                         this.authenticationService
-                            .updateAccount(
+                            .updateUsernameAndEmail(
                                 this.editProfileForm.get('username')?.value,
                                 this.editProfileForm.get('email')?.value,
                                 this.editProfileForm.get('password')?.value,
@@ -160,9 +160,9 @@ export class ProfileComponent implements OnInit {
                         const status = error.cause.status;
                         let errorMessage = 'An unknown error occurred';
                         if (status === 400) {
-                            errorMessage = 'Missing Fields';
+                            errorMessage = 'Missing/Invalid passwords';
                         } else if (status === 401) {
-                            errorMessage = 'Invalid username or password';
+                            errorMessage = 'Your old password is invalid';
                         } else if (status === 500) {
                             errorMessage = 'Internal Server Error';
                         }
@@ -186,9 +186,9 @@ export class ProfileComponent implements OnInit {
                 .subscribe({
                     next: () => {
                         this.authenticationService
-                            .updateAccount(
+                            .updatePassword(
                                 this.user!.username,
-                                this.user!.email,
+                                this.editPasswordForm.get('oldPassword')?.value,
                                 this.editPasswordForm.get('password')?.value,
                             )
                             .subscribe({
@@ -233,9 +233,9 @@ export class ProfileComponent implements OnInit {
                         const status = error.cause.status;
                         let errorMessage = 'An unknown error occurred';
                         if (status === 400) {
-                            errorMessage = 'Missing Fields';
+                            errorMessage = 'Missing/Invalid passwords';
                         } else if (status === 401) {
-                            errorMessage = 'Invalid username or password';
+                            errorMessage = 'Your old password is invalid';
                         } else if (status === 500) {
                             errorMessage = 'Internal Server Error';
                         }

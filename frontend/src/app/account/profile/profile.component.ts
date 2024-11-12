@@ -88,7 +88,9 @@ export class ProfileComponent implements OnInit {
     ];
 
     ngOnInit() {
-        this.user = this.authenticationService.userValue;
+        this.authenticationService.user$.subscribe(() => {
+            this.user = this.authenticationService.userValue as User;
+        });
         this.showEditProfile = false;
         this.showEditPassword = false;
         this.isProcessingEdit = false;
@@ -122,8 +124,18 @@ export class ProfileComponent implements OnInit {
                             )
                             .subscribe({
                                 next: () => {
-                                    this.router.navigateByUrl('/account', { skipLocationChange: true }).then(() => {
-                                        this.router.navigate(['/account/profile']);
+                                    // Reset states and forms on success
+                                    this.showEditProfile = false;
+                                    this.showEditPassword = false;
+                                    this.isProcessingEdit = false;
+                                    this.isProcessingPassword = false;
+                                    this.editProfileForm.reset();
+                                    this.editPasswordForm.reset();
+
+                                    this.messageService.add({
+                                        severity: 'success',
+                                        summary: 'Profile Updated',
+                                        detail: 'Your profile has been updated successfully!',
                                     });
                                 },
                                 error: error => {
@@ -181,8 +193,18 @@ export class ProfileComponent implements OnInit {
                             )
                             .subscribe({
                                 next: () => {
-                                    this.router.navigateByUrl('/account', { skipLocationChange: true }).then(() => {
-                                        this.router.navigate(['/account/profile']);
+                                    // Reset states and forms on success
+                                    this.showEditProfile = false;
+                                    this.showEditPassword = false;
+                                    this.isProcessingEdit = false;
+                                    this.isProcessingPassword = false;
+                                    this.editProfileForm.reset();
+                                    this.editPasswordForm.reset();
+
+                                    this.messageService.add({
+                                        severity: 'success',
+                                        summary: 'Password Updated',
+                                        detail: 'Your password has been updated successfully!',
                                     });
                                 },
                                 error: error => {

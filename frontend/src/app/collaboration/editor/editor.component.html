@@ -55,10 +55,14 @@
     [ydoc]="ydoc"
     [roomId]="roomId"
     [isVisible]="isSubmit"
-    [isInitiator]="isInitiator" />
+    [isInitiator]="isInitiator"
+    [selectedLanguage]="selectedLanguage"
+    [yeditorText]="yeditorText" />
 <app-forfeit-dialog
     (notify)="forfeitNotify()"
     (dialogClose)="onForfeitDialogClose()"
     [yforfeit]="yforfeit"
     [roomId]="roomId"
-    [isVisible]="isForfeitClick" />
+    [isVisible]="isForfeitClick"
+    [selectedLanguage]="selectedLanguage"
+    [yeditorText]="yeditorText" />

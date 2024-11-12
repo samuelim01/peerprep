@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, input } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
@@ -19,6 +19,8 @@ export class ForfeitDialogComponent implements OnInit {
     @Input() roomId!: string;
     @Input() isVisible = false;
     @Input() yforfeit!: Y.Map<boolean>;
+    @Input() selectedLanguage!: string;
+    @Input() yeditorText!: Y.Text;
 
     @Output() dialogClose = new EventEmitter<void>();
     @Output() notify = new EventEmitter<void>();
@@ -27,6 +29,7 @@ export class ForfeitDialogComponent implements OnInit {
     isForfeit = false;
     userId!: string;
     hideButtons = false;
+    code!: string;
 
     constructor(
         private authService: AuthenticationService,
@@ -60,9 +63,12 @@ export class ForfeitDialogComponent implements OnInit {
     }
 
     onForfeit() {
+        this.code = this.yeditorText.toString();
         const userId = this.authService.userValue?.id;
+        console.log('Forfeiting language:', this.selectedLanguage);
+        console.log('Forfeiting code:', this.code);
         if (userId) {
-            this.collabService.forfeit(this.roomId).subscribe({
+            this.collabService.forfeit(this.roomId, this.selectedLanguage, this.code).subscribe({
                 next: () => {
                     this.yforfeit.set(userId, true);
                     this.message = 'You have forfeited. \n\n Redirecting you to homepage...';

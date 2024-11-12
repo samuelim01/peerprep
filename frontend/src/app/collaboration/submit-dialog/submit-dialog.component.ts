@@ -21,6 +21,8 @@ export class SubmitDialogComponent implements AfterViewInit {
     @Input() roomId!: string;
     @Input() numUniqueUsers!: number;
     @Input() ydoc!: Y.Doc;
+    @Input() selectedLanguage!: string;
+    @Input() yeditorText!: Y.Text;
 
     @Output() dialogClose = new EventEmitter<number>();
     @Output() successfulSubmit = new EventEmitter<void>();
@@ -31,6 +33,7 @@ export class SubmitDialogComponent implements AfterViewInit {
     ysubmit!: Y.Map<boolean>;
     yforfeit!: Y.Map<boolean>;
     userId!: string;
+    code!: string;
 
     constructor(
         @Inject(DOCUMENT) private document: Document,
@@ -54,6 +57,7 @@ export class SubmitDialogComponent implements AfterViewInit {
     getUserId() {
         this.userId = this.authService.userValue?.id || '';
     }
+
 
     initDocListener() {
         this.ysubmit.observe(() => {
@@ -121,7 +125,10 @@ export class SubmitDialogComponent implements AfterViewInit {
         this.successfulSubmit.emit();
 
         if (this.isInitiator) {
-            this.collabService.closeRoom(this.roomId).subscribe({
+            this.code = this.yeditorText.toString();
+            console.log('Submitting language', this.selectedLanguage);
+            console.log('Submitting code:', this.code);
+            this.collabService.closeRoom(this.roomId, this.selectedLanguage, this.code).subscribe({
                 next: () => {
                     this.message = 'Successfully submitted. \n\n Redirecting you to homepage...';
                     setTimeout(() => {

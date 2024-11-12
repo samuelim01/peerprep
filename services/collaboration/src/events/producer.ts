@@ -1,5 +1,5 @@
 import { CollabCreatedEvent, IdType, MatchFailedEvent, Question } from '../types/event';
-import { CreateHistoryMessage, HistoryStatus, UpdateHistoryMessage, User } from '../types/message';
+import { CreateHistoryMessage, HistoryStatus, Snapshot, UpdateHistoryMessage, User } from '../types/message';
 import messageBroker from './broker';
 import { Queues } from './queues';
 
@@ -25,7 +25,7 @@ export async function produceCreateHistory(roomId: IdType, user1: User, user2: U
     await messageBroker.produce(Queues.CREATE_HISTORY, message);
 }
 
-export async function produceUpdateHistory(roomId: IdType, userId: IdType, status: HistoryStatus) {
-    const message: UpdateHistoryMessage = { roomId, userId, status };
+export async function produceUpdateHistory(roomId: IdType, userId: IdType, status: HistoryStatus, snapshot: Snapshot) {
+    const message: UpdateHistoryMessage = { roomId, userId, status, snapshot };
     await messageBroker.produce(Queues.UPDATE_HISTORY, message);
 }

@@ -1,5 +1,6 @@
 <div class="table-container">
     <p-table
+        #dt
         sortField="time"
         [sortOrder]="1"
         [value]="histories"
@@ -8,10 +9,25 @@
         [paginator]="true"
         [rows]="10"
         [rowsPerPageOptions]="[10, 25, 50]"
+        [globalFilterFields]="['question', 'difficulty', 'topics', 'collaborator', 'status', 'time']"
         styleClass="p-datatable-gridlines-striped">
         <ng-template pTemplate="caption">
             <div class="flex">
                 <h3 class="m-0">Matching History</h3>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="caption">
+            <div class="flex">
+                <p-iconField iconPosition="left" class="ml-auto">
+                    <p-inputIcon>
+                        <i class="pi pi-search"></i>
+                    </p-inputIcon>
+                    <input 
+                        pInputText 
+                        type="text" 
+                        (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
+                        placeholder="Search keyword" />
+                </p-iconField>
             </div>
         </ng-template>
         <ng-template pTemplate="header" let-columns>
@@ -31,7 +47,7 @@
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-history>
-            <tr>
+            <tr (click)="onRowSelect(history)">
                 <td>{{ history.question }}</td>
                 <td>{{ history.difficulty }}</td>
                 <td>{{ history.topics.join(', ') }}</td>
@@ -45,8 +61,22 @@
                         <i class="pi pi-spin pi-spinner" style="color: white; font-size: large"></i>
                     }
                 </td>
-                <td>{{ history.time | date: 'short' }}</td>
+                <td>{{ history.time }}</td>
             </tr>
         </ng-template>
     </p-table>
+</div>
+<div class="sliding-panel" [class.open]="isPanelVisible">
+    <div class="panel-header">
+        <h4>{{ history?.question }}</h4>
+        <p-button
+            icon="pi pi-times"
+            severity="secondary"
+            label="Close"
+            (onClick)="closePanel()"
+            class="p-button-text" />
+    </div>
+    <div class="panel-content">
+        <div #editor class="editor-content"></div>
+    </div>
 </div>

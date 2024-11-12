@@ -13,7 +13,9 @@ export interface MatchingHistory {
     difficulty: DifficultyLevels; // question difficulty
     topics: string[]; // question topics
     status: statusValues; // status of the session
-    time: string; // time of the session
+    time: string | null; // time of the session
+    language: string | null; // language used during the session
+    code: string | null; // code written during the session
 }
 
 export interface User {
@@ -30,6 +32,11 @@ export interface Question {
     _id: string;
 }
 
+export interface Snapshot {
+    language: string | null;
+    code: string | null;
+}
+
 export interface sessionHistory {
     _id: string;
     roomId: string;
@@ -39,6 +46,7 @@ export interface sessionHistory {
     status: statusValues;
     createdAt: string;
     updatedAt: string;
+    snapshot: Snapshot;
 }
 
 export interface historyResponse {

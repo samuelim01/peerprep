@@ -9,7 +9,6 @@ import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormUtilsService } from '../../../_services/form.utils.service';
-import { Router } from '@angular/router';
 import { EditProfileDialogComponent } from './edit-profile-dialog/edit-profile-dialog.component';
 import { EditPasswordDialogComponent } from './edit-password-dialog/edit-password-dialog.component';
 
@@ -37,8 +36,6 @@ export class ProfileComponent implements OnInit {
 
     constructor(
         private authenticationService: AuthenticationService,
-        private messageService: MessageService,
-        private router: Router,
         public formUtils: FormUtilsService,
     ) {}
 

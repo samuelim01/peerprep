@@ -61,65 +61,43 @@ export class EditProfileDialogComponent {
     }
 
     onEditSubmit() {
-        if (this.editProfileForm.valid) {
-            this.isProcessingEdit = true;
-
-            // Check if password is correct first
-            this.authenticationService
-                .login(this.user!.username, this.editProfileForm.get('password')?.value)
-                .subscribe({
-                    next: () => {
-                        this.authenticationService
-                            .updateUsernameAndEmail(
-                                this.editProfileForm.get('username')?.value,
-                                this.editProfileForm.get('email')?.value,
-                                this.editProfileForm.get('password')?.value,
-                            )
-                            .subscribe({
-                                next: () => {
-                                    this.closeDialog();
-
-                                    this.messageService.add({
-                                        severity: 'success',
-                                        summary: 'Profile Updated',
-                                        detail: 'Your profile has been updated successfully!',
-                                    });
-                                },
-                                error: error => {
-                                    this.isProcessingEdit = false;
-                                    const status = error.cause.status;
-                                    let errorMessage = 'An unknown error occurred';
-                                    if (status === 401) {
-                                        errorMessage = 'Your session has expired. Please log out and log back in.';
-                                    } else if (status === 409) {
-                                        errorMessage = 'The username or email already exists.';
-                                    }
-                                    this.messageService.add({
-                                        severity: 'error',
-                                        summary: 'Editing Profile Erorr',
-                                        detail: errorMessage,
-                                    });
-                                },
-                            });
-                    },
-                    error: error => {
-                        this.isProcessingEdit = false;
-                        const status = error.cause.status;
-                        let errorMessage = 'An unknown error occurred';
-                        if (status === 400) {
-                            errorMessage = 'Missing/Invalid passwords';
-                        } else if (status === 401) {
-                            errorMessage = 'Your password is invalid';
-                        } else if (status === 500) {
-                            errorMessage = 'Internal Server Error';
-                        }
-                        this.messageService.add({
-                            severity: 'error',
-                            summary: 'Submission Error',
-                            detail: errorMessage,
-                        });
-                    },
-                });
+        if (!this.editProfileForm.valid) {
+            return;
         }
+
+        this.isProcessingEdit = true;
+
+        this.authenticationService
+            .updateUsernameAndEmail(
+                this.editProfileForm.get('username')?.value,
+                this.editProfileForm.get('email')?.value,
+                this.editProfileForm.get('password')?.value,
+            )
+            .subscribe({
+                next: () => {
+                    this.closeDialog();
+
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Profile Updated',
+                        detail: 'Your profile has been updated successfully!',
+                    });
+                },
+                error: error => {
+                    this.isProcessingEdit = false;
+                    const status = error.cause.status;
+                    let errorMessage = 'An unknown error occurred';
+                    if (status === 401) {
+                        errorMessage = 'Your session has expired. Please log out and log back in.';
+                    } else if (status === 409) {
+                        errorMessage = 'The username or email already exists.';
+                    }
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Editing Profile Erorr',
+                        detail: errorMessage,
+                    });
+                },
+            });
     }
 }

@@ -104,12 +104,12 @@ export async function updateUsernameAndEmail(req: Request, res: Response) {
 
             const userByUsername = await _findUserByUsername(username);
             if (userByUsername && userByUsername.id !== userId) {
-                handleConflict(res, 'username already exists');
+                handleConflict(res, 'The username already exists');
                 return;
             }
             const userByEmail = await _findUserByEmail(email);
             if (userByEmail && userByEmail.id !== userId) {
-                handleConflict(res, 'email already exists');
+                handleConflict(res, 'The email already exists');
                 return;
             }
 

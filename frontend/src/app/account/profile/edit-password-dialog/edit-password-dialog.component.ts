@@ -88,70 +88,48 @@ export class EditPasswordDialogComponent {
     }
 
     onPasswordSubmit() {
-        if (this.editPasswordForm.valid) {
-            this.isProcessingPassword = true;
-
-            // Check if password is correct first
-            this.authenticationService
-                .login(this.user!.username, this.editPasswordForm.get('oldPassword')?.value)
-                .subscribe({
-                    next: () => {
-                        this.authenticationService
-                            .updatePassword(
-                                this.user!.username,
-                                this.editPasswordForm.get('oldPassword')?.value,
-                                this.editPasswordForm.get('password')?.value,
-                            )
-                            .subscribe({
-                                next: () => {
-                                    // Reset states and forms on success
-                                    this.closeDialog();
-
-                                    this.messageService.add({
-                                        severity: 'success',
-                                        summary: 'Password Updated',
-                                        detail: 'Your password has been updated successfully!',
-                                    });
-                                },
-                                error: error => {
-                                    this.isProcessingPassword = false;
-                                    const status = error.cause.status;
-                                    let errorMessage = 'An unknown error occurred';
-                                    if (status === 401) {
-                                        errorMessage = 'Try loging out and log back in. Expired token';
-                                    } else if (status === 404) {
-                                        errorMessage = 'Try loging out and log back in. User ID Not Found';
-                                    } else if (status === 409) {
-                                        errorMessage = 'Username or Email already exists';
-                                    } else if (status === 500) {
-                                        errorMessage = 'Internal Server Error';
-                                    }
-                                    this.messageService.add({
-                                        severity: 'error',
-                                        summary: 'Editing Password Erorr',
-                                        detail: errorMessage,
-                                    });
-                                },
-                            });
-                    },
-                    error: error => {
-                        this.isProcessingPassword = false;
-                        const status = error.cause.status;
-                        let errorMessage = 'An unknown error occurred';
-                        if (status === 400) {
-                            errorMessage = 'Missing/Invalid passwords';
-                        } else if (status === 401) {
-                            errorMessage = 'Your old password is invalid';
-                        } else if (status === 500) {
-                            errorMessage = 'Internal Server Error';
-                        }
-                        this.messageService.add({
-                            severity: 'error',
-                            summary: 'Submission Error',
-                            detail: errorMessage,
-                        });
-                    },
-                });
+        if (!this.editPasswordForm.valid) {
+            return;
         }
+
+        this.isProcessingPassword = true;
+
+        this.authenticationService
+            .updatePassword(
+                this.user!.username,
+                this.editPasswordForm.get('oldPassword')?.value,
+                this.editPasswordForm.get('password')?.value,
+            )
+            .subscribe({
+                next: () => {
+                    // Reset states and forms on success
+                    this.closeDialog();
+
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Password Updated',
+                        detail: 'Your password has been updated successfully!',
+                    });
+                },
+                error: error => {
+                    this.isProcessingPassword = false;
+                    const status = error.cause.status;
+                    let errorMessage = 'An unknown error occurred';
+                    if (status === 401) {
+                        errorMessage = 'Try loging out and log back in. Expired token';
+                    } else if (status === 404) {
+                        errorMessage = 'Try loging out and log back in. User ID Not Found';
+                    } else if (status === 409) {
+                        errorMessage = 'Username or Email already exists';
+                    } else if (status === 500) {
+                        errorMessage = 'Internal Server Error';
+                    }
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Editing Password Erorr',
+                        detail: errorMessage,
+                    });
+                },
+            });
     }
 }

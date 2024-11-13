@@ -27,7 +27,7 @@ export class HistoryComponent implements OnInit {
     histories: MatchingHistory[] = [];
     loading = true;
     isPanelVisible = false;
-    history: MatchingHistory | null = null;
+    panelHistory: MatchingHistory | null = null;
     editorView: EditorView | null = null;
 
     constructor(
@@ -59,16 +59,15 @@ export class HistoryComponent implements OnInit {
     }
 
     onRowSelect(history: MatchingHistory) {
-        this.history = history;
-        this.isPanelVisible = true;
+        this.panelHistory = history;
         if (history.code && history.language) {
+            this.isPanelVisible = true;
             this.initializeEditor(history.code, history.language);
         } else {
-            console.log('why no message?');
             this.messageService.add({
                 severity: 'warn',
                 summary: 'Code Not Found',
-                detail: 'Your colaboration session might not have ended',
+                detail: 'Your collaboration session might not have ended',
                 life: 3000,
             });
         }
@@ -76,7 +75,7 @@ export class HistoryComponent implements OnInit {
 
     closePanel() {
         this.isPanelVisible = false;
-        this.history = null;
+        this.panelHistory = null;
     }
 
     initializeEditor(code: string, language: string) {

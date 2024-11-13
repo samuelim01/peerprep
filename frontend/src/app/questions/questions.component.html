@@ -113,12 +113,7 @@
         (successfulRequest)="onSuccessfulRequest($event)">
     </app-question-dialog>
     <p-confirmDialog [style]="{ width: '450px' }" />
-    <p-sidebar
-        [(visible)]="isPanelVisible"
-        position="right"
-        [blockScroll]="true"
-        styleClass="w-10 md:w-4"
-        transitionOptions="300ms cubic-bezier(0, 0, 0.2, 1)">
+    <p-sidebar [(visible)]="isPanelVisible" position="right" [blockScroll]="true" styleClass="w-10 md:w-4">
         <ng-template pTemplate="header">
             <h3>{{ clickedOnQuestion?.title }}</h3>
         </ng-template>

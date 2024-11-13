@@ -1,6 +1,6 @@
 import { DifficultyLevels } from '../../questions/difficulty-levels.enum';
 
-export enum statusValues {
+export enum HistoryStatus {
     COMPLETED = 'COMPLETED',
     FORFEITED = 'FORFEITED',
     IN_PROGRESS = 'IN_PROGRESS',
@@ -8,14 +8,15 @@ export enum statusValues {
 
 export interface MatchingHistory {
     id: string;
+    roomId: string;
     collaborator: string; // collaborator username
     question: Question; // question
     difficulty: DifficultyLevels; // question difficulty
     topics: string[]; // question topics
-    status: statusValues; // status of the session
+    status: HistoryStatus; // status of the session
     time: string | null; // time of the session
-    language: string | undefined; // language used during the session
-    code: string | undefined; // code written during the session
+    language?: string; // language used during the session
+    code?: string; // code written during the session
 }
 
 export interface User {
@@ -43,14 +44,14 @@ export interface sessionHistory {
     user: User;
     collaborator: User;
     question: Question;
-    status: statusValues;
+    status: HistoryStatus;
     createdAt: string;
     updatedAt: string;
     snapshot?: Snapshot;
 }
 
 export interface historyResponse {
-    status: statusValues;
+    status: HistoryStatus;
     message: string;
     data: sessionHistory[];
 }

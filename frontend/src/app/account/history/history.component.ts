@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { CommonModule, DatePipe } from '@angular/common';
-import { MatchingHistory } from './history.model';
+import { HistoryStatus, MatchingHistory } from './history.model';
 import { HistoryService } from '../../../_services/history.service';
 import { MessageService } from 'primeng/api';
 import { InputTextModule } from 'primeng/inputtext';
@@ -13,6 +13,7 @@ import { EditorState } from '@codemirror/state';
 import { EditorView, basicSetup } from 'codemirror';
 import { languageMap } from '../../collaboration/editor/languages';
 import { ToastModule } from 'primeng/toast';
+import { Router } from '@angular/router';
 
 @Component({
     standalone: true,
@@ -34,6 +35,7 @@ export class HistoryComponent implements OnInit {
         private historyService: HistoryService,
         private messageService: MessageService,
         private datePipe: DatePipe,
+        private router: Router,
     ) {}
 
     ngOnInit() {
@@ -60,16 +62,11 @@ export class HistoryComponent implements OnInit {
 
     onRowSelect(history: MatchingHistory) {
         this.panelHistory = history;
-        if (history.code && history.language) {
+        if (history.status != HistoryStatus.IN_PROGRESS) {
             this.isPanelVisible = true;
-            this.initializeEditor(history.code, history.language);
+            this.initializeEditor(history.code as string, history.language as string);
         } else {
-            this.messageService.add({
-                severity: 'warn',
-                summary: 'Code Not Found',
-                detail: 'Your collaboration session might not have ended',
-                life: 3000,
-            });
+            this.redirectToCollab(history.roomId);
         }
     }
 
@@ -79,21 +76,27 @@ export class HistoryComponent implements OnInit {
     }
 
     initializeEditor(code: string, language: string) {
-        if (this.editor) {
-            if (this.editorView) {
-                this.editorView.destroy();
-            }
-
-            const languageExtension = languageMap[language] || languageMap['java'];
-            const state = EditorState.create({
-                doc: code,
-                extensions: [basicSetup, languageExtension, oneDark, EditorView.editable.of(false)],
-            });
-
-            this.editorView = new EditorView({
-                state,
-                parent: this.editor.nativeElement,
-            });
+        if (this.editorView) {
+            this.editorView.destroy();
         }
+
+        const languageExtension = languageMap[language] || languageMap['java'];
+        const state = EditorState.create({
+            doc: code,
+            extensions: [basicSetup, languageExtension, oneDark, EditorView.editable.of(false)],
+        });
+
+        this.editorView = new EditorView({
+            state,
+            parent: this.editor.nativeElement,
+        });
+    }
+
+    redirectToCollab(collabId: string) {
+        this.router.navigate(['/collab'], {
+            queryParams: {
+                roomId: collabId,
+            },
+        });
     }
 }

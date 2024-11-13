@@ -20,6 +20,7 @@ export class HistoryService extends ApiService {
             map(response =>
                 response.data.map(item => ({
                     id: item._id,
+                    roomId: item.roomId,
                     collaborator: item.collaborator.username,
                     question: item.question,
                     topics: item.question.topics,

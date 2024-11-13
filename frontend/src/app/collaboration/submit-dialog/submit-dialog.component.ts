@@ -34,6 +34,7 @@ export class SubmitDialogComponent implements AfterViewInit {
     yforfeit!: Y.Map<boolean>;
     userId!: string;
     code!: string;
+    isConsent = false;
 
     constructor(
         @Inject(DOCUMENT) private document: Document,
@@ -115,11 +116,13 @@ export class SubmitDialogComponent implements AfterViewInit {
     }
 
     checkVoteOutcome(counter: number) {
-        const isConsent = counter == this.numUniqueUsers;
+        this.isConsent = counter == this.numUniqueUsers;
 
-        if (!isConsent) {
+        if (!this.isConsent) {
             return;
         }
+
+        this.message = 'Successfully submitted. \n\n Redirecting you to homepage...';
 
         this.successfulSubmit.emit();
 
@@ -129,7 +132,6 @@ export class SubmitDialogComponent implements AfterViewInit {
             console.log('Submitting code:', this.code);
             this.collabService.closeRoom(this.roomId, this.selectedLanguage, this.code).subscribe({
                 next: () => {
-                    this.message = 'Successfully submitted. \n\n Redirecting you to homepage...';
                     setTimeout(() => {
                         this.router.navigate(['/home']);
                     }, 1500);

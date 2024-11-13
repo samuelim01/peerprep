@@ -9,7 +9,7 @@ export enum statusValues {
 export interface MatchingHistory {
     id: string;
     collaborator: string; // collaborator username
-    question: string; // question title
+    question: Question; // question
     difficulty: DifficultyLevels; // question difficulty
     topics: string[]; // question topics
     status: statusValues; // status of the session

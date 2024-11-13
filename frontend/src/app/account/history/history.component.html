@@ -48,7 +48,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-history>
             <tr (click)="onRowSelect(history)">
-                <td>{{ history.question }}</td>
+                <td>{{ history.question.title }}</td>
                 <td>{{ history.difficulty }}</td>
                 <td>{{ history.topics.join(', ') }}</td>
                 <td>{{ history.collaborator }}</td>
@@ -68,7 +68,7 @@
 </div>
 <div class="sliding-panel" [class.open]="isPanelVisible">
     <div class="panel-header">
-        <h4>{{ panelHistory?.question }}</h4>
+        <h4>{{ panelHistory?.question?.title }}</h4>
         <p-button
             icon="pi pi-times"
             severity="secondary"
@@ -77,6 +77,7 @@
             class="p-button-text" />
     </div>
     <div class="panel-content">
+        <p>{{ panelHistory?.question?.description }}</p>
         <div #editor class="editor-content"></div>
     </div>
 </div>

@@ -87,7 +87,7 @@ export class HistoryComponent implements OnInit {
             const languageExtension = languageMap[language] || languageMap['java'];
             const state = EditorState.create({
                 doc: code,
-                extensions: [basicSetup, languageExtension, oneDark],
+                extensions: [basicSetup, languageExtension, oneDark, EditorView.editable.of(false)],
             });
 
             this.editorView = new EditorView({

@@ -140,6 +140,9 @@ export const updateUserStatusInRoomController = async (req: Request, res: Respon
             return handleHttpNotFound(res, 'User not found in room');
         }
 
+        // Obtain code and language
+        const snapshot = await retrieveSnapshot(roomId);
+
         // Record the forfeited status in the user's history
         await produceUpdateHistory(roomId, userId, HistoryStatus.FORFEITED, snapshot);
 

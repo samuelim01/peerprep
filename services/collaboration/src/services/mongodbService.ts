@@ -3,6 +3,7 @@ import { MongodbPersistence } from 'y-mongodb-provider';
 import * as Y from 'yjs';
 import config from '../config';
 import { Question, Room } from '../types/collab';
+import { Snapshot } from '../types/message';
 
 let roomDb: Db | null = null;
 let yjsDb: Db | null = null;
@@ -225,4 +226,11 @@ export const updateRoomUserStatus = async (roomId: string, userId: string, isFor
         console.error(`Error updating user isForfeit status for user ID ${userId} in room ${roomId}:`, error);
         throw error;
     }
+};
+
+export const retrieveSnapshot = async (roomId: string): Promise<Snapshot> => {
+    const yDoc = await mdb.getYDoc(roomId);
+    const code = yDoc.getText('editorText').toString();
+    const language = yDoc.getMap('language').toJSON()['selected'];
+    return { code, language };
 };

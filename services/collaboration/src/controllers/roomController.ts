@@ -7,6 +7,8 @@ import {
     findRoomsByUserId,
     closeRoomById,
     updateRoomUserStatus,
+    mdb,
+    retrieveSnapshot,
 } from '../services/mongodbService';
 import { handleHttpNotFound, handleHttpSuccess, handleHttpServerError, handleHttpBadRequest } from '../utils/helper';
 import { Room, Question } from '../types/collab';
@@ -86,6 +88,9 @@ export const closeRoomController = async (req: Request, res: Response) => {
             return handleHttpNotFound(res, 'Room not found');
         }
 
+        // Obtain code and language
+        const snapshot = await retrieveSnapshot(roomId);
+
         // Delete the Yjs document associated with the room
         await deleteYjsDocument(roomId);
 
@@ -93,7 +98,7 @@ export const closeRoomController = async (req: Request, res: Response) => {
         await Promise.all(
             room.users
                 .filter(user => !user.isForfeit)
-                .map(user => produceUpdateHistory(roomId, user.id, HistoryStatus.COMPLETED)),
+                .map(user => produceUpdateHistory(roomId, user.id, HistoryStatus.COMPLETED, snapshot)),
         );
 
         console.log(`Room ${roomId} closed and Yjs document removed`);
@@ -115,7 +120,7 @@ export const closeRoomController = async (req: Request, res: Response) => {
 export const updateUserStatusInRoomController = async (req: Request, res: Response) => {
     const userId = req.user.id;
     const { roomId } = req.params;
-    const { isForfeit } = req.body;
+    const { isForfeit, snapshot } = req.body;
 
     // Validate that isForfeit is a boolean value
     if (typeof isForfeit !== 'boolean') {
@@ -136,7 +141,7 @@ export const updateUserStatusInRoomController = async (req: Request, res: Respon
         }
 
         // Record the forfeited status in the user's history
-        await produceUpdateHistory(roomId, userId, HistoryStatus.FORFEITED);
+        await produceUpdateHistory(roomId, userId, HistoryStatus.FORFEITED, snapshot);
 
         // Check if all users in the room have forfeited
         const allUsersForfeited = updatedRoom.users.every(user => user.isForfeit === true);

@@ -120,7 +120,7 @@ export const closeRoomController = async (req: Request, res: Response) => {
 export const updateUserStatusInRoomController = async (req: Request, res: Response) => {
     const userId = req.user.id;
     const { roomId } = req.params;
-    const { isForfeit, snapshot } = req.body;
+    const { isForfeit } = req.body;
 
     // Validate that isForfeit is a boolean value
     if (typeof isForfeit !== 'boolean') {

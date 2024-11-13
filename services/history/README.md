@@ -121,7 +121,7 @@ docker compose down -v
   - `roomId` - The ID of the collaboration room.
   - `userId` - The user associated with the update.
   - `status` - The new status associated with the collaboration room. It may be `"IN_PROGRESS"`, `"FORFEITED"`, or `"COMPLETED"`.
-  - `snapshot` - The snapshot of the code editor upon forfeit / submit.
+  - `snapshot` - The snapshot of the code editor upon forfeit or submit.
 
   ```json
     {

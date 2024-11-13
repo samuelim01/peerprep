@@ -434,12 +434,17 @@ session.
   - `userId` - The user associated with the update.
   - `status` - The new status associated with the collaboration room. It may be `"IN_PROGRESS"`, `"FORFEITED"`,
     or `"COMPLETED"`.
+  - `snapshot` - The snapshot of the code editor upon forfeit or submit.
 
   ```json
     {
       "roomId": "67234d29aa52f2376973f96a",
       "userId": "671a064a6f536e9af46b0017",
-      "status": "FORFEITED"
+      "status": "FORFEITED",
+      "snapshot": {
+        "language": "python",
+        "code": "print('Hello World!')"
+      }
     },
   ```
 

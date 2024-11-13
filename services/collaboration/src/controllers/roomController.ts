@@ -7,6 +7,8 @@ import {
     findRoomsByUserId,
     closeRoomById,
     updateRoomUserStatus,
+    mdb,
+    retrieveSnapshot,
 } from '../services/mongodbService';
 import { handleHttpNotFound, handleHttpSuccess, handleHttpServerError, handleHttpBadRequest } from '../utils/helper';
 import { Room, Question } from '../types/collab';
@@ -68,7 +70,6 @@ export const closeRoomController = async (req: Request, res: Response) => {
     try {
         const userId = req.user.id;
         const roomId = req.params.roomId;
-        const { snapshot } = req.body;
 
         const room = await findRoomById(roomId, userId);
         if (!room) {
@@ -86,6 +87,9 @@ export const closeRoomController = async (req: Request, res: Response) => {
         if (result.modifiedCount === 0) {
             return handleHttpNotFound(res, 'Room not found');
         }
+
+        // Obtain code and language
+        const snapshot = await retrieveSnapshot(roomId);
 
         // Delete the Yjs document associated with the room
         await deleteYjsDocument(roomId);

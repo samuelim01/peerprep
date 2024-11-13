@@ -47,33 +47,18 @@ export class CollabService extends ApiService {
     /**
      * Allows a user to close a room (change room_status to false) and delete the associated Yjs document.
      */
-    closeRoom(roomId: string, language: string, code: string) {
-        return this.http.patch<CloseRoomResponse>(
-            this.apiUrl + '/' + roomId + '/close',
-            {
-                snapshot: {
-                    language: language,
-                    code: code,
-                },
-            },
-            this.httpOptions,
-        );
+    closeRoom(roomId: string) {
+        return this.http.patch<CloseRoomResponse>(this.apiUrl + '/' + roomId + '/close', {}, this.httpOptions);
     }
 
     /**
      * updates the isForfeit status of a specified user in a particular room. Each user in a room has a
      * isForfeit field that tracks whether the user has left the room through forfeiting or is still active.
      */
-    forfeit(roomId: string, language: string, code: string) {
+    forfeit(roomId: string) {
         return this.http.patch<RoomResponse>(
             this.apiUrl + '/' + roomId + '/user/isForfeit',
-            {
-                isForfeit: true,
-                snapshot: {
-                    language: language,
-                    code: code,
-                },
-            },
+            { isForfeit: true },
             this.httpOptions,
         );
     }

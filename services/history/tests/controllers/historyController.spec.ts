@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config({ path: '.env.sample' });
-
 import { use, expect } from 'chai';
 import chaiHttp from 'chai-http';
 import { MongoMemoryServer } from 'mongodb-memory-server';

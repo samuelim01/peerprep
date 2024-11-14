@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config({ path: '.env.sample' });
-
 import { expect } from 'chai';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose, { Types } from 'mongoose';
